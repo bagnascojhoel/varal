@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[DESIGN MOCKUP] Devo Lavar Roupas? — v3 Time-Aware</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- [DESIGN NOTE] This is a static mockup. Do not ship this file. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; min-height: 100svh; font-family: 'Inter', system-ui, sans-serif; }
+    body { position: relative; overflow-x: hidden; }
+
+    /* ════════════════════════════════════════════════
+       WEATHER GIF BACKGROUND (from v2 — unchanged)
+       ════════════════════════════════════════════════ */
+
+    .weather-bg {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden;
+    }
+    /* Background fallback: dark night sky / bright day sky — driven by time, not weather */
+    body[data-time="night"] .weather-bg::before,
+    body:not([data-time])   .weather-bg::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(170deg, #0b0d19 0%, #131726 25%, #1c2033 50%, #20243e 75%, #181b2d 100%);
+    }
+    body[data-time="morning"] .weather-bg::before,
+    body[data-time="afternoon"] .weather-bg::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(170deg, #aac8f0 0%, #bed5f5 25%, #cfe4fa 50%, #dceef8 75%, #c5dff5 100%);
+    }
+    .weather-gif {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; opacity: 0.58;
+    }
+    .weather-gif[src]:not([src^="http"]):not([src^="/"]):not([src^="data"]) { opacity: 0; }
+
+    /* Scrim: heavier at night for readability, lighter during the day so GIF breathes */
+    .weather-scrim { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+    body[data-time="night"] .weather-scrim,
+    body:not([data-time])   .weather-scrim { background: rgba(5,7,20,0.45); }
+    body[data-time="morning"] .weather-scrim,
+    body[data-time="afternoon"] .weather-scrim { background: rgba(255,255,255,0.12); }
+
+    /* ════════════════════════════════════════════════
+       GLASS SURFACES
+       ════════════════════════════════════════════════ */
+
+    .glass {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .glass-inner {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    body:is([data-time="morning"],[data-time="afternoon"]) .glass       { background: rgba(255,255,255,0.42); border-color: rgba(255,255,255,0.72); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .glass-inner { background: rgba(255,255,255,0.38); border-color: rgba(255,255,255,0.55); }
+
+    /* ════════════════════════════════════════════════
+       APP HEADER
+       ════════════════════════════════════════════════ */
+
+    .app-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      padding-bottom: 0.85rem;
+    }
+    .header-app-title {
+      font-size: 1.1rem; font-weight: 300; letter-spacing: -0.01em; line-height: 1.2;
+      color: rgba(255,255,255,0.90);
+    }
+    .header-subtitle {
+      color: rgba(255,255,255,0.32); font-size: 0.62rem; font-weight: 300;
+      letter-spacing: 0.04em; margin-top: 0.2rem;
+    }
+    .header-time {
+      font-size: 2.2rem; font-weight: 200; line-height: 1; letter-spacing: -0.03em;
+      color: rgba(255,255,255,0.88); font-variant-numeric: tabular-nums;
+    }
+    body:is([data-time="morning"],[data-time="afternoon"]) .header-app-title { color: rgba(18,48,100,0.88); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .header-subtitle   { color: rgba(18,48,100,0.45); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .header-time        { color: rgba(18,48,100,0.82); }
+
+    /* ════════════════════════════════════════════════
+       CARDS: CAROUSEL (mobile) / GRID (desktop)
+       ════════════════════════════════════════════════ */
+
+    .cards-track {
+      display: flex;
+      /* flex:1 + min-height:0 lets the track grow to fill all vertical space the parent grants */
+      flex: 1;
+      min-height: 0;
+      /* stretch so every card fills the track's height, not just the tallest */
+      align-items: stretch;
+      overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch; gap: 0.75rem;
+      padding-right: 1.5rem; scrollbar-width: none;
+    }
+    .cards-track::-webkit-scrollbar { display: none; }
+
+    .card {
+      flex: 0 0 min(88vw, 320px);
+      scroll-snap-align: start;
+      transition: transform 0.3s ease, opacity 0.4s ease;
+    }
+
+    /* Desktop: 3-column grid (normal and night — see night rules below) */
+    @media (min-width: 1024px) {
+      .cards-track {
+        display: grid; grid-template-columns: 1.15fr 1fr 1fr;
+        /* align-items:stretch is the grid default; cards fill full track height automatically */
+        gap: 1rem; overflow-x: visible; scroll-snap-type: none; padding-right: 0;
+      }
+      .card { flex: none; }
+      .card:hover { transform: translateY(-3px); }
+    }
+
+    /* ════════════════════════════════════════════════
+       CAROUSEL DOTS
+       ════════════════════════════════════════════════ */
+
+    .carousel-dots {
+      display: flex; justify-content: center; align-items: center;
+      gap: 0.35rem; padding-top: 0.85rem;
+    }
+    @media (min-width: 1024px) { .carousel-dots { display: none; } }
+
+    .dot {
+      display: flex; align-items: center; justify-content: center;
+      min-width: 44px; min-height: 44px;
+      background: transparent; border: none; cursor: pointer; padding: 0;
+    }
+    .dot::after {
+      content: ''; display: block; width: 6px; height: 6px;
+      border-radius: 9999px; background: rgba(255,255,255,0.28);
+      transition: width 0.25s ease, background 0.25s ease;
+    }
+    .dot.active::after { width: 20px; background: rgba(255,255,255,0.85); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .dot::after        { background: rgba(18,48,100,0.28); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .dot.active::after { background: rgba(18,48,100,0.75); }
+
+    /* ════════════════════════════════════════════════
+       CARD ACCENT BARS
+       ════════════════════════════════════════════════ */
+
+    .accent-red   { background: linear-gradient(90deg, rgba(248,113,113,0.9), rgba(239,68,68,0.15)); }
+    .accent-amber { background: linear-gradient(90deg, rgba(251,191,36,0.9), rgba(245,158,11,0.15)); }
+    .accent-sky   { background: linear-gradient(90deg, rgba(56,189,248,0.9), rgba(34,211,238,0.15)); }
+    .accent-indigo{ background: linear-gradient(90deg, rgba(129,140,248,0.9), rgba(99,102,241,0.15)); }
+
+    /* ════════════════════════════════════════════════
+       TYPOGRAPHY
+       ════════════════════════════════════════════════ */
+
+    .label-day     { color: rgba(255,255,255,0.32); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.18em; }
+    .label-weekday { color: rgba(255,255,255,0.52); font-size: 0.75rem; font-weight: 300; margin-top: 0.15rem; }
+    .section-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); }
+    .windows-label { color: rgba(255,255,255,0.22); font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.5rem; }
+    .window-label  { color: rgba(255,255,255,0.58); font-size: 0.8rem; font-weight: 300; }
+
+    body:is([data-time="morning"],[data-time="afternoon"]) .label-day      { color: rgba(18,48,100,0.45); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .label-weekday  { color: rgba(18,48,100,0.62); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .section-divider{ border-top-color: rgba(18,48,100,0.10); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .windows-label  { color: rgba(18,48,100,0.32); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .window-label   { color: rgba(18,48,100,0.68); }
+
+    /* ════════════════════════════════════════════════
+       STATUS PILLS
+       ════════════════════════════════════════════════ */
+
+    .pill { display: inline-flex; align-items: center; font-size: 0.62rem; padding: 0.18rem 0.5rem; border-radius: 9999px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+    @media (min-width: 640px) { .pill { font-size: 0.68rem; padding: 0.2rem 0.6rem; } }
+    .pill-no     { background: rgba(239,68,68,0.15);  color: rgb(252,165,165); border: 1px solid rgba(239,68,68,0.25); }
+    .pill-yes    { background: rgba(251,191,36,0.15); color: rgb(253,230,138); border: 1px solid rgba(251,191,36,0.25); }
+    .pill-clear  { background: rgba(56,189,248,0.15); color: rgb(125,211,252); border: 1px solid rgba(56,189,248,0.25); }
+    .pill-unsure { background: rgba(255,255,255,0.06);color: rgba(255,255,255,0.38); border: 1px solid rgba(255,255,255,0.10); }
+
+    /* ════════════════════════════════════════════════
+       TIMELINE BARS
+       ════════════════════════════════════════════════ */
+
+    .timeline-caption {
+      display: block; color: rgba(255,255,255,0.22); font-size: 0.5rem;
+      text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 5px;
+    }
+    /* [STYLE] position:relative required for the now-marker to be positioned correctly */
+    .timeline-bars {
+      display: flex; align-items: flex-end; gap: 2px;
+      height: 48px; padding-bottom: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .t-bar { flex: 1; min-width: 0; min-height: 2px; border-radius: 2px 2px 0 0; transition: opacity 0.15s, background 0.3s; }
+    .t-bar:hover { opacity: 0.72; }
+    .t-good { background: rgba(56,189,248,0.60); }
+    .t-warn { background: rgba(251,191,36,0.65); }
+    .t-bad  { background: rgba(239,68,68,0.65); }
+
+    /* [STYLE] Past bars: desaturated and dim. Applied by JS based on current hour. */
+    .t-bar--past { background: rgba(255,255,255,0.10) !important; }
+
+    .timeline-labels { display: flex; justify-content: space-between; margin-top: 4px; }
+    .timeline-label  { color: rgba(255,255,255,0.28); font-size: 0.52rem; letter-spacing: 0.04em; }
+
+    body:is([data-time="morning"],[data-time="afternoon"]) .timeline-caption      { color: rgba(18,48,100,0.30); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .timeline-bars          { border-bottom-color: rgba(18,48,100,0.10); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .timeline-label         { color: rgba(18,48,100,0.32); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .t-good { background: rgba(2,132,199,0.45); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .t-warn { background: rgba(217,119,6,0.50); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .t-bad  { background: rgba(185,28,28,0.45); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .t-bar--past { background: rgba(18,48,100,0.08) !important; }
+
+    /* ════════════════════════════════════════════════
+       TIME-AWARE: NOW MARKER
+       ════════════════════════════════════════════════ */
+
+    /* [IMPLEMENT] Component: TimelineNowMarker
+       A thin vertical line at the current time position on today's hourly bar chart.
+       Only visible in afternoon state (morning bars have not started; night state is not applicable).
+       Left position set by JS: ((currentHour + currentMinutes/60) - 6) / 14 * 100 + '%'
+       The timeline spans 6h–20h = 14 hours.
+       Clamped to 0%–100%. Hidden when hour < 6 or hour > 20. */
+    .timeline-now-marker {
+      position: absolute;
+      top: 0;
+      bottom: 4px; /* match timeline-bars padding-bottom */
+      width: 1.5px;
+      background: rgba(255,255,255,0.60);
+      border-radius: 1px;
+      pointer-events: none;
+      display: none; /* JS shows it in afternoon state */
+    }
+    .timeline-now-marker::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px; height: 5px;
+      background: rgba(255,255,255,0.75);
+      border-radius: 9999px;
+    }
+    body:is([data-time="morning"],[data-time="afternoon"]) .timeline-now-marker       { background: rgba(18,48,100,0.60); }
+    body:is([data-time="morning"],[data-time="afternoon"]) .timeline-now-marker::before { background: rgba(18,48,100,0.75); }
+
+    /* ════════════════════════════════════════════════
+       TIME-AWARE: MORNING WINDOW HIDING
+       ════════════════════════════════════════════════ */
+
+    /* [IMPLEMENT] Logic: hide the morning ("Manhã") window row when hour ≥ 12.
+       Apply class 'window-morning' to the morning row's container div in the today card only.
+       Check is performed server-side using request time or via client-side hydration.
+       Important: only suppress on the today card — future day cards always show full windows. */
+    body[data-time="afternoon"] .window-morning,
+    body[data-time="night"]     .window-morning {
+      display: none;
+    }
+
+    /* ════════════════════════════════════════════════
+       TIME-AWARE: NIGHT STATE — TODAY CARD
+       ════════════════════════════════════════════════ */
+
+    /* [IMPLEMENT] Night state (hour ≥ 21): today card is dimmed to signal the day is over.
+       Do NOT remove it — user should be able to swipe back to it in the carousel for reference.
+       On desktop it is hidden (today is replaced by tomorrow as the first visible column). */
+
+    body[data-time="night"] .card-today {
+      opacity: 0.38;
+    }
+    /* Desktop night: hide today card, reveal day+3 in the grid */
+    @media (min-width: 1024px) {
+      body[data-time="night"] .card-today  { display: none; }
+      body[data-time="night"] .cards-track { grid-template-columns: 1.15fr 1fr 1fr; }
+    }
+
+    /* [IMPLEMENT] "Encerrado" badge: shown only in night state, inside today's card header.
+       Signals that today is no longer actionable.
+       Style: muted pill, small uppercase text. */
+    .today-encerrado {
+      display: none;
+      margin-top: 0.35rem;
+      font-size: 0.48rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.28);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 9999px;
+      padding: 0.1rem 0.45rem;
+      width: fit-content;
+    }
+    body[data-time="night"] .today-encerrado { display: block; }
+    body:is([data-time="morning"],[data-time="afternoon"]) .today-encerrado {
+      color: rgba(18,48,100,0.32);
+      border-color: rgba(18,48,100,0.14);
+    }
+
+    /* ════════════════════════════════════════════════
+       TIME-AWARE: NIGHT STATE — DAY+3 CARD
+       ════════════════════════════════════════════════ */
+
+    /* [IMPLEMENT] Day+3 card: always rendered in HTML but hidden until night state.
+       In the mobile carousel it appears as the 4th card after day+2.
+       On desktop it replaces today in the grid (today is display:none at night). */
+    .card-day3 { display: none; }
+    body[data-time="night"] .card-day3 { display: flex; }
+    /* On mobile, always flex (carousel); on desktop only show at night */
+    @media (max-width: 1023px) {
+      body[data-time="night"] .card-day3 { display: flex; }
+    }
+
+    /* 4th dot: visible only in night state on mobile */
+    .dot-day3 { display: none !important; }
+    body[data-time="night"] .dot-day3 { display: flex !important; }
+
+    /* ════════════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════════════ */
+
+    .footer-text { color: rgba(255,255,255,0.18); font-size: 0.65rem; }
+    .footer-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; opacity: 0.7; }
+    .footer-link:hover { opacity: 1; }
+    body:is([data-time="morning"],[data-time="afternoon"]) .footer-text { color: rgba(18,48,100,0.30); }
+
+    /* ════════════════════════════════════════════════
+       MOCKUP DEMO CONTROLS
+       ════════════════════════════════════════════════ */
+
+    .demo-bar {
+      position: fixed; bottom: 1rem; right: 1rem; z-index: 100;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;
+    }
+    .demo-group {
+      display: flex; align-items: center; gap: 0.3rem;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(10px);
+      padding: 0.3rem 0.5rem; border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    .demo-label {
+      font-size: 0.5rem; color: rgba(255,255,255,0.3);
+      letter-spacing: 0.08em; padding-right: 0.4rem;
+      border-right: 1px solid rgba(255,255,255,0.10);
+    }
+    .demo-btn {
+      font-size: 0.58rem; padding: 0.18rem 0.5rem;
+      border-radius: 9999px; border: 1px solid rgba(255,255,255,0.12);
+      background: transparent; color: rgba(255,255,255,0.45);
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .demo-btn:hover, .demo-btn.active {
+      background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.90);
+    }
+  </style>
+</head>
+
+<body data-time="morning">
+
+  <!-- ══ MOCKUP DEMO CONTROLS ══ -->
+  <!-- [DESIGN NOTE] Remove entirely in production. Both states are server/client-determined. -->
+  <!-- [DESIGN NOTE] Mockup time-state switcher — remove in production. Theme is auto-applied from real clock. -->
+  <div class="demo-bar">
+    <div class="demo-group" role="group" aria-label="Mockup: simular horário">
+      <span class="demo-label">HORA</span>
+      <button class="demo-btn active" onclick="applyTimeState(9,0,this)">☀️ Manhã</button>
+      <button class="demo-btn" onclick="applyTimeState(15,0,this)">🕑 Tarde</button>
+      <button class="demo-btn" onclick="applyTimeState(22,0,this)">🌙 Noite</button>
+    </div>
+  </div>
+
+  <!-- ══ WEATHER GIF BACKGROUND ══ -->
+  <div class="weather-bg" aria-hidden="true">
+    <img class="weather-gif" id="weather-gif" src="rain.gif" alt="" aria-hidden="true" />
+  </div>
+  <div class="weather-scrim" aria-hidden="true"></div>
+
+  <!-- ══ PAGE CONTENT ══ -->
+  <div style="position:relative;z-index:10;min-height:100svh;display:flex;flex-direction:column;
+              padding:1.25rem 1.25rem 0.75rem;max-width:64rem;margin:0 auto;">
+
+    <!-- ══ APP HEADER ══ -->
+    <header class="app-header">
+      <div>
+        <h1 class="header-app-title">Devo Lavar Roupas?</h1>
+        <p class="header-subtitle" id="location-label">São Paulo, BR</p>
+      </div>
+      <time class="header-time" id="header-time" datetime="">—:—</time>
+    </header>
+
+    <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem;">
+
+      <div class="cards-track" id="cards-track"
+           role="region" aria-label="Previsão para os próximos dias"
+           aria-roledescription="carrossel">
+
+        <!-- ════ TODAY ════ -->
+        <!-- [IMPLEMENT] Card: Today
+             Time-aware behavior (all determined by hour at render/hydration time):
+               hour < 12  → show both windows (Manhã + Tarde)
+               hour 12–20 → hide .window-morning; mark past bars; show .timeline-now-marker
+               hour ≥ 21  → card is dimmed (opacity:0.38); show .today-encerrado badge;
+                             hidden on desktop (display:none); carousel auto-scrolls to index 1
+             data-card-index="0" for carousel dot tracking. -->
+        <article class="card card-today glass rounded-2xl flex flex-col overflow-hidden"
+                 data-card-index="0"
+                 role="group" aria-roledescription="slide" aria-label="Hoje">
+          <div class="accent-red h-[3px] shrink-0"></div>
+
+          <div style="display:flex;flex-direction:column;flex:1;padding:1.25rem 1.25rem 1rem;">
+
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;">
+              <div>
+                <p class="label-day">Hoje</p>
+                <p class="label-weekday" id="weekday-0">—</p>
+                <!-- [IMPLEMENT] "encerrado" badge: render in DOM always; CSS shows it only when
+                     body[data-time="night"]. This avoids a flash of content on hydration. -->
+                <span class="today-encerrado" aria-label="dia encerrado">encerrado</span>
+              </div>
+              <span style="font-size:1.6rem;line-height:1;user-select:none;" aria-hidden="true">🌧️</span>
+            </div>
+
+            <!-- [IMPLEMENT] Timeline: today's hourly drying-chance bars (6h–20h, 15 bars).
+                 Each bar has data-bar-hour for JS to mark as past.
+                 bars with data-bar-hour < currentHour → add class t-bar--past
+                 TimelineNowMarker is positioned at ((currentHour + min/60 - 6) / 14 * 100)%. -->
+            <div style="margin-bottom:1.25rem;">
+              <span class="timeline-caption">chance de secar ao natural</span>
+              <div class="timeline-bars" id="today-timeline">
+                <div class="t-bar t-bad"  data-bar-hour="6"  style="height:14px" title="6h · 30%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="7"  style="height:11px" title="7h · 22%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="8"  style="height:9px"  title="8h · 18%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="9"  style="height:8px"  title="9h · 16%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="10" style="height:9px"  title="10h · 18%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="11" style="height:11px" title="11h · 22%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="12" style="height:12px" title="12h · 26%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="13" style="height:14px" title="13h · 30%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="14" style="height:15px" title="14h · 32%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="15" style="height:13px" title="15h · 28%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="16" style="height:11px" title="16h · 22%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="17" style="height:12px" title="17h · 25%"></div>
+                <div class="t-bar t-bad"  data-bar-hour="18" style="height:13px" title="18h · 28%"></div>
+                <div class="t-bar t-warn" data-bar-hour="19" style="height:17px" title="19h · 35%"></div>
+                <div class="t-bar t-warn" data-bar-hour="20" style="height:19px" title="20h · 40%"></div>
+                <!-- [IMPLEMENT] TimelineNowMarker: position set by JS. Visible only in afternoon state. -->
+                <div class="timeline-now-marker" id="today-now-marker" aria-hidden="true"></div>
+              </div>
+              <div class="timeline-labels">
+                <span class="timeline-label">6h</span>
+                <span class="timeline-label">13h</span>
+                <span class="timeline-label">20h</span>
+              </div>
+            </div>
+
+            <hr class="section-divider" style="margin-top:auto;margin-bottom:0.75rem;" />
+            <p class="windows-label">Janelas do dia</p>
+
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+              <!-- [IMPLEMENT] class="window-morning" causes this row to be hidden when hour ≥ 12.
+                   The afternoon check is done on the server (request time) or client at hydration.
+                   Do NOT add this class to window rows on future-day cards. -->
+              <div class="glass-inner window-morning" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="font-size:0.875rem;line-height:1;" aria-hidden="true">🌅</span>
+                  <span class="window-label">Manhã</span>
+                </div>
+                <span class="pill pill-no">Chuva</span>
+              </div>
+              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="font-size:0.875rem;line-height:1;" aria-hidden="true">🌆</span>
+                  <span class="window-label">Tarde</span>
+                </div>
+                <span class="pill pill-no">Chuva</span>
+              </div>
+            </div>
+
+          </div>
+        </article>
+
+        <!-- ════ TOMORROW ════ -->
+        <article class="card glass rounded-2xl flex flex-col overflow-hidden"
+                 data-card-index="1"
+                 role="group" aria-roledescription="slide" aria-label="Amanhã">
+          <div class="accent-amber h-[3px] shrink-0"></div>
+          <div style="display:flex;flex-direction:column;flex:1;padding:1rem 1.25rem;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+              <div>
+                <p class="label-day">Amanhã</p>
+                <p class="label-weekday" id="weekday-1">—</p>
+              </div>
+              <span style="font-size:1.4rem;line-height:1;user-select:none;" aria-hidden="true">⛅</span>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <span class="timeline-caption">chance de secar ao natural</span>
+              <div class="timeline-bars" style="height:36px;">
+                <div class="t-bar t-good" style="height:28px"></div>
+                <div class="t-bar t-good" style="height:29px"></div>
+                <div class="t-bar t-good" style="height:28px"></div>
+                <div class="t-bar t-good" style="height:26px"></div>
+                <div class="t-bar t-good" style="height:24px"></div>
+                <div class="t-bar t-warn" style="height:22px"></div>
+                <div class="t-bar t-warn" style="height:20px"></div>
+                <div class="t-bar t-warn" style="height:17px"></div>
+                <div class="t-bar t-warn" style="height:19px"></div>
+                <div class="t-bar t-warn" style="height:21px"></div>
+                <div class="t-bar t-warn" style="height:23px"></div>
+                <div class="t-bar t-good" style="height:26px"></div>
+                <div class="t-bar t-good" style="height:28px"></div>
+                <div class="t-bar t-good" style="height:29px"></div>
+                <div class="t-bar t-good" style="height:28px"></div>
+              </div>
+              <div class="timeline-labels">
+                <span class="timeline-label">6h</span>
+                <span class="timeline-label">13h</span>
+                <span class="timeline-label">20h</span>
+              </div>
+            </div>
+            <hr class="section-divider" style="margin-top:auto;margin-bottom:0.75rem;" />
+            <p class="windows-label">Janelas do dia</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="font-size:0.875rem;" aria-hidden="true">🌅</span>
+                  <span class="window-label">Manhã</span>
+                </div>
+                <span class="pill pill-yes">Livre ✓</span>
+              </div>
+              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="font-size:0.875rem;" aria-hidden="true">🌆</span>
+                  <span class="window-label">Tarde</span>
+                </div>
+                <span class="pill pill-unsure">Incerto</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ════ DAY AFTER TOMORROW ════ -->
+        <article class="card glass rounded-2xl flex flex-col overflow-hidden"
+                 data-card-index="2"
+                 role="group" aria-roledescription="slide" aria-label="Depois de amanhã">
+          <div class="accent-sky h-[3px] shrink-0"></div>
+          <div style="display:flex;flex-direction:column;flex:1;padding:1rem 1.25rem;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+              <div>
+                <p class="label-day">Depois de amanhã</p>
+                <p class="label-weekday" id="weekday-2">—</p>
+              </div>
+              <span style="font-size:1.4rem;line-height:1;user-select:none;" aria-hidden="true">☀️</span>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <span class="timeline-caption">chance de secar ao natural</span>
+              <div class="timeline-bars" style="height:36px;">
+                <div class="t-bar t-good" style="height:33px"></div>
+                <div class="t-bar t-good" style="height:34px"></div>
+                <div class="t-bar t-good" style="height:34px"></div>
+                <div class="t-bar t-good" style="height:33px"></div>
+                <div class="t-bar t-good" style="height:34px"></div>
+                <div class="t-bar t-good" style="height:35px"></div>
+                <div class="t-bar t-good" style="height:34px"></div>
+                <div class="t-bar t-good" style="height:34px"></div>
+                <div class="t-bar t-good" style="height:33px"></div>
+                <div class="t-bar t-good" style="height:34px"></div>
+                <div class="t-bar t-good" style="height:33px"></div>
+                <div class="t-bar t-good" style="height:32px"></div>
+                <div class="t-bar t-good" style="height:33px"></div>
+                <div class="t-bar t-good" style="height:32px"></div>
+                <div class="t-bar t-good" style="height:31px"></div>
+              </div>
+              <div class="timeline-labels">
+                <span class="timeline-label">6h</span>
+                <span class="timeline-label">13h</span>
+                <span class="timeline-label">20h</span>
+              </div>
+            </div>
+            <hr class="section-divider" style="margin-top:auto;margin-bottom:0.75rem;" />
+            <p class="windows-label">Janelas do dia</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="font-size:0.875rem;" aria-hidden="true">🌅</span>
+                  <span class="window-label">Manhã</span>
+                </div>
+                <span class="pill pill-clear">Livre ✓</span>
+              </div>
+              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="font-size:0.875rem;" aria-hidden="true">🌆</span>
+                  <span class="window-label">Tarde</span>
+                </div>
+                <span class="pill pill-clear">Livre ✓</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ════ DAY +3 (night state only) ════ -->
+        <!-- [IMPLEMENT] Card: Day +3
+             Rendered in HTML always, hidden via CSS until body[data-time="night"].
+             On mobile: appears as 4th carousel card.
+             On desktop: replaces today in the 3-column grid (today becomes display:none at night).
+             data-card-index="3" for 4-dot carousel tracking.
+             Label: use a different "Em X dias" or just the weekday name.
+             Forecast data: fetch day+3 from Open-Meteo (it already returns 7-day forecasts). -->
+        <article class="card card-day3 glass rounded-2xl flex-col overflow-hidden"
+                 data-card-index="3"
+                 role="group" aria-roledescription="slide" aria-label="Em 3 dias">
+          <div class="accent-indigo h-[3px] shrink-0"></div>
+          <div style="display:flex;flex-direction:column;flex:1;padding:1rem 1.25rem;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+              <div>
+                <!-- [IMPLEMENT] Label: "Em 3 dias" as the label-day, weekday-3 as label-weekday -->
+                <p class="label-day">Em 3 dias</p>
+                <p class="label-weekday" id="weekday-3">—</p>
+              </div>
+              <span style="font-size:1.4rem;line-height:1;user-select:none;" aria-hidden="true">⛅</span>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <span class="timeline-caption">chance de secar ao natural</span>
+              <div class="timeline-bars" style="height:36px;">
+                <div class="t-bar t-good" style="height:30px"></div>
+                <div class="t-bar t-good" style="height:31px"></div>
+                <div class="t-bar t-good" style="height:32px"></div>
+                <div class="t-bar t-good" style="height:30px"></div>
+                <div class="t-bar t-warn" style="height:27px"></div>
+                <div class="t-bar t-warn" style="height:24px"></div>
+                <div class="t-bar t-warn" style="height:22px"></div>
+                <div class="t-bar t-warn" style="height:20px"></div>
+                <div class="t-bar t-warn" style="height:22px"></div>
+                <div class="t-bar t-good" style="height:26px"></div>
+                <div class="t-bar t-good" style="height:28px"></div>
+                <div class="t-bar t-good" style="height:30px"></div>
+                <div class="t-bar t-good" style="height:31px"></div>
+                <div class="t-bar t-good" style="height:30px"></div>
+                <div class="t-bar t-good" style="height:29px"></div>
+              </div>
+              <div class="timeline-labels">
+                <span class="timeline-label">6h</span>
+                <span class="timeline-label">13h</span>
+                <span class="timeline-label">20h</span>
+              </div>
+            </div>
+            <hr class="section-divider" style="margin-top:auto;margin-bottom:0.75rem;" />
+            <p class="windows-label">Janelas do dia</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="font-size:0.875rem;" aria-hidden="true">🌅</span>
+                  <span class="window-label">Manhã</span>
+                </div>
+                <span class="pill pill-yes">Livre ✓</span>
+              </div>
+              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span style="font-size:0.875rem;" aria-hidden="true">🌆</span>
+                  <span class="window-label">Tarde</span>
+                </div>
+                <span class="pill pill-unsure">Incerto</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- /cards-track -->
+
+      <!-- [IMPLEMENT] Carousel dots: 4th dot (dot-day3) only visible in night state.
+           Dot count and labels update based on time state. -->
+      <div class="carousel-dots" role="tablist" aria-label="Navegar entre dias">
+        <button class="dot active" role="tab" aria-selected="true"  aria-label="Hoje"             onclick="scrollToCard(0)"></button>
+        <button class="dot"        role="tab" aria-selected="false" aria-label="Amanhã"           onclick="scrollToCard(1)"></button>
+        <button class="dot"        role="tab" aria-selected="false" aria-label="Depois de amanhã" onclick="scrollToCard(2)"></button>
+        <button class="dot dot-day3" role="tab" aria-selected="false" aria-label="Em 3 dias"     onclick="scrollToCard(3)"></button>
+      </div>
+
+    </div>
+
+    <footer style="margin-top:0.65rem;display:flex;justify-content:space-between;align-items:center;">
+      <p class="footer-text">Precipitação via <a href="https://open-meteo.com" class="footer-link">Open-Meteo</a></p>
+      <p class="footer-text">Atualizado agora</p>
+    </footer>
+
+  </div>
+
+  <script>
+    /* ── Live clock ── */
+    (function liveClock() {
+      function tick() {
+        var now = new Date();
+        var t   = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        var el  = document.getElementById('header-time');
+        el.textContent = t;
+        el.setAttribute('datetime', now.toISOString());
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+
+    /* ── Day labels (0=today … 3=day+3) ── */
+    (function setDayLabels() {
+      var days = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+      var today = new Date();
+      [0, 1, 2, 3].forEach(function(offset) {
+        var d = new Date(today);
+        d.setDate(today.getDate() + offset);
+        var el = document.getElementById('weekday-' + offset);
+        if (el) el.textContent = days[d.getDay()];
+      });
+    })();
+
+    /* ── Time-aware state ──────────────────────────────────────────────────
+       [IMPLEMENT] Server-side (recommended):
+         Compute hour from new Date() in the API route / server component.
+         Pass timeState as a prop or set body[data-time] directly in page.tsx.
+         This prevents a flash of "wrong" state on client hydration.
+
+       Client-side (acceptable fallback):
+         const hour = new Date().getHours();
+         const timeState = hour < 12 ? 'morning' : hour < 21 ? 'afternoon' : 'night';
+         document.body.dataset.time = timeState;
+         applyTodayTimeline(hour, new Date().getMinutes());
+    ─────────────────────────────────────────────────────────────────────── */
+
+    function applyTimeState(hour, minute, demoBtn) {
+      // Determine state
+      var state = hour < 12 ? 'morning' : hour < 21 ? 'afternoon' : 'night';
+      document.body.setAttribute('data-time', state);
+
+      // ── Past bars on today's timeline ──
+      // [IMPLEMENT] Loop through precipitationProbability array hours 6–20.
+      // Mark bar as past if its hour < currentHour (or all bars if night).
+      var bars = document.querySelectorAll('#today-timeline .t-bar[data-bar-hour]');
+      bars.forEach(function(bar) {
+        var barHour = parseInt(bar.getAttribute('data-bar-hour'), 10);
+        var isPast  = state === 'night' || barHour < hour;
+        bar.classList.toggle('t-bar--past', isPast);
+      });
+
+      // ── Now marker position ──
+      // [IMPLEMENT] Show a thin vertical line at current time within the 6h–20h range.
+      // Only visible in afternoon state. Clamp to timeline bounds.
+      var marker = document.getElementById('today-now-marker');
+      if (marker) {
+        if (state === 'afternoon' && hour >= 6 && hour <= 20) {
+          var fraction = ((hour + minute / 60) - 6) / 14; // 6h→0%, 20h→100%
+          fraction = Math.min(Math.max(fraction, 0), 1);
+          marker.style.left = (fraction * 100) + '%';
+          marker.style.display = 'block';
+        } else {
+          marker.style.display = 'none';
+        }
+      }
+
+      // ── Night: scroll carousel to Tomorrow ──
+      // [IMPLEMENT] On night state, auto-scroll the carousel to the Tomorrow card (index 1)
+      // so it becomes the primary focus. Today is still swipeable at index 0.
+      // On desktop, today is hidden in the grid and tomorrow is the first visible column.
+      if (state === 'night' && window.innerWidth < 1024) {
+        setTimeout(function() { scrollToCard(1); }, 80);
+      }
+
+      // Update demo buttons
+      if (demoBtn) {
+        var group = demoBtn.closest('.demo-group');
+        group.querySelectorAll('.demo-btn').forEach(function(b) { b.classList.remove('active'); });
+        demoBtn.classList.add('active');
+      }
+    }
+
+    /* ── Carousel dot tracking ── */
+    (function initCarousel() {
+      var track = document.getElementById('cards-track');
+      var getDots  = function() { return Array.from(document.querySelectorAll('.carousel-dots .dot')); };
+      var getCards = function() { return Array.from(document.querySelectorAll('.card[data-card-index]')); };
+
+      function setActiveDot(index) {
+        getDots().forEach(function(d, i) {
+          d.classList.toggle('active', i === index);
+          d.setAttribute('aria-selected', String(i === index));
+        });
+      }
+
+      track.addEventListener('scroll', function() {
+        if (window.innerWidth >= 1024) return;
+        var midX = track.scrollLeft + track.clientWidth / 2;
+        var closest = 0, minDist = Infinity;
+        getCards().forEach(function(card, i) {
+          var dist = Math.abs((card.offsetLeft + card.offsetWidth / 2) - midX);
+          if (dist < minDist) { minDist = dist; closest = i; }
+        });
+        setActiveDot(closest);
+      }, { passive: true });
+    })();
+
+    function scrollToCard(index) {
+      if (window.innerWidth >= 1024) return;
+      var track = document.getElementById('cards-track');
+      var card  = document.querySelector('.card[data-card-index="' + index + '"]');
+      if (card && card.offsetParent !== null) {
+        track.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
+      }
+    }
+
+    /* ── Auto-apply on load based on real current time ── */
+    // [IMPLEMENT] In production, compute hour server-side and pass as body[data-time].
+    // This prevents any flash of wrong theme on hydration.
+    (function() {
+      var now = new Date();
+      applyTimeState(now.getHours(), now.getMinutes(), null);
+      // Sync demo buttons to reflect real current state
+      var activeIndex = now.getHours() < 12 ? 0 : now.getHours() < 21 ? 1 : 2;
+      var timeBtns = document.querySelectorAll('.demo-group .demo-btn');
+      timeBtns.forEach(function(b, i) { b.classList.toggle('active', i === activeIndex); });
+    })();
+  </script>
+
+</body>
+</html>

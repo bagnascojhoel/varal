@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Devo Lavar Roupas?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="sky min-h-svh">
+
+  <!-- ── Atmospheric blobs ── -->
+  <div class="cloud w-[420px] h-[360px] bg-slate-600/40 -top-20 -right-16" style="opacity:.45" aria-hidden="true"></div>
+  <div class="cloud w-[320px] h-[260px] bg-blue-950/60 top-[35%] -left-14" aria-hidden="true"></div>
+  <div class="cloud w-[260px] h-[260px] bg-indigo-950/50 bottom-0 right-[28%]" aria-hidden="true"></div>
+
+  <!-- ── Animated rain ── -->
+  <div class="rain-layer" id="rain" aria-hidden="true"></div>
+
+  <!-- ── Dark scrim ── -->
+  <div id="scrim" class="absolute inset-0 bg-black/20 pointer-events-none" aria-hidden="true"></div>
+
+  <!-- ── Theme toggle (fixed) ── -->
+  <button id="theme-toggle" class="theme-toggle" aria-label="Mudar para tema claro">
+    <span class="theme-icon" aria-hidden="true">☀️</span>
+  </button>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!--                   CONTENT                   -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="relative z-10 min-h-svh flex flex-col
+              px-5 py-7
+              sm:px-8 sm:py-9
+              lg:px-14 lg:py-11
+              max-w-5xl mx-auto">
+
+    <!-- ── 3-day cards ── -->
+    <div class="cards-grid flex-1">
+
+      <!-- ══════ TODAY ══════ -->
+      <article class="card card-today glass rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden">
+        <div class="accent-red h-[3px] shrink-0"></div>
+
+        <div class="flex flex-col flex-1 p-5 sm:p-6">
+
+          <div class="flex justify-between items-start mb-5 sm:mb-7">
+            <div>
+              <p class="label-day">Hoje</p>
+              <p class="label-weekday" id="weekday-0">—</p>
+            </div>
+            <span class="text-2xl sm:text-3xl leading-none select-none" aria-label="chuva">🌧️</span>
+          </div>
+
+          <!-- Hourly rain-probability chart -->
+          <div class="timeline mb-5 sm:mb-6">
+            <span class="timeline-caption">chance de secar ao natural</span>
+            <div class="timeline-bars">
+              <div class="t-bar t-bad"  style="height:14px" title="6h · 30%"></div>
+              <div class="t-bar t-bad"  style="height:11px" title="7h · 22%"></div>
+              <div class="t-bar t-bad"  style="height:9px"  title="8h · 18%"></div>
+              <div class="t-bar t-bad"  style="height:8px"  title="9h · 16%"></div>
+              <div class="t-bar t-bad"  style="height:9px"  title="10h · 18%"></div>
+              <div class="t-bar t-bad"  style="height:11px" title="11h · 22%"></div>
+              <div class="t-bar t-bad"  style="height:12px" title="12h · 26%"></div>
+              <div class="t-bar t-bad"  style="height:14px" title="13h · 30%"></div>
+              <div class="t-bar t-bad"  style="height:15px" title="14h · 32%"></div>
+              <div class="t-bar t-bad"  style="height:13px" title="15h · 28%"></div>
+              <div class="t-bar t-bad"  style="height:11px" title="16h · 22%"></div>
+              <div class="t-bar t-bad"  style="height:12px" title="17h · 25%"></div>
+              <div class="t-bar t-bad"  style="height:13px" title="18h · 28%"></div>
+              <div class="t-bar t-warn" style="height:17px" title="19h · 35%"></div>
+              <div class="t-bar t-warn" style="height:19px" title="20h · 40%"></div>
+            </div>
+            <div class="timeline-labels">
+              <span class="timeline-label">6h</span>
+              <span class="timeline-label">13h</span>
+              <span class="timeline-label">20h</span>
+            </div>
+          </div>
+
+          <hr class="section-divider mt-auto mb-3 sm:mb-4" />
+          <p class="windows-label">Janelas do dia</p>
+
+          <div class="space-y-2">
+            <div class="glass-inner rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm leading-none" aria-hidden="true">🌅</span>
+                <span class="window-label">Manhã</span>
+              </div>
+              <span class="pill pill-no">Chuva</span>
+            </div>
+            <div class="glass-inner rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm leading-none" aria-hidden="true">🌆</span>
+                <span class="window-label">Tarde</span>
+              </div>
+              <span class="pill pill-no">Chuva</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ══════ TOMORROW ══════ -->
+      <article class="card card-secondary card-tomorrow glass rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden">
+        <div class="accent-amber h-[3px] shrink-0"></div>
+
+        <div class="flex flex-col flex-1 p-4 sm:p-6">
+
+          <div class="flex justify-between items-start mb-4 sm:mb-7">
+            <div>
+              <p class="label-day">Amanhã</p>
+              <p class="label-weekday" id="weekday-1">—</p>
+            </div>
+            <span class="text-xl sm:text-3xl leading-none select-none" aria-label="parcialmente nublado">⛅</span>
+          </div>
+
+          <div class="timeline mb-4 sm:mb-6">
+            <span class="timeline-caption">chance de secar ao natural</span>
+            <div class="timeline-bars">
+              <div class="t-bar t-good" style="height:28px" title="6h · 78%"></div>
+              <div class="t-bar t-good" style="height:29px" title="7h · 80%"></div>
+              <div class="t-bar t-good" style="height:28px" title="8h · 78%"></div>
+              <div class="t-bar t-good" style="height:26px" title="9h · 72%"></div>
+              <div class="t-bar t-good" style="height:24px" title="10h · 68%"></div>
+              <div class="t-bar t-warn" style="height:22px" title="11h · 62%"></div>
+              <div class="t-bar t-warn" style="height:20px" title="12h · 55%"></div>
+              <div class="t-bar t-warn" style="height:17px" title="13h · 48%"></div>
+              <div class="t-bar t-warn" style="height:19px" title="14h · 52%"></div>
+              <div class="t-bar t-warn" style="height:21px" title="15h · 58%"></div>
+              <div class="t-bar t-warn" style="height:23px" title="16h · 65%"></div>
+              <div class="t-bar t-good" style="height:26px" title="17h · 72%"></div>
+              <div class="t-bar t-good" style="height:28px" title="18h · 78%"></div>
+              <div class="t-bar t-good" style="height:29px" title="19h · 80%"></div>
+              <div class="t-bar t-good" style="height:28px" title="20h · 78%"></div>
+            </div>
+            <div class="timeline-labels">
+              <span class="timeline-label">6h</span>
+              <span class="timeline-label">13h</span>
+              <span class="timeline-label">20h</span>
+            </div>
+          </div>
+
+          <hr class="section-divider mt-auto mb-3 sm:mb-4" />
+          <p class="windows-label">Janelas do dia</p>
+
+          <div class="space-y-2">
+            <div class="glass-inner rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm leading-none" aria-hidden="true">🌅</span>
+                <span class="window-label">Manhã</span>
+              </div>
+              <span class="pill pill-yes">Livre ✓</span>
+            </div>
+            <div class="glass-inner rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm leading-none" aria-hidden="true">🌆</span>
+                <span class="window-label">Tarde</span>
+              </div>
+              <span class="pill pill-unsure">Incerto</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ══════ DAY AFTER ══════ -->
+      <article class="card card-secondary card-dayafter glass rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden">
+        <div class="accent-sky h-[3px] shrink-0"></div>
+
+        <div class="flex flex-col flex-1 p-4 sm:p-6">
+
+          <div class="flex justify-between items-start mb-4 sm:mb-7">
+            <div>
+              <p class="label-day">Depois de amanhã</p>
+              <p class="label-weekday" id="weekday-2">—</p>
+            </div>
+            <span class="text-xl sm:text-3xl leading-none select-none" aria-label="céu aberto">☀️</span>
+          </div>
+
+          <div class="timeline mb-4 sm:mb-6">
+            <span class="timeline-caption">chance de secar ao natural</span>
+            <div class="timeline-bars">
+              <div class="t-bar t-good" style="height:33px" title="6h · 92%"></div>
+              <div class="t-bar t-good" style="height:34px" title="7h · 95%"></div>
+              <div class="t-bar t-good" style="height:34px" title="8h · 95%"></div>
+              <div class="t-bar t-good" style="height:33px" title="9h · 92%"></div>
+              <div class="t-bar t-good" style="height:34px" title="10h · 95%"></div>
+              <div class="t-bar t-good" style="height:35px" title="11h · 97%"></div>
+              <div class="t-bar t-good" style="height:34px" title="12h · 95%"></div>
+              <div class="t-bar t-good" style="height:34px" title="13h · 95%"></div>
+              <div class="t-bar t-good" style="height:33px" title="14h · 92%"></div>
+              <div class="t-bar t-good" style="height:34px" title="15h · 95%"></div>
+              <div class="t-bar t-good" style="height:33px" title="16h · 92%"></div>
+              <div class="t-bar t-good" style="height:32px" title="17h · 88%"></div>
+              <div class="t-bar t-good" style="height:33px" title="18h · 92%"></div>
+              <div class="t-bar t-good" style="height:32px" title="19h · 88%"></div>
+              <div class="t-bar t-good" style="height:31px" title="20h · 86%"></div>
+            </div>
+            <div class="timeline-labels">
+              <span class="timeline-label">6h</span>
+              <span class="timeline-label">13h</span>
+              <span class="timeline-label">20h</span>
+            </div>
+          </div>
+
+          <hr class="section-divider mt-auto mb-3 sm:mb-4" />
+          <p class="windows-label">Janelas do dia</p>
+
+          <div class="space-y-2">
+            <div class="glass-inner rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm leading-none" aria-hidden="true">🌅</span>
+                <span class="window-label">Manhã</span>
+              </div>
+              <span class="pill pill-clear">Livre ✓</span>
+            </div>
+            <div class="glass-inner rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm leading-none" aria-hidden="true">🌆</span>
+                <span class="window-label">Tarde</span>
+              </div>
+              <span class="pill pill-clear">Livre ✓</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+    <!-- /cards -->
+
+    <!-- Footer -->
+    <footer class="mt-7 sm:mt-9 flex justify-between items-center">
+      <p class="footer-text">Precipitação via <a href="https://open-meteo.com" class="footer-link">Open-Meteo</a></p>
+      <p class="footer-text">Atualizado agora</p>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
