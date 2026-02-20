@@ -1,3 +1,4 @@
+import { determineBarState } from "@/domain/wash-decision";
 import type { DayForecast, TimeState, WindowState, WeatherState } from "@/types/api";
 
 const ACCENT_CLASSES = ["accent-red", "accent-amber", "accent-sky", "accent-indigo"] as const;
@@ -25,9 +26,7 @@ function getWeekday(dateStr: string): string {
 }
 
 function barClass(prob: number): string {
-  if (prob >= 60) return "t-bar t-bad";
-  if (prob >= 20) return "t-bar t-warn";
-  return "t-bar t-good";
+  return `t-bar t-${determineBarState(prob)}`;
 }
 
 function barHeight(prob: number): number {
