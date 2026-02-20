@@ -31,7 +31,7 @@ function barClass(prob: number): string {
 }
 
 function barHeight(prob: number): number {
-  return Math.max(2, Math.round((prob / 100) * 44));
+  return Math.max(2, Math.round(((100 - prob) / 100) * 44));
 }
 
 function WindowPill({ state }: { state: WindowState }) {
@@ -139,7 +139,7 @@ export function DayCard({
                   key={barHour}
                   className={`${barClass(prob)}${isPast ? " t-bar--past" : ""}`}
                   style={{ height: `${barHeight(prob)}px` }}
-                  title={`${barHour}h · ${prob}%`}
+                  title={`${barHour}h · ${100 - prob}%`}
                   data-bar-hour={isToday ? barHour : undefined}
                 />
               );
