@@ -1,0 +1,100 @@
+openapi: "3.0.3"
+info:
+  title: Devo Lavar Roupas API
+  version: "1.0.0"
+  description: >
+    REST API powering "Should I wash my clothes today?".
+    All domain logic is encapsulated in these endpoints.
+
+servers:
+  - url: /api
+
+paths:
+  /forecast:
+    get:
+      summary: Full 4-day forecast with time context
+      operationId: getForecast
+      parameters:
+        - { name: latitude,  in: query, required: true, schema: { type: number, minimum: -90,  maximum: 90  } }
+        - { name: longitude, in: query, required: true, schema: { type: number, minimum: -180, maximum: 180 } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/ForecastPageResponse" } } } }
+        "400": { description: Invalid params, content: { application/json: { schema: { $ref: "#/components/schemas/ApiErrorResponse" } } } }
+        "502": { description: Upstream unavailable, content: { application/json: { schema: { $ref: "#/components/schemas/ApiErrorResponse" } } } }
+
+  /wash-recommendation:
+    get:
+      summary: Single-day wash recommendation
+      operationId: getWashRecommendation
+      parameters:
+        - { name: latitude,  in: query, required: true, schema: { type: number, minimum: -90,  maximum: 90  } }
+        - { name: longitude, in: query, required: true, schema: { type: number, minimum: -180, maximum: 180 } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/WashDecision" } } } }
+        "400": { description: Invalid params, content: { application/json: { schema: { $ref: "#/components/schemas/ApiErrorResponse" } } } }
+        "502": { description: Upstream unavailable, content: { application/json: { schema: { $ref: "#/components/schemas/ApiErrorResponse" } } } }
+
+components:
+  schemas:
+    TimeState:
+      type: string
+      enum: [morning, afternoon, night]
+      description: "morning=06–11, afternoon=12–20, night=21–23 and 00–05"
+
+    WeatherState:
+      type: string
+      enum: [rainy, cloudy, sunny]
+
+    WindowState:
+      type: string
+      enum: [clear, unsure, rain]
+      description: "clear=<20%, unsure=20–39%, rain=>=40%"
+
+    WashDecision:
+      type: object
+      required: [canWash, reason]
+      properties:
+        canWash: { type: boolean }
+        reason:  { type: string, example: "No rain expected today" }
+
+    DayForecast:
+      type: object
+      required: [date, precipitationSum, precipitationProbabilityMax, decision, weatherState, hourlyPrecipitationProbability, morningWindow, afternoonWindow, stillUsable]
+      properties:
+        date:                          { type: string, format: date, example: "2026-02-20" }
+        precipitationSum:              { type: number, description: "mm" }
+        precipitationProbabilityMax:   { type: number, description: "%" }
+        decision:                      { $ref: "#/components/schemas/WashDecision" }
+        weatherState:                  { $ref: "#/components/schemas/WeatherState" }
+        hourlyPrecipitationProbability:
+          type: array
+          items: { type: number }
+          minItems: 15
+          maxItems: 15
+          description: "Hourly precipitation probability (%) for hours 06–20"
+        morningWindow:                 { $ref: "#/components/schemas/WindowState" }
+        afternoonWindow:               { $ref: "#/components/schemas/WindowState" }
+        stillUsable:                   { type: boolean, description: "true when there is still time in the day to wash clothes; false once the day has ended (today after 21h)" }
+
+    ForecastPageResponse:
+      type: object
+      required: [forecasts, cityName, timeState, dayEnded, currentHour, currentMinutes]
+      properties:
+        forecasts:
+          type: array
+          items: { $ref: "#/components/schemas/DayForecast" }
+          minItems: 4
+          maxItems: 4
+        cityName:       { type: string, nullable: true, example: "São Paulo, BR" }
+        timeState:      { $ref: "#/components/schemas/TimeState" }
+        dayEnded:       { type: boolean, description: "true when currentHour >= 21" }
+        currentHour:    { type: integer, minimum: 0, maximum: 23 }
+        currentMinutes: { type: integer, minimum: 0, maximum: 59 }
+
+    ApiErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:   { type: string }
+        details: { type: array, items: { type: string } }
+        message: { type: string }

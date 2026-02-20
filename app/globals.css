@@ -1,26 +1,585 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ════════════════════════════════════════
+   WEATHER GIF BACKGROUND
+   ════════════════════════════════════════ */
+
+.weather-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html[data-time="night"] .weather-bg::before,
+html:not([data-time]) .weather-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    170deg,
+    #0b0d19 0%,
+    #131726 25%,
+    #1c2033 50%,
+    #20243e 75%,
+    #181b2d 100%
+  );
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html[data-time="morning"] .weather-bg::before,
+html[data-time="afternoon"] .weather-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    170deg,
+    #aac8f0 0%,
+    #bed5f5 25%,
+    #cfe4fa 50%,
+    #dceef8 75%,
+    #c5dff5 100%
+  );
+}
+
+.weather-gif {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.58;
+}
+
+.weather-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+html[data-time="night"] .weather-scrim,
+html:not([data-time]) .weather-scrim {
+  background: rgba(5, 7, 20, 0.45);
+}
+
+html[data-time="morning"] .weather-scrim,
+html[data-time="afternoon"] .weather-scrim {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ════════════════════════════════════════
+   GLASS SURFACES
+   ════════════════════════════════════════ */
+
+.glass {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-inner {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .glass {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(255, 255, 255, 0.72);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .glass-inner {
+  background: rgba(255, 255, 255, 0.38);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* ════════════════════════════════════════
+   APP HEADER
+   ════════════════════════════════════════ */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 0.85rem;
+}
+
+.header-app-title {
+  font-size: 1.1rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.header-subtitle {
+  color: rgba(255, 255, 255, 0.32);
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+.header-time {
+  font-size: 2.2rem;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.88);
+  font-variant-numeric: tabular-nums;
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .header-app-title {
+  color: rgba(18, 48, 100, 0.88);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .header-subtitle {
+  color: rgba(18, 48, 100, 0.45);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .header-time {
+  color: rgba(18, 48, 100, 0.82);
+}
+
+/* ════════════════════════════════════════
+   CARDS: CAROUSEL (mobile) / GRID (desktop)
+   ════════════════════════════════════════ */
+
+.cards-track {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  gap: 0.75rem;
+  padding-right: 1.5rem;
+  scrollbar-width: none;
+}
+
+.cards-track::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  flex: 0 0 min(88vw, 320px);
+  scroll-snap-align: start;
+  transition: transform 0.3s ease, opacity 0.4s ease;
+}
+
+@media (min-width: 1024px) {
+  .cards-track {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr;
+    gap: 1rem;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    padding-right: 0;
+  }
+
+  .card {
+    flex: none;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ════════════════════════════════════════
+   CAROUSEL DOTS
+   ════════════════════════════════════════ */
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  padding-top: 0.85rem;
+}
+
+@media (min-width: 1024px) {
+  .carousel-dots {
+    display: none;
+  }
+}
+
+.dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dot::after {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.28);
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.dot.active::after {
+  width: 20px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .dot::after {
+  background: rgba(18, 48, 100, 0.28);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .dot.active::after {
+  background: rgba(18, 48, 100, 0.75);
+}
+
+/* ════════════════════════════════════════
+   CARD ACCENT BARS
+   ════════════════════════════════════════ */
+
+.accent-red {
+  background: linear-gradient(
+    90deg,
+    rgba(248, 113, 113, 0.9),
+    rgba(239, 68, 68, 0.15)
+  );
+}
+
+.accent-amber {
+  background: linear-gradient(
+    90deg,
+    rgba(251, 191, 36, 0.9),
+    rgba(245, 158, 11, 0.15)
+  );
+}
+
+.accent-sky {
+  background: linear-gradient(
+    90deg,
+    rgba(56, 189, 248, 0.9),
+    rgba(34, 211, 238, 0.15)
+  );
+}
+
+.accent-indigo {
+  background: linear-gradient(
+    90deg,
+    rgba(129, 140, 248, 0.9),
+    rgba(99, 102, 241, 0.15)
+  );
+}
+
+/* ════════════════════════════════════════
+   TYPOGRAPHY
+   ════════════════════════════════════════ */
+
+.label-day {
+  color: rgba(255, 255, 255, 0.32);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.label-weekday {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.75rem;
+  font-weight: 300;
+  margin-top: 0.15rem;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.windows-label {
+  color: rgba(255, 255, 255, 0.22);
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.5rem;
+}
+
+.window-label {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .label-day {
+  color: rgba(18, 48, 100, 0.45);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .label-weekday {
+  color: rgba(18, 48, 100, 0.62);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .section-divider {
+  border-top-color: rgba(18, 48, 100, 0.1);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .windows-label {
+  color: rgba(18, 48, 100, 0.32);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .window-label {
+  color: rgba(18, 48, 100, 0.68);
+}
+
+/* ════════════════════════════════════════
+   STATUS PILLS
+   ════════════════════════════════════════ */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.62rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .pill {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.6rem;
+  }
+}
+
+.pill-rain {
+  background: rgba(239, 68, 68, 0.15);
+  color: rgb(252, 165, 165);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.pill-clear {
+  background: rgba(56, 189, 248, 0.15);
+  color: rgb(125, 211, 252);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.pill-unsure {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ════════════════════════════════════════
+   TIMELINE BARS
+   ════════════════════════════════════════ */
+
+.timeline-caption {
+  display: block;
+  color: rgba(255, 255, 255, 0.22);
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 5px;
+}
+
+.timeline-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 48px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.t-bar {
+  flex: 1;
+  min-width: 0;
+  min-height: 2px;
+  border-radius: 2px 2px 0 0;
+  transition: opacity 0.15s, background 0.3s;
+}
+
+.t-bar:hover {
+  opacity: 0.72;
+}
+
+.t-good {
+  background: rgba(56, 189, 248, 0.6);
+}
+
+.t-warn {
+  background: rgba(251, 191, 36, 0.65);
+}
+
+.t-bad {
+  background: rgba(239, 68, 68, 0.65);
+}
+
+.t-bar--past {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.timeline-label {
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.52rem;
+  letter-spacing: 0.04em;
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .timeline-caption {
+  color: rgba(18, 48, 100, 0.3);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .timeline-bars {
+  border-bottom-color: rgba(18, 48, 100, 0.1);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .timeline-label {
+  color: rgba(18, 48, 100, 0.32);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .t-good {
+  background: rgba(2, 132, 199, 0.45);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .t-warn {
+  background: rgba(217, 119, 6, 0.5);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .t-bad {
+  background: rgba(185, 28, 28, 0.45);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .t-bar--past {
+  background: rgba(18, 48, 100, 0.08) !important;
+}
+
+/* ════════════════════════════════════════
+   NOW MARKER
+   ════════════════════════════════════════ */
+
+.timeline-now-marker {
+  position: absolute;
+  top: 0;
+  bottom: 4px;
+  width: 1.5px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.timeline-now-marker::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 9999px;
+}
+
+html:is([data-time="morning"], [data-time="afternoon"])
+  .timeline-now-marker {
+  background: rgba(18, 48, 100, 0.6);
+}
+
+html:is([data-time="morning"], [data-time="afternoon"])
+  .timeline-now-marker::before {
+  background: rgba(18, 48, 100, 0.75);
+}
+
+/* ════════════════════════════════════════
+   MORNING WINDOW HIDING
+   ════════════════════════════════════════ */
+
+html[data-time="afternoon"] .window-morning,
+html[data-time="night"] .window-morning {
+  display: none;
+}
+
+/* ════════════════════════════════════════
+   DAY-ENDED STATE — TODAY CARD
+   (data-day-ended is set only when hour >= 21, decoupled from night theme)
+   ════════════════════════════════════════ */
+
+@media (min-width: 1024px) {
+  html[data-day-ended] .cards-track {
+    grid-template-columns: 0.85fr 1.15fr 1fr 1fr;
+  }
+}
+
+.today-encerrado {
+  margin-top: 0.35rem;
+  font-size: 0.48rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  padding: 0.1rem 0.45rem;
+  width: fit-content;
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .today-encerrado {
+  color: rgba(18, 48, 100, 0.32);
+  border-color: rgba(18, 48, 100, 0.14);
+}
+
+/* ════════════════════════════════════════
+   DAY-ENDED STATE — DAY+3 CARD
+   ════════════════════════════════════════ */
+
+.card-day3 {
+  display: none;
+}
+
+html[data-day-ended] .card-day3 {
+  display: flex;
+}
+
+.dot-day3 {
+  display: none !important;
+}
+
+html[data-day-ended] .dot-day3 {
+  display: flex !important;
+}
+
+/* ════════════════════════════════════════
+   FOOTER
+   ════════════════════════════════════════ */
+
+.footer-text {
+  color: rgba(255, 255, 255, 0.18);
+  font-size: 0.65rem;
+}
+
+.footer-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  opacity: 0.7;
+}
+
+.footer-link:hover {
+  opacity: 1;
+}
+
+html:is([data-time="morning"], [data-time="afternoon"]) .footer-text {
+  color: rgba(18, 48, 100, 0.3);
 }

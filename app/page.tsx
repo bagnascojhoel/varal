@@ -1,65 +1,154 @@
-import Image from "next/image";
+import { headers } from "next/headers";
+import { DayCard } from "@/components/WashResult";
+import { LocationDetector } from "@/components/LocationDetector";
+import { LiveClock } from "@/components/LiveClock";
+import { CarouselTrack } from "@/components/CarouselTrack";
+import type { ForecastPageResponse } from "@/types/api";
 
-export default function Home() {
+const DAY_LABELS = ["Hoje", "Amanhã", "Depois de amanhã", "Em 3 dias"] as const;
+
+interface PageProps {
+  searchParams: Promise<{ lat?: string; lon?: string }>;
+}
+
+export default async function Home({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const lat = params.lat ? parseFloat(params.lat) : null;
+  const lon = params.lon ? parseFloat(params.lon) : null;
+
+  const hasLocation = lat !== null && lon !== null && !isNaN(lat) && !isNaN(lon);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      {/* Background — siblings of content so z-index layering works correctly */}
+      <div className="weather-bg" aria-hidden="true" />
+      <div className="weather-scrim" aria-hidden="true" />
+
+    <div
+      style={{
+        position: "relative",
+        zIndex: 10,
+        minHeight: "100svh",
+        display: "flex",
+        flexDirection: "column",
+        padding: "1.25rem 1.25rem 0.75rem",
+        maxWidth: "64rem",
+        margin: "0 auto",
+      }}
+    >
+
+      {/* Header */}
+      <header className="app-header">
+        <div>
+          <h1 className="header-app-title">Devo Lavar Roupas?</h1>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+        <LiveClock />
+      </header>
+
+      {hasLocation ? (
+        <ForecastContent lat={lat!} lon={lon!} />
+      ) : (
+        <LocationPrompt />
+      )}
+
+      <footer
+        style={{
+          marginTop: "0.65rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <p className="footer-text">
+          Precipitação via{" "}
+          <a href="https://open-meteo.com" className="footer-link">
+            Open-Meteo
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        </p>
+        <p className="footer-text">Atualizado agora</p>
+      </footer>
+    </div>
+    </>
+  );
+}
+
+async function ForecastContent({ lat, lon }: { lat: number; lon: number }) {
+  const hdrs = await headers();
+  const host = hdrs.get("host") ?? "localhost:3000";
+  const protocol = host.startsWith("localhost") ? "http" : "https";
+  const url = `${protocol}://${host}/api/forecast?latitude=${lat}&longitude=${lon}`;
+
+  let data: ForecastPageResponse;
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`${res.status}`);
+    data = (await res.json()) as ForecastPageResponse;
+  } catch {
+    return <ErrorState />;
+  }
+
+  const { forecasts, cityName, timeState, dayEnded, currentHour, currentMinutes } = data;
+
+  return (
+    <>
+      {cityName && <p className="header-subtitle">{cityName}</p>}
+      <CarouselTrack dayEnded={dayEnded}>
+        {forecasts.map((forecast, i) => (
+          <DayCard
+            key={forecast.date}
+            forecast={forecast}
+            label={DAY_LABELS[i] ?? `Em ${i} dias`}
+            cardIndex={i}
+            isToday={i === 0}
+            timeState={timeState}
+            dayEnded={dayEnded}
+            currentHour={currentHour}
+            currentMinutes={currentMinutes}
+          />
+        ))}
+      </CarouselTrack>
+    </>
+  );
+}
+
+function ErrorState() {
+  return (
+    <div className="flex flex-col items-center justify-center flex-1 gap-3">
+      <span className="text-5xl">⚠️</span>
+      <p
+        className="text-lg font-light text-center"
+        style={{ color: "rgba(255,255,255,0.7)" }}
+      >
+        Serviço de previsão indisponível
+      </p>
+      <p
+        className="text-sm text-center"
+        style={{ color: "rgba(255,255,255,0.4)" }}
+      >
+        Tente novamente mais tarde.
+      </p>
+    </div>
+  );
+}
+
+function LocationPrompt() {
+  return (
+    <div className="flex flex-col items-center justify-center flex-1 gap-6">
+      <div className="text-center">
+        <p
+          className="text-2xl font-light mb-2"
+          style={{ color: "rgba(255,255,255,0.88)" }}
+        >
+          Onde você está?
+        </p>
+        <p
+          className="text-sm font-light"
+          style={{ color: "rgba(255,255,255,0.42)" }}
+        >
+          Precisamos da sua localização para verificar a previsão.
+        </p>
+      </div>
+      <LocationDetector />
     </div>
   );
 }
