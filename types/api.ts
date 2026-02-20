@@ -12,6 +12,7 @@ export interface ApiErrorResponse {
 export type TimeState = "morning" | "afternoon" | "night";
 export type WeatherState = "rainy" | "cloudy" | "sunny";
 export type WindowState = "clear" | "unsure" | "rain";
+export type BarState = "good" | "warn" | "bad";
 
 export interface DayForecast {
   date: string;

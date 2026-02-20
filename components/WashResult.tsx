@@ -1,3 +1,4 @@
+import { determineBarState } from "@/domain/wash-decision";
 import type { DayForecast, TimeState, WindowState, WeatherState } from "@/types/api";
 
 const ACCENT_CLASSES = ["accent-red", "accent-amber", "accent-sky", "accent-indigo"] as const;
@@ -25,13 +26,11 @@ function getWeekday(dateStr: string): string {
 }
 
 function barClass(prob: number): string {
-  if (prob >= 60) return "t-bar t-bad";
-  if (prob >= 20) return "t-bar t-warn";
-  return "t-bar t-good";
+  return `t-bar t-${determineBarState(prob)}`;
 }
 
 function barHeight(prob: number): number {
-  return Math.max(2, Math.round((prob / 100) * 44));
+  return Math.max(2, Math.round(((100 - prob) / 100) * 44));
 }
 
 function WindowPill({ state }: { state: WindowState }) {
@@ -139,7 +138,7 @@ export function DayCard({
                   key={barHour}
                   className={`${barClass(prob)}${isPast ? " t-bar--past" : ""}`}
                   style={{ height: `${barHeight(prob)}px` }}
-                  title={`${barHour}h · ${prob}%`}
+                  title={`${barHour}h · ${100 - prob}%`}
                   data-bar-hour={isToday ? barHour : undefined}
                 />
               );

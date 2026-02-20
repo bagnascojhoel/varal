@@ -1,4 +1,4 @@
-import type { DayForecast, TimeState, WeatherState, WindowState, WashDecision } from "@/types/api";
+import type { BarState, DayForecast, TimeState, WeatherState, WindowState, WashDecision } from "@/types/api";
 
 const PRECIPITATION_PROBABILITY_THRESHOLD = 40;
 const PRECIPITATION_SUM_THRESHOLD = 1;
@@ -31,6 +31,12 @@ export function determineWeatherState(
   if (precipitationProbabilityMax >= 60 || precipitationSum >= 5) return "rainy";
   if (precipitationProbabilityMax >= 20 || precipitationSum >= 1) return "cloudy";
   return "sunny";
+}
+
+export function determineBarState(precipitationProbability: number): BarState {
+  if (precipitationProbability >= 60) return "bad";
+  if (precipitationProbability >= 20) return "warn";
+  return "good";
 }
 
 /** hourlyProb: precipitation probabilities for the window's hours */
