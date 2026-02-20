@@ -17,6 +17,18 @@
 - Use ARIA labels where necessary.
 - Test with screen readers.
 
+### Typography — Minimum Sizes
+
+- **Minimum body/label font size: 0.75rem (12px).** Smaller text fails legibility on mobile and violates platform guidelines (iOS HIG, Material Design both set 12sp/12px as the floor).
+- Decorative micro-labels (e.g., chart axis ticks) may go as low as 0.625rem (10px) only when they are purely supplementary and not required for comprehension.
+- Prefer 0.875rem (14px) or larger for any interactive label.
+
+### Touch Targets
+
+- Minimum **44×44px** tap target for all interactive elements (buttons, links, icons).
+- When a visual element is intentionally smaller (e.g., an icon-only edit button), expand the tap area with padding or a transparent pseudo-element while keeping the visual size small.
+- Never rely on padding alone if it would break surrounding layout — use negative margin to compensate.
+
 ### Performance
 
 - Optimize images and assets.

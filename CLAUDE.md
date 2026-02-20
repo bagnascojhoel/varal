@@ -40,6 +40,7 @@ The API route `GET /api/wash-recommendation?latitude=&longitude=` exposes the sa
 - Server components are the default; add `"use client"` only when browser APIs are needed.
 - Business logic lives exclusively in `domain/`; components and routes must not contain decision logic.
 - External API calls are isolated in `services/`; domain and components must not call fetch directly.
+- All commits must follow the Conventional Commits standard — see `.ai/docs/semantic-commits.md`.
 
 ## AI Agent Documentation
 

@@ -21,6 +21,7 @@ agents should follow.
 |------|---------------|
 | Implementing a frontend feature | `docs/ui-ux-rules.md`, `docs/style-guide.md` |
 | Applying the component/design system | `docs/atomic-design-standards.md` |
+| Writing a commit message | `docs/semantic-commits.md` |
 | Starting a new multi-file feature | `templates/implementation-plan.md` |
 | Recording a significant architectural decision | `templates/ADR.md` |
 | Understanding past design decisions | `features/<feature-name>/ADR-*.md` |
@@ -46,4 +47,5 @@ The following files are project-agnostic and can be copied to new projects:
 | `docs/style-guide.template.md` | Style guide skeleton with `{{PLACEHOLDER}}` values |
 | `docs/ui-ux-rules.md` | Generic mobile-first, accessibility, and performance rules |
 | `docs/atomic-design-standards.md` | Generic BEM + atomic design component rules |
+| `docs/semantic-commits.md` | Conventional Commits standard and rules for AI agents |
 | `CLAUDE.md.template` _(root)_ | Minimal CLAUDE.md scaffold for new projects |

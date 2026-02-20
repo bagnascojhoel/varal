@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
+import Link from "next/link";
 import { DayCard } from "@/components/WashResult";
-import { LocationDetector } from "@/components/LocationDetector";
+import { LocationPicker } from "@/components/LocationPicker";
 import { LiveClock } from "@/components/LiveClock";
 import { CarouselTrack } from "@/components/CarouselTrack";
 import type { ForecastPageResponse } from "@/types/api";
@@ -91,7 +92,20 @@ async function ForecastContent({ lat, lon }: { lat: number; lon: number }) {
 
   return (
     <>
-      {cityName && <p className="header-subtitle">{cityName}</p>}
+      {cityName && (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <p className="header-subtitle">{cityName}</p>
+          <Link
+            href="/"
+            title="Alterar localização"
+            aria-label="Alterar localização"
+            className="text-white/[32%] day:text-ink/[45%] inline-flex items-center justify-center text-sm -ml-2"
+            style={{ minWidth: "44px", minHeight: "44px" }}
+          >
+            ✎
+          </Link>
+        </div>
+      )}
       <CarouselTrack dayEnded={dayEnded}>
         {forecasts.map((forecast, i) => (
           <DayCard
@@ -133,22 +147,8 @@ function ErrorState() {
 
 function LocationPrompt() {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 gap-6">
-      <div className="text-center">
-        <p
-          className="text-2xl font-light mb-2"
-          style={{ color: "rgba(255,255,255,0.88)" }}
-        >
-          Onde você está?
-        </p>
-        <p
-          className="text-sm font-light"
-          style={{ color: "rgba(255,255,255,0.42)" }}
-        >
-          Precisamos da sua localização para verificar a previsão.
-        </p>
-      </div>
-      <LocationDetector />
+    <div className="flex flex-col items-center justify-center flex-1">
+      <LocationPicker />
     </div>
   );
 }

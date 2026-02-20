@@ -1,6 +1,23 @@
 @import "tailwindcss";
 
 /* ════════════════════════════════════════
+   THEME VARIANTS & TOKENS
+   ════════════════════════════════════════ */
+
+/* Applies when html carries data-time="morning" or "afternoon" */
+@custom-variant day {
+  html:is([data-time='morning'], [data-time='afternoon']) & {
+    @slot;
+  }
+}
+
+@theme {
+  /* Dark navy used for text in daytime (light) theme.
+     Space-separated RGB so Tailwind opacity modifiers work: text-ink/[88%] */
+  --color-ink: 18 48 100;
+}
+
+/* ════════════════════════════════════════
    WEATHER GIF BACKGROUND
    ════════════════════════════════════════ */
 
@@ -116,7 +133,7 @@ html:is([data-time="morning"], [data-time="afternoon"]) .glass-inner {
 
 .header-subtitle {
   color: rgba(255, 255, 255, 0.32);
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 300;
   letter-spacing: 0.04em;
   margin-top: 0.2rem;
@@ -582,4 +599,28 @@ html[data-day-ended] .dot-day3 {
 
 html:is([data-time="morning"], [data-time="afternoon"]) .footer-text {
   color: rgba(18, 48, 100, 0.3);
+}
+
+/* ════════════════════════════════════════
+   LOCATION PICKER MODAL (desktop only)
+   ════════════════════════════════════════ */
+
+.location-modal-backdrop { display: none; }
+.location-modal-dialog { /* mobile: inherits parent flex layout */ }
+
+@media (min-width: 1024px) {
+  .location-modal-backdrop {
+    display: block;
+    position: fixed; inset: 0; z-index: 40;
+    background: rgba(5, 7, 20, 0.6);
+    backdrop-filter: blur(4px);
+  }
+  html:is([data-time="morning"],[data-time="afternoon"]) .location-modal-backdrop {
+    background: rgba(180, 210, 240, 0.55);
+  }
+  .location-modal-dialog {
+    position: fixed; z-index: 50;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: min(90vw, 24rem);
+  }
 }
