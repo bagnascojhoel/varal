@@ -1,4 +1,4 @@
-import { determineBarState } from "@/domain/wash-decision";
+import { determineBarState, pickPhrase } from "@/domain/wash-decision";
 import type { DayForecast, TimeState, WindowState, WeatherState } from "@/types/api";
 
 const ACCENT_CLASSES = ["accent-red", "accent-amber", "accent-sky", "accent-indigo"] as const;
@@ -125,6 +125,10 @@ export function DayCard({
             {WEATHER_EMOJI[forecast.weatherState]}
           </span>
         </div>
+
+        <p className="mb-5 text-xl font-semibold text-left text-white/[52%] day:text-ink/[62%]">
+          {pickPhrase(forecast.decision.canWash, forecast.date)}
+        </p>
 
         {/* Timeline */}
         <div className="mb-5">

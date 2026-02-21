@@ -47,6 +47,37 @@ export function determineWindowState(hourlyProb: number[]): WindowState {
   return "rain";
 }
 
+const CAN_WASH_PHRASES = [
+  "Adeus, roupa suja! 👋",
+  "Hoje é dia de lavar! ✨",
+  "O sol tá chamando a roupa ☀️",
+  "Boa notícia pra lavanderia 🎉",
+  "Aproveita que vai secar! 🌬️",
+  "A roupa agradece 🙌",
+  "Tô vendo roupa secando aí 👀",
+  "Sem desculpa hoje 💪",
+] as const;
+
+const CANNOT_WASH_PHRASES = [
+  "Que passe logo 🙏",
+  "A roupa fica pra amanhã 😔",
+  "Nem tenta, vai molhar tudo 🌧️",
+  "Chuva chata demais 😒",
+  "Deixa no cesto por enquanto ⏳",
+  "Hoje não dá, irmão 😬",
+  "O varal vai esperar mais um dia 😮‍💨",
+  "Nem pensa nisso hoje 🙅",
+] as const;
+
+function dateHash(date: string): number {
+  return date.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+}
+
+export function pickPhrase(canWash: boolean, date: string): string {
+  const phrases = canWash ? CAN_WASH_PHRASES : CANNOT_WASH_PHRASES;
+  return phrases[dateHash(date) % phrases.length];
+}
+
 /**
  * @param date         ISO date string (e.g. "2024-01-01")
  * @param precipSum    daily precipitation sum in mm
