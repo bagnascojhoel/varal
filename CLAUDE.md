@@ -1,60 +1,127 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with
+code in this repository.
 
 ## Commands
 
-- `npm run dev` — start the development server
-- `npm run build` — production build
-- `npm run start` — run the production server
-- `npm run typecheck` — TypeScript type check (no lint or test scripts exist)
+```bash
+npm run dev          # Start development server
+npm run build        # Production build
+npm run start        # Run the production server
+npm run typecheck    # TypeScript type check (no lint or test scripts exist)
+```
 
 ## Architecture
 
-**"Devo Lavar Roupas?"** — a Next.js (App Router) app that answers "should I wash my clothes today?" based on the day's rain forecast from the Open-Meteo API.
+**"Devo Lavar Roupas?"** — a Next.js 16 (App Router) app that answers "should I
+wash my clothes today?" based on the day's rain forecast from the Open-Meteo
+API.
 
-### Directory layout
+### Layer Structure (Ports & Adapters / Hexagonal)
 
-| Directory | Purpose |
-|-----------|---------|
-| `app/` | Next.js App Router: `page.tsx` (server component), `layout.tsx`, and `api/wash-recommendation/route.ts` |
-| `components/` | React components: `LocationDetector` (client), `WashResult` (server-renderable) |
-| `domain/` | Pure business logic: `wash-decision.ts` |
-| `services/` | External API calls: `open-meteo.ts` |
-| `types/` | Shared TypeScript interfaces: `api.ts`, `open-meteo.ts` |
+```
+src/
+  core/
+    domain/                        # Pure business logic (no fetch, no React)
+      day-forecast.ts              # DayForecast entity class with static build()
+      location.ts                  # Location aggregate root class
+      wash-decision.ts             # WashDecision interface + classifier functions
+      time-state.ts                # enum TimeState
+      weather-state.ts             # enum WeatherState
+      window-state.ts              # enum WindowState
+      bar-state.ts                 # enum BarState
+      weather-repository.ts        # WeatherRepository port interface + token
+      localization-repository.ts   # LocalizationRepository port interface + token
+    application-services/
+      forecast-service.ts          # ForecastService (@injectable) + ForecastPageResponse
+      localization-service.ts      # LocalizationService (@injectable)
+    infrastructure/
+      rest/
+        weather-repository-open-meteo-adapter.ts  # @injectable, implements WeatherRepository
+        location-repository-adapter.ts            # @injectable, implements LocalizationRepository
+        geocoding-client-service.ts               # internal HTTP helper (not a port)
+        viacep-client-service.ts                  # internal HTTP helper (not a port)
+        types/
+          open-meteo.ts                           # Open-Meteo API response types
+    ContainerConfig.ts             # Inversify DI container bindings
+  app/                             # Next.js App Router (driving adapter)
+    page.tsx                       # Server component: resolves container directly
+    layout.tsx                     # Root layout
+    globals.css
+    _components/                   # React components
+      DayCard.tsx                  # Forecast card (was WashResult.tsx)
+      LocationPicker.tsx
+      CarouselTrack.tsx
+      LiveClock.tsx
+      LocationDetector.tsx
+    api/
+      forecast/route.ts            # GET /api/forecast
+      wash-recommendation/route.ts # GET /api/wash-recommendation
+      cep/route.ts                 # GET /api/cep
+      docs/route.ts                # Swagger UI
+      openapi/route.ts             # OpenAPI spec
+```
 
-Path alias `@/*` resolves to the repo root (e.g., `@/domain/wash-decision`).
+Path alias `@/*` resolves to `./src/`.
 
-### Request flow
+### Key Patterns
 
-1. `LocationDetector` (client component) calls `navigator.geolocation` and pushes `/?lat=X&lon=Y`.
-2. `app/page.tsx` (server component) reads `searchParams`, calls `fetchTodayPrecipitation(lat, lon)` from `services/open-meteo.ts`.
-3. `determineWashDecision(precipitationProbabilityMax, precipitationSum)` in `domain/wash-decision.ts` applies thresholds: rain probability < 40% **and** precipitation sum < 1 mm → `canWash: true`.
-4. `WashResult` renders a YES/NO answer with an emoji and reason string.
+- **Ports & Adapters**: Domain defines port interfaces; infrastructure adapters
+  implement them; Inversify wires everything in `ContainerConfig.ts`.
+- **Inversify DI**: `@injectable()` on adapter/service classes; `@inject(TOKEN)`
+  in constructors; container resolved at route/page boundaries.
+- **`core/` uses classes, interfaces, enums** — entities are classes; port
+  contracts are interfaces; discriminated states are enums.
+- **`app/` uses plain JS objects** — components work with plain destructurable
+  objects; no class instantiation in UI code.
+- **Server components resolve container directly** — `page.tsx` calls
+  `container.get(FORECAST_SERVICE).getForecast(lat, lon)` with no self-fetch.
+- **Server Components First**: `app/page.tsx` is a server component;
+  client components (`"use client"`) only when browser APIs are needed.
+- **Type Safety**: All API boundaries validated with Zod (`app/api/`).
 
-The API route `GET /api/wash-recommendation?latitude=&longitude=` exposes the same `services` + `domain` logic as a standalone JSON endpoint, validated with Zod.
+### Data Sources
+
+- **Open-Meteo API**: Weather data fetched by `WeatherRepositoryOpenMeteoAdapter`.
+- **Nominatim (OpenStreetMap)**: Reverse geocoding in `GeocodingClientService`.
+- **ViaCEP**: Brazilian postal code lookup in `ViacepClientService`.
+
+## Request Flow
+
+1. User visits page → `src/app/page.tsx` (server component).
+2. `LocationPicker` (client) resolves GPS or CEP and pushes `/?lat=X&lon=Y`.
+3. `page.tsx` reads `searchParams` and calls
+   `container.get(FORECAST_SERVICE).getForecast(lat, lon)`.
+4. `ForecastService` calls `WeatherRepository.fetchForecast()` and
+   `LocalizationRepository.fetchLocationByCoordinates()` in parallel.
+5. `DayForecast.build()` classifies each day; `DayCard` renders the results.
+
+API routes (`/api/forecast`, `/api/wash-recommendation`, `/api/cep`) are thin
+Zod → container → response controllers.
 
 ## Conventions
 
-- No default exports — use named exports throughout.
-- Server components are the default; add `"use client"` only when browser APIs are needed.
-- Business logic lives exclusively in `domain/`; components and routes must not contain decision logic.
-- External API calls are isolated in `services/`; domain and components must not call fetch directly.
-- All commits must follow the Conventional Commits standard — see `.ai/docs/semantic-commits.md`.
+- **No default exports** — use named exports throughout.
+- **Server components by default** — add `"use client"` only when browser APIs
+  are needed.
+- **Business logic in `core/domain/`** — components and routes must not contain
+  decision logic.
+- **Fetch calls in `core/infrastructure/`** — domain and components must not
+  call fetch directly.
+- **DI tokens as `Symbol.for()`** — defined alongside their port interface.
+- **Conventional Commits** — all commits follow the standard; see
+  `.ai/docs/semantic-commits.md`.
 
 ## AI Agent Documentation
 
-The `.ai/` directory contains project-specific standards and documentation for AI agents.
+The `.ai/` directory contains project-specific standards and documentation for
+AI agents. See `.ai/AGENTS.md` for the full directory overview.
 
-**Before implementing a frontend feature**: read `.ai/docs/ui-ux-rules.md` and `.ai/docs/style-guide.md`.
+**Before implementing a frontend feature**: read `.ai/docs/ui-ux-rules.md` and
+`.ai/docs/style-guide.md`.
 
-**Before planning a multi-file feature**: use `.ai/templates/ADR.md` and `.ai/templates/implementation-plan.md`.
+**Before planning a multi-file feature**: use `.ai/templates/ADR.md` and
+`.ai/templates/implementation-plan.md`.
 
 **Feature decisions are persisted in** `.ai/features/<feature-name>/`.
-
-Directory overview:
-- `.ai/docs/` — permanent project-level guidelines (UI/UX rules, style guide, atomic design)
-- `.ai/templates/` — document templates (ADR, implementation plan)
-- `.ai/features/` — per-feature ADRs, implementation plans, and summaries
-- `.ai/design/` — visual design iterations (HTML/CSS mockups)
-- `.ai/references/` — old code kept for historical context
