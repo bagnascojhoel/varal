@@ -6,7 +6,7 @@ export function GET() {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Devo Lavar Roupas? — API Docs</title>
+    <title>Varal — API Docs</title>
     <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
   </head>
   <body>

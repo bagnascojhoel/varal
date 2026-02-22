@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>[DESIGN MOCKUP] Devo Lavar Roupas? — v2 GIF Background + Carousel + Clock</title>
+  <title>[DESIGN MOCKUP] Varal — v2 GIF Background + Carousel + Clock</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- [DESIGN NOTE] This is a static mockup. Do not ship this file. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -450,12 +450,12 @@
     <!-- ══ APP HEADER ══ -->
 
     <!-- [IMPLEMENT] Component: AppHeader
-         Left: <h1> "Devo Lavar Roupas?" (weight 300) with city/country subtitle below.
+         Left: <h1> "Varal" (weight 300) with city/country subtitle below.
          Right: <LiveClock /> — client component, setInterval(1000ms).
          Not sticky. Renders server-side with time "—:—" then hydrates client-side. -->
     <header class="app-header">
       <div>
-        <h1 class="header-app-title">Devo Lavar Roupas?</h1>
+        <h1 class="header-app-title">Varal</h1>
         <!-- [IMPLEMENT] Subtitle: resolved via reverse geocoding after navigator.geolocation succeeds.
              API: nominatim.openstreetmap.org/reverse?lat=X&lon=Y&format=json → address.city + country_code
              Show nothing (visibility:hidden) until resolved; avoids layout jump. -->

@@ -21,7 +21,7 @@ export class GeocodingClientService {
     let response: Response;
     try {
       response = await fetch(url.toString(), {
-        headers: { 'User-Agent': 'devo-lavar-roupas/1.0' },
+        headers: { 'User-Agent': 'varal/1.0' },
         signal: AbortSignal.timeout(5_000),
         next: { revalidate: 86400 },
       });

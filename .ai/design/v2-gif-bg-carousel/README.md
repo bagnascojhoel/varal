@@ -2,7 +2,7 @@
 
 ## What this designs
 
-An updated version of the main "Devo Lavar Roupas?" screen with three improvements over v1:
+An updated version of the main Varal screen with three improvements over v1:
 1. **Animated GIF background** matching today's weather condition, replacing the CSS gradient sky and JS-animated rain drops.
 2. **Mobile carousel** — the three day-cards scroll horizontally with snap behavior and dot indicators, instead of the previous grid where today spanned full width and tomorrow/day-after sat side by side.
 3. **Live clock** in the app header, showing the current local time in HH:MM format.

@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Devo Lavar Roupas?',
+  title: 'Varal',
   description: 'Should I wash my clothes today? Based on rain forecast.',
 };
 

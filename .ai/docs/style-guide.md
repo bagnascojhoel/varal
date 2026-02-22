@@ -1,4 +1,4 @@
-# Style Guide — Devo Lavar Roupas?
+# Style Guide — Varal
 
 Authoritative reference for visual design decisions. Read this before writing any CSS or color value.
 

@@ -44,7 +44,7 @@ export default async function Home({ searchParams }: PageProps) {
         {/* Header */}
         <header className="app-header">
           <div>
-            <h1 className="header-app-title">Devo Lavar Roupas?</h1>
+            <h1 className="header-app-title">Varal</h1>
           </div>
           <LiveClock />
         </header>

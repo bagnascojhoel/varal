@@ -14,7 +14,7 @@ npm run typecheck    # TypeScript type check (no lint or test scripts exist)
 
 ## Architecture
 
-**"Devo Lavar Roupas?"** — a Next.js 16 (App Router) app that answers "should I
+**"Varal"** — a Next.js 16 (App Router) app that answers "should I
 wash my clothes today?" based on the day's rain forecast from the Open-Meteo
 API.
 

@@ -1,6 +1,6 @@
 openapi: "3.0.3"
 info:
-  title: Devo Lavar Roupas API
+  title: Varal API
   version: "1.0.0"
   description: >
     REST API powering "Should I wash my clothes today?".

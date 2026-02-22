@@ -46,7 +46,7 @@ export class ViacepClientService {
     let results: NominatimResult[];
     try {
       const res = await fetch(nominatimUrl.toString(), {
-        headers: { 'User-Agent': 'devo-lavar-roupas/1.0' },
+        headers: { 'User-Agent': 'varal/1.0' },
         signal: AbortSignal.timeout(5_000),
       });
       if (!res.ok) throw new Error('not ok');
