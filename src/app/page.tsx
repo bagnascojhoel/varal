@@ -1,27 +1,31 @@
+'use client';
+
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { DateTime } from 'luxon';
 import { DayCard } from '@/app/_components/DayCard';
 import { LocationPicker } from '@/app/_components/LocationPicker';
 import { LiveClock } from '@/app/_components/LiveClock';
 import { CarouselTrack } from '@/app/_components/CarouselTrack';
-import { container } from '@/core/ContainerConfig';
-import {
-  ForecastService,
-  FORECAST_SERVICE,
-} from '@/core/application-services/forecast-service';
+import { useForecast } from '@/app/_lib/forecast-hook';
+import type { ForecastPageResponse } from '@/core/application-services/forecast-application-service';
 
 const DAY_LABELS = ['Hoje', 'Amanhã', 'Depois de amanhã', 'Em 3 dias'] as const;
 
-interface PageProps {
-  searchParams: Promise<{ lat?: string; lon?: string }>;
-}
-
-export default async function Home({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const lat = params.lat ? parseFloat(params.lat) : null;
-  const lon = params.lon ? parseFloat(params.lon) : null;
-
-  const hasLocation =
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const rawLat = searchParams.get('lat');
+  const rawLon = searchParams.get('lon');
+  const lat = rawLat ? parseFloat(rawLat) : null;
+  const lon = rawLon ? parseFloat(rawLon) : null;
+  const hasValidCoords =
     lat !== null && lon !== null && !isNaN(lat) && !isNaN(lon);
+
+  const forecast = useForecast(
+    hasValidCoords ? lat : null,
+    hasValidCoords ? lon : null,
+  );
 
   return (
     <>
@@ -46,14 +50,20 @@ export default async function Home({ searchParams }: PageProps) {
           <div>
             <h1 className="header-app-title">Varal</h1>
           </div>
-          <LiveClock />
+          <LiveClock
+            timezone={
+              forecast.status === 'success' ? forecast.data.timezone : undefined
+            }
+          />
         </header>
 
-        {hasLocation ? (
-          <ForecastContent lat={lat!} lon={lon!} />
-        ) : (
+        {forecast.status === 'error' ? (
+          <ErrorState />
+        ) : forecast.status === 'success' ? (
+          <ForecastContent data={forecast.data} />
+        ) : forecast.status === 'idle' ? (
           <LocationPrompt />
-        )}
+        ) : null}
 
         <footer
           style={{
@@ -76,24 +86,19 @@ export default async function Home({ searchParams }: PageProps) {
   );
 }
 
-async function ForecastContent({ lat, lon }: { lat: number; lon: number }) {
-  let data;
-  try {
-    data = await container
-      .get<ForecastService>(FORECAST_SERVICE)
-      .getForecast(lat, lon);
-  } catch {
-    return <ErrorState />;
-  }
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
+  );
+}
 
-  const {
-    forecasts,
-    cityName,
-    timeState,
-    dayEnded,
-    currentHour,
-    currentMinutes,
-  } = data;
+function ForecastContent({ data }: { data: ForecastPageResponse }) {
+  const { forecasts, cityName, timeState, dayEnded, timezone } = data;
+  const zonedNow = DateTime.now().setZone(timezone);
+  const currentHour = zonedNow.hour;
+  const currentMinutes = zonedNow.minute;
 
   return (
     <>

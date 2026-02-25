@@ -1,23 +1,23 @@
-import 'reflect-metadata';
-import { Container } from 'inversify';
+import {
+  FORECAST_SERVICE,
+  ForecastApplicationService,
+} from '@/core/application-services/forecast-application-service';
+import {
+  WASHER_APPLICATION_SERVICE,
+  WasherApplicationService,
+} from '@/core/application-services/washer-application-service';
+import {
+  LOCALITY_REPOSITORY,
+  type LocalityRepository,
+} from '@/core/domain/localization-repository';
 import {
   WEATHER_REPOSITORY,
   type WeatherRepository,
 } from '@/core/domain/weather-repository';
-import {
-  LOCALIZATION_REPOSITORY,
-  type LocalizationRepository,
-} from '@/core/domain/localization-repository';
+import { LocalityRepositoryAdapter } from '@/core/infrastructure/rest/locality-repository-adapter';
 import { WeatherRepositoryOpenMeteoAdapter } from '@/core/infrastructure/rest/weather-repository-open-meteo-adapter';
-import { LocationRepositoryAdapter } from '@/core/infrastructure/rest/location-repository-adapter';
-import {
-  ForecastService,
-  FORECAST_SERVICE,
-} from '@/core/application-services/forecast-service';
-import {
-  LocalizationService,
-  LOCALIZATION_SERVICE,
-} from '@/core/application-services/localization-service';
+import { Container } from 'inversify';
+import 'reflect-metadata';
 
 const container = new Container();
 
@@ -27,18 +27,18 @@ container
   .inSingletonScope();
 
 container
-  .bind<LocalizationRepository>(LOCALIZATION_REPOSITORY)
-  .to(LocationRepositoryAdapter)
+  .bind<LocalityRepository>(LOCALITY_REPOSITORY)
+  .to(LocalityRepositoryAdapter)
   .inSingletonScope();
 
 container
-  .bind<ForecastService>(FORECAST_SERVICE)
-  .to(ForecastService)
+  .bind<ForecastApplicationService>(FORECAST_SERVICE)
+  .to(ForecastApplicationService)
   .inSingletonScope();
 
 container
-  .bind<LocalizationService>(LOCALIZATION_SERVICE)
-  .to(LocalizationService)
+  .bind<WasherApplicationService>(WASHER_APPLICATION_SERVICE)
+  .to(WasherApplicationService)
   .inSingletonScope();
 
 export { container };

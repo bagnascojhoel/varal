@@ -1,4 +1,5 @@
 export interface OpenMeteoResponse {
+  timezone: string;
   daily: {
     time: string[];
     precipitation_sum: number[];

@@ -1,11 +1,6 @@
-import {
-  determineWashDecision,
-  determineWeatherState,
-  determineWindowState,
-  type WashDecision,
-} from '@/core/domain/wash-decision';
 import { WeatherState } from '@/core/domain/weather-state';
-import { WindowState } from '@/core/domain/window-state';
+import { DateTime } from 'luxon';
+import { Locality } from './locality';
 
 const CAN_WASH_PHRASES = [
   'Adeus, roupa suja! 👋',
@@ -33,81 +28,97 @@ function dateHash(date: string): number {
   return date.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
 }
 
-function pickPhrase(canWash: boolean, date: string): string {
+export function pickPhrase(canWash: boolean, date: string): string {
   const phrases = canWash ? CAN_WASH_PHRASES : CANNOT_WASH_PHRASES;
   return phrases[dateHash(date) % phrases.length];
 }
 
 export class DayForecast {
-  readonly date: string;
+  readonly locality: Locality;
+  readonly date: DateTime;
   readonly precipitationSum: number;
   readonly precipitationProbabilityMax: number;
-  readonly decision: WashDecision;
-  readonly weatherState: WeatherState;
   readonly hourlyPrecipitationProbability: number[];
-  readonly morningWindow: WindowState;
-  readonly afternoonWindow: WindowState;
-  readonly stillUsable: boolean;
-  // Computed at build time as an own property so JSON.stringify serializes it correctly
-  readonly phrase: string;
+  readonly dayWeatherState: WeatherState;
 
-  private constructor(fields: {
-    date: string;
+  constructor(fields: {
+    locality: Locality;
+    date: DateTime;
     precipitationSum: number;
     precipitationProbabilityMax: number;
-    decision: WashDecision;
-    weatherState: WeatherState;
     hourlyPrecipitationProbability: number[];
-    morningWindow: WindowState;
-    afternoonWindow: WindowState;
-    stillUsable: boolean;
-    phrase: string;
+    dayWeatherState: WeatherState;
   }) {
+    this.locality = fields.locality;
     this.date = fields.date;
     this.precipitationSum = fields.precipitationSum;
     this.precipitationProbabilityMax = fields.precipitationProbabilityMax;
-    this.decision = fields.decision;
-    this.weatherState = fields.weatherState;
+    this.dayWeatherState = fields.dayWeatherState;
     this.hourlyPrecipitationProbability = fields.hourlyPrecipitationProbability;
-    this.morningWindow = fields.morningWindow;
-    this.afternoonWindow = fields.afternoonWindow;
-    this.stillUsable = fields.stillUsable;
-    this.phrase = fields.phrase;
   }
 
-  /**
-   * @param date         ISO date string (e.g. "2024-01-01")
-   * @param precipSum    daily precipitation sum in mm
-   * @param precipMax    daily precipitation probability max in %
-   * @param hourly6to20  15 hourly precipitation probability values for hours 6–20
-   * @param stillUsable  true when there is still time in the day to wash clothes
-   */
-  static build(
-    date: string,
-    precipSum: number,
-    precipMax: number,
-    hourly6to20: number[],
-    stillUsable: boolean,
-  ): DayForecast {
-    const decision = determineWashDecision(precipMax, precipSum);
-    const weatherState = determineWeatherState(precipMax, precipSum);
+  static builder(): DayForecastBuilder {
+    return new DayForecastBuilder();
+  }
 
-    // Morning window: hours 6–11 → indices 0–5
-    const morningWindow = determineWindowState(hourly6to20.slice(0, 6));
-    // Afternoon window: hours 12–20 → indices 6–14
-    const afternoonWindow = determineWindowState(hourly6to20.slice(6, 15));
+  isStillUsableNow(): boolean {
+    return this.locality.isStillUsable(this.locality.zonedNow());
+  }
+}
+
+export class DayForecastBuilder {
+  private _locality?: Locality;
+  private _date?: DateTime;
+  private _precipitationSum?: number;
+  private _precipitationProbabilityMax?: number;
+  private _hourlyPrecipitationProbability?: number[];
+  private _dayWeatherState?: WeatherState;
+
+  locality(locality: Locality): this {
+    this._locality = locality;
+    return this;
+  }
+
+  date(date: DateTime): this {
+    this._date = date;
+    return this;
+  }
+
+  precipitationSum(value: number): this {
+    this._precipitationSum = value;
+    return this;
+  }
+
+  precipitationProbabilityMax(value: number): this {
+    this._precipitationProbabilityMax = value;
+    return this;
+  }
+
+  hourlyPrecipitationProbability(values: number[]): this {
+    this._hourlyPrecipitationProbability = values;
+    return this;
+  }
+
+  dayWeatherState(state: WeatherState): this {
+    this._dayWeatherState = state;
+    return this;
+  }
+
+  build(): DayForecast {
+    if (this._locality === undefined) throw new Error('locality is required');
+    if (this._date === undefined) throw new Error('date is required');
+    if (this._precipitationSum === undefined) throw new Error('precipitationSum is required');
+    if (this._precipitationProbabilityMax === undefined) throw new Error('precipitationProbabilityMax is required');
+    if (this._hourlyPrecipitationProbability === undefined) throw new Error('hourlyPrecipitationProbability is required');
+    if (this._dayWeatherState === undefined) throw new Error('dayWeatherState is required');
 
     return new DayForecast({
-      date,
-      precipitationSum: precipSum,
-      precipitationProbabilityMax: precipMax,
-      decision,
-      weatherState,
-      hourlyPrecipitationProbability: hourly6to20,
-      morningWindow,
-      afternoonWindow,
-      stillUsable,
-      phrase: pickPhrase(decision.canWash, date),
+      locality: this._locality,
+      date: this._date,
+      precipitationSum: this._precipitationSum,
+      precipitationProbabilityMax: this._precipitationProbabilityMax,
+      hourlyPrecipitationProbability: this._hourlyPrecipitationProbability,
+      dayWeatherState: this._dayWeatherState,
     });
   }
 }

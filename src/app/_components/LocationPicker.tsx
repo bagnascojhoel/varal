@@ -1,116 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
-const STORAGE_KEY = 'saved_location';
-
-interface SavedLocation {
-  lat: string;
-  lon: string;
-}
-
-function saveLocation(lat: string, lon: string) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ lat, lon }));
-}
-
-function loadLocation(): SavedLocation | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as SavedLocation;
-  } catch {
-    return null;
-  }
-}
-
-function formatCep(raw: string): string {
-  const digits = raw.replace(/\D/g, '').slice(0, 8);
-  if (digits.length > 5) {
-    return `${digits.slice(0, 5)}-${digits.slice(5)}`;
-  }
-  return digits;
-}
-
-function isValidCep(formatted: string): boolean {
-  return /^\d{5}-\d{3}$/.test(formatted);
-}
+import { useLocality } from '@/app/_lib/locality-hook';
 
 export function LocationPicker() {
   const router = useRouter();
-  const [savedLocation, setSavedLocation] = useState<SavedLocation | null>(
-    null,
-  );
-  const [gpsLoading, setGpsLoading] = useState(false);
-  const [gpsError, setGpsError] = useState<string | null>(null);
-  const [cepValue, setCepValue] = useState('');
-  const [cepLoading, setCepLoading] = useState(false);
-  const [cepError, setCepError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setSavedLocation(loadLocation());
-  }, []);
-
-  const isLoading = gpsLoading || cepLoading;
+  const { savedLocation, isLoading, gps, cep } = useLocality((lat, lon) => {
+    router.push(`/?lat=${lat}&lon=${lon}`);
+  });
 
   function handleClose() {
     if (!savedLocation) return;
     router.push(`/?lat=${savedLocation.lat}&lon=${savedLocation.lon}`);
-  }
-
-  function handleGps() {
-    if (!navigator.geolocation) {
-      setGpsError('Geolocalização não é suportada pelo seu navegador.');
-      return;
-    }
-
-    setGpsLoading(true);
-    setGpsError(null);
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude.toFixed(6);
-        const lon = position.coords.longitude.toFixed(6);
-        saveLocation(lat, lon);
-        router.push(`/?lat=${lat}&lon=${lon}`);
-      },
-      () => {
-        setGpsLoading(false);
-        setGpsError(
-          'Não foi possível obter sua localização. Permita o acesso e tente novamente.',
-        );
-      },
-    );
-  }
-
-  async function handleCepSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!isValidCep(cepValue)) return;
-
-    const digits = cepValue.replace('-', '');
-    setCepLoading(true);
-    setCepError(null);
-
-    try {
-      const res = await fetch(`/api/cep?cep=${digits}`);
-      if (res.status === 404) {
-        setCepError('CEP não encontrado.');
-        return;
-      }
-      if (!res.ok) {
-        setCepError('Serviço indisponível.');
-        return;
-      }
-      const data = (await res.json()) as { lat: number; lon: number };
-      const lat = String(data.lat);
-      const lon = String(data.lon);
-      saveLocation(lat, lon);
-      router.push(`/?lat=${lat}&lon=${lon}`);
-    } catch {
-      setCepError('Serviço indisponível.');
-    } finally {
-      setCepLoading(false);
-    }
   }
 
   return (
@@ -142,15 +43,15 @@ export function LocationPicker() {
 
         <div className="flex flex-col items-center gap-3">
           <button
-            onClick={handleGps}
+            onClick={gps.request}
             disabled={isLoading}
             className="text-white/[82%] day:text-ink/[82%] glass px-6 py-3 min-h-[44px] rounded-2xl font-light text-sm cursor-pointer disabled:cursor-not-allowed transition-opacity hover:opacity-80 disabled:opacity-50"
           >
-            {gpsLoading ? 'Detectando…' : '📍 Compartilhar localização'}
+            {gps.loading ? 'Detectando…' : '📍 Compartilhar localização'}
           </button>
-          {gpsError && (
+          {gps.error && (
             <p className="text-red-300/90 day:text-red-800/90 text-xs text-center max-w-xs">
-              {gpsError}
+              {gps.error}
             </p>
           )}
         </div>
@@ -164,7 +65,10 @@ export function LocationPicker() {
         </div>
 
         <form
-          onSubmit={handleCepSubmit}
+          onSubmit={(e) => {
+            e.preventDefault();
+            cep.submit();
+          }}
           className="flex flex-col items-center gap-3"
         >
           <div className="flex gap-2 w-full">
@@ -173,22 +77,22 @@ export function LocationPicker() {
               inputMode="numeric"
               maxLength={9}
               placeholder="00000-000"
-              value={cepValue}
-              onChange={(e) => setCepValue(formatCep(e.target.value))}
+              value={cep.value}
+              onChange={(e) => cep.onChange(e.target.value)}
               disabled={isLoading}
               className="text-white/[82%] day:text-ink/[82%] placeholder:text-white/[28%] day:placeholder:text-ink/[35%] glass flex-1 px-4 py-3 min-h-[44px] rounded-2xl font-light text-sm text-center bg-transparent outline-none disabled:opacity-50"
             />
             <button
               type="submit"
-              disabled={isLoading || !isValidCep(cepValue)}
+              disabled={isLoading || !cep.isValid}
               className="text-white/[82%] day:text-ink/[82%] glass px-5 py-3 min-h-[44px] rounded-2xl font-light text-sm cursor-pointer disabled:cursor-not-allowed transition-opacity hover:opacity-80 disabled:opacity-50"
             >
-              {cepLoading ? '…' : 'Buscar'}
+              {cep.loading ? '…' : 'Buscar'}
             </button>
           </div>
-          {cepError && (
+          {cep.error && (
             <p className="text-red-300/90 day:text-red-800/90 text-xs text-center max-w-xs">
-              {cepError}
+              {cep.error}
             </p>
           )}
         </form>

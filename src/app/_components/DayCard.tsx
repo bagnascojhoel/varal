@@ -1,8 +1,9 @@
-import { determineBarState } from '@/core/domain/wash-decision';
-import type { DayForecast } from '@/core/domain/day-forecast';
+import type { ForecastDayDto } from '@/core/application-services/forecast-application-service';
 import type { TimeState } from '@/core/domain/time-state';
-import type { WindowState } from '@/core/domain/window-state';
+import { determineBarState } from '@/core/domain/wash-decision';
 import type { WeatherState } from '@/core/domain/weather-state';
+import type { WindowState } from '@/core/domain/window-state';
+import { DateTime } from 'luxon';
 
 const ACCENT_CLASSES = [
   'accent-red',
@@ -17,20 +18,8 @@ const WEATHER_EMOJI: Record<WeatherState, string> = {
   sunny: '☀️',
 };
 
-const WEEKDAY_NAMES = [
-  'Domingo',
-  'Segunda-feira',
-  'Terça-feira',
-  'Quarta-feira',
-  'Quinta-feira',
-  'Sexta-feira',
-  'Sábado',
-];
-
 function getWeekday(dateStr: string): string {
-  // Parse "YYYY-MM-DD" as local date (not UTC) to avoid day-shift near midnight
-  const [year, month, day] = dateStr.split('-').map(Number);
-  return WEEKDAY_NAMES[new Date(year, month - 1, day).getDay()];
+  return DateTime.fromISO(dateStr).setLocale('pt-BR').weekdayLong ?? '';
 }
 
 function barClass(prob: number): string {
@@ -52,7 +41,7 @@ function WindowPill({ state }: { state: WindowState }) {
 }
 
 interface DayCardProps {
-  forecast: DayForecast;
+  forecast: ForecastDayDto;
   label: string;
   cardIndex: number;
   isToday: boolean;
@@ -121,7 +110,7 @@ export function DayCard({
       role="group"
       aria-roledescription="slide"
       aria-label={label}
-      style={!forecast.stillUsable ? { opacity: 0.38 } : undefined}
+      style={!forecast.isStillUsableNow ? { opacity: 0.38 } : undefined}
     >
       <div className={`${accent} h-[3px] shrink-0`} />
 
@@ -141,7 +130,7 @@ export function DayCard({
             style={{ fontSize: '1.4rem', lineHeight: 1, userSelect: 'none' }}
             aria-hidden="true"
           >
-            {WEATHER_EMOJI[forecast.weatherState]}
+            {WEATHER_EMOJI[forecast.dayWeatherState]}
           </span>
         </div>
 
@@ -153,19 +142,21 @@ export function DayCard({
         <div className="mb-5">
           <span className="timeline-caption">chance de secar ao natural</span>
           <div className="timeline-bars">
-            {forecast.hourlyPrecipitationProbability.map((prob, i) => {
-              const barHour = 6 + i;
-              const isPast = isToday && barHour < pastThreshold;
-              return (
-                <div
-                  key={barHour}
-                  className={`${barClass(prob)}${isPast ? ' t-bar--past' : ''}`}
-                  style={{ height: `${barHeight(prob)}px` }}
-                  title={`${barHour}h · ${100 - prob}%`}
-                  data-bar-hour={isToday ? barHour : undefined}
-                />
-              );
-            })}
+            {forecast.hourlyPrecipitationProbability
+              .slice(6, 21)
+              .map((prob, i) => {
+                const barHour = 6 + i;
+                const isPast = isToday && barHour < pastThreshold;
+                return (
+                  <div
+                    key={barHour}
+                    className={`${barClass(prob)}${isPast ? ' t-bar--past' : ''}`}
+                    style={{ height: `${barHeight(prob)}px` }}
+                    title={`${barHour}h · ${100 - prob}%`}
+                    data-bar-hour={isToday ? barHour : undefined}
+                  />
+                );
+              })}
             {nowMarkerStyle && (
               <div
                 className="timeline-now-marker"

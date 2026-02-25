@@ -1,8 +1,8 @@
-import type { Location } from '@/core/domain/location';
+import type { Locality } from '@/core/domain/locality';
+import { WasherSetupCommand } from './washer-setup-command';
 
-export interface LocalizationRepository {
-  fetchLocationByCoordinates(lat: number, lon: number): Promise<Location>;
-  fetchLocationByCep(cep: string): Promise<Location>;
+export interface LocalityRepository {
+  fetchLocality(command: WasherSetupCommand): Promise<Locality>;
 }
 
-export const LOCALIZATION_REPOSITORY = Symbol.for('LocalizationRepository');
+export const LOCALITY_REPOSITORY = Symbol.for('LocalityRepository');

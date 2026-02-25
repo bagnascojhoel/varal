@@ -19,6 +19,7 @@ agents should follow.
 
 | Task | Where to look |
 |------|---------------|
+| Understanding the `app/` presentation layer | `docs/presentation-layer.md` |
 | Implementing a frontend feature | `docs/ui-ux-rules.md`, `docs/style-guide.md` |
 | Applying the component/design system | `docs/atomic-design-standards.md` |
 | Writing a commit message | `docs/semantic-commits.md` |

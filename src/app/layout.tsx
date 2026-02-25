@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { DateTime } from 'luxon';
 import { determineTimeState } from '@/core/domain/wash-decision';
 import './globals.css';
 
@@ -18,7 +19,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const hour = new Date().getHours();
+  const hour = DateTime.now().hour;
   const timeState = determineTimeState(hour);
   const dayEnded = hour >= 21;
 
