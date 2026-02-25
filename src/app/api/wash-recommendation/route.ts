@@ -1,46 +1,12 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { container } from '@/core/ContainerConfig';
-import {
-  WEATHER_REPOSITORY,
-  type WeatherRepository,
-} from '@/core/domain/weather-repository';
-import { determineWashDecision } from '@/core/domain/wash-decision';
-import { OpenMeteoError } from '@/core/infrastructure/rest/weather-repository-open-meteo-adapter';
+import { ApplicationServices } from '../_lib/application-services';
+import { forecastQuerySchema } from '../_lib/types/forecast';
+import { wrapApi } from '../_lib/wrap-api';
 
-const coordNumber = (name: string, min: number, max: number) =>
-  z.preprocess(
-    (v) => (v === null ? undefined : v),
-    z
-      .string({ required_error: `${name} is required` })
-      .transform((v, ctx) => {
-        const n = Number(v);
-        if (isNaN(n)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `${name} must be a number`,
-          });
-          return z.NEVER;
-        }
-        return n;
-      })
-      .pipe(
-        z
-          .number()
-          .min(min, `${name} must be >= ${min}`)
-          .max(max, `${name} must be <= ${max}`),
-      ),
-  );
-
-const querySchema = z.object({
-  latitude: coordNumber('latitude', -90, 90),
-  longitude: coordNumber('longitude', -180, 180),
-});
-
-export async function GET(request: Request) {
+export const GET = wrapApi(async function (request: Request) {
   const { searchParams } = new URL(request.url);
 
-  const parsed = querySchema.safeParse({
+  const parsed = forecastQuerySchema.safeParse({
     latitude: searchParams.get('latitude'),
     longitude: searchParams.get('longitude'),
   });
@@ -56,27 +22,7 @@ export async function GET(request: Request) {
   }
 
   const { latitude, longitude } = parsed.data;
+  const data = await ApplicationServices.getWashRecommendation(latitude, longitude);
 
-  try {
-    const { precipitationSum, precipitationProbabilityMax } = await container
-      .get<WeatherRepository>(WEATHER_REPOSITORY)
-      .fetchTodayPrecipitation(latitude, longitude);
-
-    const decision = determineWashDecision(
-      precipitationProbabilityMax,
-      precipitationSum,
-    );
-    return NextResponse.json(decision);
-  } catch (error) {
-    if (error instanceof OpenMeteoError) {
-      return NextResponse.json(
-        {
-          error: 'Weather service unavailable',
-          message: error.message,
-        },
-        { status: 502 },
-      );
-    }
-    throw error;
-  }
-}
+  return NextResponse.json(data);
+});
