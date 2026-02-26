@@ -39,7 +39,7 @@ export class DayForecast {
   readonly precipitationSum: number;
   readonly precipitationProbabilityMax: number;
   readonly hourlyPrecipitationProbability: number[];
-  readonly dayWeatherState: WeatherState;
+  readonly dayWeatherState?: WeatherState;
 
   constructor(fields: {
     locality: Locality;
@@ -47,7 +47,7 @@ export class DayForecast {
     precipitationSum: number;
     precipitationProbabilityMax: number;
     hourlyPrecipitationProbability: number[];
-    dayWeatherState: WeatherState;
+    dayWeatherState?: WeatherState;
   }) {
     this.locality = fields.locality;
     this.date = fields.date;
@@ -62,7 +62,7 @@ export class DayForecast {
   }
 
   isStillUsableNow(): boolean {
-    return this.locality.isStillUsable(this.locality.zonedNow());
+    return this.locality.isStillUsable(this.date);
   }
 }
 
@@ -107,10 +107,12 @@ export class DayForecastBuilder {
   build(): DayForecast {
     if (this._locality === undefined) throw new Error('locality is required');
     if (this._date === undefined) throw new Error('date is required');
-    if (this._precipitationSum === undefined) throw new Error('precipitationSum is required');
-    if (this._precipitationProbabilityMax === undefined) throw new Error('precipitationProbabilityMax is required');
-    if (this._hourlyPrecipitationProbability === undefined) throw new Error('hourlyPrecipitationProbability is required');
-    if (this._dayWeatherState === undefined) throw new Error('dayWeatherState is required');
+    if (this._precipitationSum === undefined)
+      throw new Error('precipitationSum is required');
+    if (this._precipitationProbabilityMax === undefined)
+      throw new Error('precipitationProbabilityMax is required');
+    if (this._hourlyPrecipitationProbability === undefined)
+      throw new Error('hourlyPrecipitationProbability is required');
 
     return new DayForecast({
       locality: this._locality,
