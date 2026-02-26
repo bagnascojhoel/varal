@@ -64,12 +64,12 @@ export class RestClientService {
   ): Promise<T> {
     const { timeoutMs = DEFAULT_TIMEOUT_MS, nextOptions, ...init } = options;
     const urlString = new URL(path, this.host).toString();
-    const parsedUrl = new URL(urlString);
-    const methodAndUrl = `${method} ${parsedUrl.pathname}${parsedUrl.search}`;
 
-    Logger.info(`[outbound-request] sending request ${methodAndUrl}`, {
-      service: this.serviceName,
-    });
+    Logger.info('outbound request sending, serviceName={}, method={}, url={}', [
+      this.serviceName,
+      method,
+      urlString,
+    ]);
 
     const fetchBlock = async (): Promise<T> => {
       let response: Response;
@@ -85,10 +85,11 @@ export class RestClientService {
           ...(nextOptions && { next: nextOptions }),
         });
       } catch (cause) {
-        Logger.error(`[outbound-request] request failed ${methodAndUrl}`, {
-          service: this.serviceName,
-          cause,
-        });
+        Logger.error('outbound request failed, serviceName={}, method={}, url={}', [
+          this.serviceName,
+          method,
+          urlString,
+        ]);
         throw new ExternalServiceError(
           this.serviceName,
           'Request failed',
@@ -97,10 +98,8 @@ export class RestClientService {
       }
 
       Logger.info(
-        `[outbound-request] completed request ${methodAndUrl} ${response.status}`,
-        {
-          service: this.serviceName,
-        },
+        'outbound request completed, serviceName={}, method={}, url={}, responseStatus={}',
+        [this.serviceName, method, urlString, response.status],
       );
 
       if (!response.ok) {

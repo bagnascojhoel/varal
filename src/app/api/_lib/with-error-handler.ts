@@ -10,20 +10,16 @@ export function withErrorHandler(handler: RouteHandler): RouteHandler {
       return await handler(req, ctx);
     } catch (error) {
       if (error instanceof ExternalServiceError) {
-        Logger.error('external service error', {
-          service: error.service,
-          description: error.description,
-          ...(error.statusCode !== undefined && {
-            statusCode: error.statusCode,
-          }),
-          ...(error.cause !== undefined && { cause: error.cause }),
-        });
+        Logger.error(
+          'external service error, serviceName={}, description={}, responseStatus={}',
+          [error.service, error.description, error.statusCode ?? 'n/a'],
+        );
         return NextResponse.json(
           { error: 'External service unavailable' },
           { status: 502 },
         );
       }
-      Logger.error('unhandled exception', { error });
+      Logger.error('unhandled exception, error={}', [String(error)]);
       return NextResponse.json(
         { error: 'Internal server error' },
         { status: 500 },

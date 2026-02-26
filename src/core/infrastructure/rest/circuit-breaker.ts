@@ -96,7 +96,10 @@ export class CircuitBreaker {
   }
 
   private transitionTo(state: CircuitState): void {
-    Logger.warn(`[circuit-breaker] ${this.serviceName} state → ${state}`);
+    Logger.warn('circuit breaker state transition, serviceName={}, state={}', [
+      this.serviceName,
+      state,
+    ]);
     this.state = state;
   }
 }

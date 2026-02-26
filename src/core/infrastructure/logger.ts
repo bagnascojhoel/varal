@@ -9,14 +9,20 @@ const instance = createLogger({
   transports: [new transports.Console()],
 });
 
+function interpolate(message: string, params?: unknown[]): string {
+  if (!params?.length) return message;
+  let i = 0;
+  return message.replace(/\{\}/g, () => String(params[i++] ?? ''));
+}
+
 export class Logger {
-  static info(message: string, meta?: object): void {
-    instance.info(message, meta);
+  static info(message: string, params?: unknown[]): void {
+    instance.info(interpolate(message, params));
   }
-  static warn(message: string, meta?: object): void {
-    instance.warn(message, meta);
+  static warn(message: string, params?: unknown[]): void {
+    instance.warn(interpolate(message, params));
   }
-  static error(message: string, meta?: object): void {
-    instance.error(message, meta);
+  static error(message: string, params?: unknown[]): void {
+    instance.error(interpolate(message, params));
   }
 }
