@@ -5,16 +5,34 @@ interface BigDataCloudTimezone {
   ianaTimeId: string;
 }
 
+interface Informative {
+  description: string;
+  name: string;
+  order: number;
+}
+
+interface LocalityInfo {
+  informative: Informative[];
+}
+
 interface BigDataCloudResponse {
   city?: string;
   locality?: string;
   countryCode?: string;
-  timezone?: BigDataCloudTimezone;
+  localityInfo: LocalityInfo;
 }
 
 interface NominatimResult {
   lat: string;
   lon: string;
+}
+
+function extractTimezone(data: BigDataCloudResponse): string {
+  return (
+    data.localityInfo.informative.find(
+      (info) => info.description === 'fuso horário',
+    )?.name ?? 'UTC'
+  );
 }
 
 export interface BigDataCloudLocationResponse {
@@ -47,10 +65,11 @@ export class BigDataCloudClientService {
       latitude: String(lat),
       longitude: String(lon),
       localityLanguage: 'pt-BR',
+      key: process.env.BIGDATACLOUD_API_KEY ?? '',
     });
 
     const data = await this.bigDataCloudClient.get<BigDataCloudResponse>(
-      `/data/reverse-geocode-client?${params.toString()}`,
+      `/data/reverse-geocode?${params.toString()}`,
       { timeoutMs: 5_000, nextOptions: { revalidate: 86400 } },
     );
 
@@ -61,10 +80,11 @@ export class BigDataCloudClientService {
         'Response missing city name',
       );
 
+    // TODO need a better way to find timezone from API resposne
     return {
       cityName: city,
       countryCode: data.countryCode ?? '',
-      timezoneIana: data.timezone?.ianaTimeId ?? 'UTC',
+      timezoneIana: extractTimezone(data),
     };
   }
 
