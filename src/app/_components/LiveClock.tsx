@@ -28,7 +28,7 @@ export function LiveClock({ timezone }: LiveClockProps) {
 
   return (
     <time
-      className="header-time hidden md:block"
+      className="text-[2.2rem] font-[200] leading-none tracking-[-0.03em] text-white/[88%] day:text-ink/[82%] [font-variant-numeric:tabular-nums] hidden md:block"
       dateTime={isoTime}
       suppressHydrationWarning
     >

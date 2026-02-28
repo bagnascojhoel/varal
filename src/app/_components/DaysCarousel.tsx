@@ -1,34 +1,22 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
-import { useState } from 'react';
-const DOT_LABELS = ['Hoje', 'Amanhã', 'Depois de amanhã', 'Em 3 dias'];
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface CarouselTrackProps {
   children: ReactNode;
   dayEnded: boolean;
 }
 
-export function CarouselTrack({ children, dayEnded }: CarouselTrackProps) {
+export function DaysCarousel({ children, dayEnded }: CarouselTrackProps) {
+  const t = useTranslations('DaysCarousel');
   const trackRef = useRef<HTMLDivElement>(null);
-  const [activeDot, setActiveDot] = useState(dayEnded ? 1 : 0);
-  const dotCount = dayEnded ? 4 : 3;
+  const [activeDot, setActiveDot] = useState(0);
+  const dotCount = 4;
 
-  // Auto-scroll to card 1 when day has ended
-  useEffect(() => {
-    if (!dayEnded) return;
-    if (window.innerWidth >= 1024) return;
-
-    const track = trackRef.current;
-    if (!track) return;
-
-    const card = track.querySelector<HTMLElement>('[data-card-index="1"]');
-    if (card) {
-      setTimeout(() => {
-        track.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
-      }, 80);
-    }
-  }, [dayEnded]);
+  const dotLabelKeys = dayEnded
+    ? (['tomorrow', 'dayAfterTomorrow', 'in3Days', 'in4Days'] as const)
+    : (['today', 'tomorrow', 'dayAfterTomorrow', 'in3Days'] as const);
 
   // Track scroll to update active dot
   useEffect(() => {
@@ -39,7 +27,7 @@ export function CarouselTrack({ children, dayEnded }: CarouselTrackProps) {
       if (!track || window.innerWidth >= 1024) return;
       const midX = track.scrollLeft + track.clientWidth / 2;
       const cards = Array.from(
-        track.querySelectorAll<HTMLElement>('.card[data-card-index]'),
+        track.querySelectorAll<HTMLElement>('[data-card-index]'),
       ).filter((c) => c.offsetParent !== null);
 
       let closest = 0;
@@ -70,36 +58,29 @@ export function CarouselTrack({ children, dayEnded }: CarouselTrackProps) {
   }
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.5rem',
-      }}
-    >
+    <div className="flex-1 flex flex-col gap-2">
       <div
         ref={trackRef}
-        className="cards-track"
+        className={`flex flex-1 min-h-0 items-stretch overflow-x-auto snap-x snap-mandatory scroll-smooth [-webkit-overflow-scrolling:touch] gap-3 pr-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:gap-4 lg:overflow-x-visible lg:[scroll-snap-type:none] lg:pr-0 ${dayEnded ? 'lg:grid-cols-[1fr_1fr_1fr_1fr]' : 'lg:grid-cols-[1.15fr_1fr_1fr_1fr]'}`}
         role="region"
-        aria-label="Previsão para os próximos dias"
-        aria-roledescription="carrossel"
+        aria-label={t('regionLabel')}
+        aria-roledescription={t('carouselDescription')}
       >
         {children}
       </div>
 
       <div
-        className="carousel-dots"
+        className="flex justify-center items-center gap-[0.35rem] pt-[0.85rem] lg:hidden"
         role="tablist"
-        aria-label="Navegar entre dias"
+        aria-label={t('navigationLabel')}
       >
         {Array.from({ length: dotCount }, (_, i) => (
           <button
             key={i}
-            className={`dot${i === 3 ? ' dot-day3' : ''}${activeDot === i ? ' active' : ''}`}
+            className={`flex items-center justify-center min-w-[44px] min-h-[44px] bg-transparent border-none cursor-pointer p-0 after:content-[''] after:block after:h-[6px] after:rounded-full after:transition-[width,background] after:duration-[250ms] ${activeDot === i ? 'after:w-[20px] after:bg-[rgba(255,255,255,0.85)] day:after:bg-[rgba(18,48,100,0.75)]' : 'after:w-[6px] after:bg-[rgba(255,255,255,0.28)] day:after:bg-[rgba(18,48,100,0.28)]'}`}
             role="tab"
             aria-selected={activeDot === i}
-            aria-label={DOT_LABELS[i]}
+            aria-label={t(`dotLabels.${dotLabelKeys[i]}`)}
             onClick={() => scrollToCard(i)}
           />
         ))}

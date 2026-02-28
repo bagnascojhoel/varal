@@ -1,0 +1,65 @@
+{
+  "App": {
+    "title": "Varal",
+    "description": "Should I wash my clothes today? Based on rain forecast."
+  },
+  "Page": {
+    "precipitationVia": "Precipitação via",
+    "updatedAt": "Atualizado às",
+    "changeLocation": "Alterar localização",
+    "dayLabels": {
+      "today": "Hoje",
+      "tomorrow": "Amanhã",
+      "dayAfterTomorrow": "Depois de amanhã",
+      "in3Days": "Em 3 dias",
+      "in4Days": "Em 4 dias",
+      "inNDays": "Em {n} dias"
+    }
+  },
+  "DayCard": {
+    "dayEnded": "encerrado",
+    "dayEndedAriaLabel": "dia encerrado",
+    "dryingChance": "chance de secar ao natural",
+    "windowsOfDay": "Janelas do dia",
+    "morning": "Manhã",
+    "afternoon": "Tarde",
+    "windowClear": "Livre ✓",
+    "windowUnsure": "Incerto",
+    "windowRain": "Chuva"
+  },
+  "DaysCarousel": {
+    "regionLabel": "Previsão para os próximos dias",
+    "carouselDescription": "carrossel",
+    "navigationLabel": "Navegar entre dias",
+    "dotLabels": {
+      "today": "Hoje",
+      "tomorrow": "Amanhã",
+      "dayAfterTomorrow": "Depois de amanhã",
+      "in3Days": "Em 3 dias",
+      "in4Days": "Em 4 dias"
+    }
+  },
+  "LocationPicker": {
+    "dialogLabel": "Selecionar localização",
+    "close": "Fechar",
+    "whereAreYou": "Onde você está?",
+    "locationNeeded": "Precisamos da sua localização para verificar a previsão.",
+    "detecting": "Detectando\u2026",
+    "shareLocation": "📍 Compartilhar localização",
+    "or": "ou",
+    "cepPlaceholder": "00000-000",
+    "search": "Buscar",
+    "searching": "\u2026"
+  },
+  "Errors": {
+    "forecastUnavailable": "Serviço de previsão indisponível",
+    "tryAgainLater": "Tente novamente mais tarde.",
+    "gpsNotSupported": "Geolocalização não é suportada pelo seu navegador.",
+    "gpsPermissionDenied": "Não foi possível obter sua localização. Permita o acesso e tente novamente.",
+    "cepNotFound": "CEP não encontrado.",
+    "serviceUnavailable": "Serviço indisponível.",
+    "title": "Algo correu mal",
+    "digest": "Referência: {digest}",
+    "retry": "Tentar novamente"
+  }
+}

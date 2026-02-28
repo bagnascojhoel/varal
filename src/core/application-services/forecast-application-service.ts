@@ -41,7 +41,7 @@ export const FORECAST_SERVICE = Symbol.for('ForecastService');
 
 @injectable()
 export class ForecastApplicationService {
-  private readonly FORECAST_NEXT_DAYS: number = 4;
+  private readonly FORECAST_NEXT_DAYS: number = 5;
 
   constructor(
     @inject(WEATHER_REPOSITORY)
@@ -54,12 +54,14 @@ export class ForecastApplicationService {
       this.FORECAST_NEXT_DAYS,
     );
     const timeState = determineTimeState(washer.locality.zonedHour());
+    const dayEnded = !washer.locality.isStillUsable(washer.locality.zonedNow());
+    const relevantForecasts = dayEnded ? forecasts.slice(1) : forecasts.slice(0, 4);
     return {
-      forecasts: forecasts.map((f) => this.toDto(f)),
+      forecasts: relevantForecasts.map((f) => this.toDto(f)),
       cityName: washer.locality.cityName,
       timezone: washer.locality.timezone,
       timeState,
-      dayEnded: washer.locality.isStillUsable(washer.locality.zonedNow()),
+      dayEnded,
     };
   }
 

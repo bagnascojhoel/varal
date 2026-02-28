@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { DateTime } from 'luxon';
 import { determineTimeState } from '@/core/domain/wash-decision';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import messages from '../../messages/pt-BR.json';
 import './globals.css';
 
 const inter = Inter({
@@ -10,11 +13,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Varal',
-  description: 'Should I wash my clothes today? Based on rain forecast.',
+  title: messages.App.title,
+  description: messages.App.description,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -22,6 +25,7 @@ export default function RootLayout({
   const hour = DateTime.now().hour;
   const timeState = determineTimeState(hour);
   const dayEnded = hour >= 21;
+  const allMessages = await getMessages();
 
   return (
     <html
@@ -31,7 +35,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className={`${inter.className} antialiased min-h-screen`}>
-        {children}
+        <NextIntlClientProvider messages={allMessages}>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );
