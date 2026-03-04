@@ -1,15 +1,19 @@
 import { DayForecast } from '@/core/domain/day-forecast';
 import { Locality } from '@/core/domain/locality';
 import type { WeatherRepository } from '@/core/domain/weather-repository';
-import { RestClientService } from '@/core/infrastructure/rest/rest-client-service';
+import type { RestClient } from '@/core/infrastructure/rest/rest-client';
 import type { OpenMeteoResponse } from '@/core/infrastructure/rest/types/open-meteo';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { DateTime } from 'luxon';
 import 'reflect-metadata';
 
+export const OPENMETEO_REST_CLIENT = Symbol.for('OpenMeteoRestClient');
+
 @injectable()
 export class WeatherRepositoryOpenMeteoAdapter implements WeatherRepository {
-  private readonly client = new RestClientService('Open-Meteo', 'https://api.open-meteo.com');
+  constructor(
+    @inject(OPENMETEO_REST_CLIENT) private readonly client: RestClient,
+  ) {}
 
   async fetchForecast(locality: Locality, days: number): Promise<DayForecast[]> {
     const params = new URLSearchParams({

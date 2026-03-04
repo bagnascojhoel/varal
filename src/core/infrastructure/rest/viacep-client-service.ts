@@ -1,5 +1,10 @@
+import 'reflect-metadata';
 import { ExternalServiceError } from '@/core/domain/external-service-error';
-import { RestClientService } from '@/core/infrastructure/rest/rest-client-service';
+import type { RestClient } from '@/core/infrastructure/rest/rest-client';
+import { inject, injectable } from 'inversify';
+
+export const VIACEP_CLIENT_SERVICE = Symbol.for('ViacepClientService');
+export const VIACEP_REST_CLIENT = Symbol.for('ViacepRestClient');
 
 interface ViaCepResponse {
   erro?: boolean;
@@ -7,8 +12,11 @@ interface ViaCepResponse {
   uf?: string;
 }
 
+@injectable()
 export class ViacepClientService {
-  private readonly client = new RestClientService('ViaCEP', 'https://viacep.com.br');
+  constructor(
+    @inject(VIACEP_REST_CLIENT) private readonly client: RestClient,
+  ) {}
 
   async fetchCityFromCep(cep: string): Promise<{ cityName: string; uf: string }> {
     const data = await this.client.get<ViaCepResponse>(`/ws/${cep}/json/`, {

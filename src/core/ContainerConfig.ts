@@ -14,12 +14,53 @@ import {
   WEATHER_REPOSITORY,
   type WeatherRepository,
 } from '@/core/domain/weather-repository';
+import {
+  BigDataCloudClientService,
+  BIGDATACLOUD_CLIENT_SERVICE,
+  BIGDATACLOUD_REST_CLIENT,
+  NOMINATIM_REST_CLIENT,
+} from '@/core/infrastructure/rest/bigdatacloud-client-service';
 import { LocalityRepositoryAdapter } from '@/core/infrastructure/rest/locality-repository-adapter';
-import { WeatherRepositoryOpenMeteoAdapter } from '@/core/infrastructure/rest/weather-repository-open-meteo-adapter';
+import { RestClientService } from '@/core/infrastructure/rest/rest-client-service';
+import {
+  ViacepClientService,
+  VIACEP_CLIENT_SERVICE,
+  VIACEP_REST_CLIENT,
+} from '@/core/infrastructure/rest/viacep-client-service';
+import {
+  OPENMETEO_REST_CLIENT,
+  WeatherRepositoryOpenMeteoAdapter,
+} from '@/core/infrastructure/rest/weather-repository-open-meteo-adapter';
 import { Container } from 'inversify';
 import 'reflect-metadata';
 
 const container = new Container();
+
+container
+  .bind(BIGDATACLOUD_REST_CLIENT)
+  .toConstantValue(new RestClientService('BigDataCloud', process.env.BIGDATACLOUD_HOST!));
+
+container
+  .bind(NOMINATIM_REST_CLIENT)
+  .toConstantValue(new RestClientService('Nominatim', process.env.NOMINATIM_HOST!));
+
+container
+  .bind(VIACEP_REST_CLIENT)
+  .toConstantValue(new RestClientService('ViaCEP', process.env.VIACEP_HOST!));
+
+container
+  .bind(OPENMETEO_REST_CLIENT)
+  .toConstantValue(new RestClientService('Open-Meteo', process.env.OPENMETEO_HOST!));
+
+container
+  .bind(BIGDATACLOUD_CLIENT_SERVICE)
+  .to(BigDataCloudClientService)
+  .inSingletonScope();
+
+container
+  .bind(VIACEP_CLIENT_SERVICE)
+  .to(ViacepClientService)
+  .inSingletonScope();
 
 container
   .bind<WeatherRepository>(WEATHER_REPOSITORY)

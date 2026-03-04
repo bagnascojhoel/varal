@@ -1,5 +1,11 @@
+import 'reflect-metadata';
 import { ExternalServiceError } from '@/core/domain/external-service-error';
-import { RestClientService } from '@/core/infrastructure/rest/rest-client-service';
+import type { RestClient } from '@/core/infrastructure/rest/rest-client';
+import { inject, injectable } from 'inversify';
+
+export const BIGDATACLOUD_CLIENT_SERVICE = Symbol.for('BigDataCloudClientService');
+export const BIGDATACLOUD_REST_CLIENT = Symbol.for('BigDataCloudRestClient');
+export const NOMINATIM_REST_CLIENT = Symbol.for('NominatimRestClient');
 
 interface BigDataCloudTimezone {
   ianaTimeId: string;
@@ -46,15 +52,12 @@ export interface BigDataCloudLocalityResponse extends BigDataCloudLocationRespon
   lon: number;
 }
 
+@injectable()
 export class BigDataCloudClientService {
-  private readonly bigDataCloudClient = new RestClientService(
-    'BigDataCloud',
-    'https://api.bigdatacloud.net',
-  );
-  private readonly nominatimClient = new RestClientService(
-    'Nominatim',
-    'https://nominatim.openstreetmap.org',
-  );
+  constructor(
+    @inject(BIGDATACLOUD_REST_CLIENT) private readonly bigDataCloudClient: RestClient,
+    @inject(NOMINATIM_REST_CLIENT) private readonly nominatimClient: RestClient,
+  ) {}
 
   async fetchLocalityInfo(
     lat: number,

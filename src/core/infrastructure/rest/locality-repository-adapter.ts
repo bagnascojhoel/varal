@@ -2,15 +2,23 @@ import { Coordinates } from '@/core/domain/coordinates';
 import { Locality } from '@/core/domain/locality';
 import type { LocalityRepository } from '@/core/domain/localization-repository';
 import { WasherSetupCommand } from '@/core/domain/washer-setup-command';
-import { BigDataCloudClientService } from '@/core/infrastructure/rest/bigdatacloud-client-service';
-import { ViacepClientService } from '@/core/infrastructure/rest/viacep-client-service';
-import { injectable } from 'inversify';
+import {
+  BigDataCloudClientService,
+  BIGDATACLOUD_CLIENT_SERVICE,
+} from '@/core/infrastructure/rest/bigdatacloud-client-service';
+import {
+  ViacepClientService,
+  VIACEP_CLIENT_SERVICE,
+} from '@/core/infrastructure/rest/viacep-client-service';
+import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 
 @injectable()
 export class LocalityRepositoryAdapter implements LocalityRepository {
-  private readonly bigDataCloudClient = new BigDataCloudClientService();
-  private readonly viacepClient = new ViacepClientService();
+  constructor(
+    @inject(BIGDATACLOUD_CLIENT_SERVICE) private readonly bigDataCloudClient: BigDataCloudClientService,
+    @inject(VIACEP_CLIENT_SERVICE) private readonly viacepClient: ViacepClientService,
+  ) {}
 
   async fetchLocality(command: WasherSetupCommand): Promise<Locality> {
     const locale = command.acceptLocale;

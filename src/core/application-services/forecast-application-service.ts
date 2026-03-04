@@ -22,7 +22,7 @@ export interface ForecastDayDto {
   phrase: string;
   morningWindow: WindowState;
   afternoonWindow: WindowState;
-  dayWeatherState: WeatherState;
+  dayWeatherState?: WeatherState;
   hourlyPrecipitationProbability: number[];
   isStillUsableNow: boolean;
   precipitationProbabilityMax: number;

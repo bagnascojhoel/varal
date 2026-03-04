@@ -4,6 +4,7 @@ import {
   CircuitBreaker,
   CircuitBreakerOptions,
 } from '@/core/infrastructure/rest/circuit-breaker';
+import type { RestClient } from '@/core/infrastructure/rest/rest-client';
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 
@@ -15,7 +16,7 @@ export interface RestRequestOptions extends Omit<
   nextOptions?: NextFetchRequestConfig;
 }
 
-export class RestClientService {
+export class RestClientService implements RestClient {
   private readonly circuitBreaker: CircuitBreaker | null;
 
   constructor(
