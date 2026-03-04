@@ -1,0 +1,10 @@
+{
+  "cucumber.features": ["tests/features/**/*.feature"],
+  "cucumber.glue": ["tests/support/**/*.ts", "tests/step-definitions/**/*.ts"],
+  "cucumberautocomplete.steps": [
+    "tests/step-definitions/**/*.ts",
+    "tests/support/**/*.ts"
+  ],
+  "cucumberautocomplete.syncfeatures": "tests/features/**/*.feature",
+  "cucumberautocomplete.runTestCommand": "TS_NODE_PROJECT=tsconfig.cucumber.json npx cucumber-js \"{filePath}\""
+}
