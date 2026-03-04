@@ -9,7 +9,8 @@
     "format:check": "prettier --check .",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:behavior": "TS_NODE_PROJECT=tsconfig.cucumber.json cucumber-js"
   },
   "dependencies": {
     "inversify": "^7.11.0",
@@ -24,6 +25,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^12.7.0",
     "@tailwindcss/postcss": "^4",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
@@ -36,6 +38,8 @@
     "pretty-quick": "^4.2.2",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5"
   }
 }
