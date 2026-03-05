@@ -125,6 +125,16 @@ Zod → container → response controllers.
 - **Conventional Commits** — all commits follow the standard; see
   `.ai/docs/semantic-commits.md`.
 
+## Branch Workflow
+
+At the start of every new work session, ask the user whether they want to switch to a new branch before making any changes.
+
+Branch naming convention:
+- `<developer-username>/<short-work-description>` — for general work (e.g. `bagnascojhoel/add-location-picker`)
+- `<developer-username>/<story-number>` — when there is a numbered US/task (e.g. `bagnascojhoel/US-42`)
+
+Never work directly on `main`.
+
 ## AI Agent Documentation
 
 The `.ai/` directory contains project-specific standards and documentation for
