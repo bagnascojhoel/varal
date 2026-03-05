@@ -1,0 +1,13 @@
+{
+  "name": "varal-e2e",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@mockoon/cli": "^9.0.0",
+    "@playwright/test": "^1.50.0"
+  }
+}

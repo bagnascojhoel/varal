@@ -64,7 +64,7 @@ export class RestClientService implements RestClient {
     options: RestRequestOptions,
   ): Promise<T> {
     const { timeoutMs = DEFAULT_TIMEOUT_MS, nextOptions, ...init } = options;
-    const urlString = new URL(path, this.host).toString();
+    const urlString = this.host.replace(/\/$/, '') + path;
 
     Logger.info('outbound request sending, serviceName={}, method={}, url={}', [
       this.serviceName,

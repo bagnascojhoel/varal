@@ -12,6 +12,18 @@ npm run start        # Run the production server
 npm run typecheck    # TypeScript type check (no lint or test scripts exist)
 ```
 
+## Running E2E Tests
+
+After completing a major change (new feature, significant refactor, API change), run the API e2e tests:
+
+```bash
+cd e2e && npm test
+```
+
+This requires the Next.js dev server to be running (Playwright starts it automatically via `webServer` config).
+
+**Exception**: The `rapid-prototyper` agent is exempt from this requirement.
+
 ## Architecture
 
 **"Varal"** — a Next.js 16 (App Router) app that answers "should I
