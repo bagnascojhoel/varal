@@ -149,7 +149,8 @@ export function DayCard({
             style={{ fontSize: '1.4rem', lineHeight: 1, userSelect: 'none' }}
             aria-hidden="true"
           >
-            {WEATHER_EMOJI[forecast.dayWeatherState]}
+            {forecast.dayWeatherState &&
+              WEATHER_EMOJI[forecast.dayWeatherState]}
           </span>
         </div>
 

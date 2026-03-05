@@ -7,6 +7,10 @@ import {
   WasherApplicationService,
 } from '@/core/application-services/washer-application-service';
 import {
+  DryingSessionApplicationService,
+  START_SESSION_APPLICATION_SERVICE,
+} from '@/core/application-services/drying-session-application-service';
+import {
   LOCALITY_REPOSITORY,
   type LocalityRepository,
 } from '@/core/domain/localization-repository';
@@ -14,6 +18,10 @@ import {
   WEATHER_REPOSITORY,
   type WeatherRepository,
 } from '@/core/domain/weather-repository';
+import {
+  DRYING_SESSION_REPOSITORY,
+  type DryingSessionRepository,
+} from '@/core/domain/drying-session-repository';
 import {
   BigDataCloudClientService,
   BIGDATACLOUD_CLIENT_SERVICE,
@@ -31,6 +39,11 @@ import {
   OPENMETEO_REST_CLIENT,
   WeatherRepositoryOpenMeteoAdapter,
 } from '@/core/infrastructure/rest/weather-repository-open-meteo-adapter';
+import {
+  getPrismaClient,
+  PRISMA_CLIENT,
+} from '@/core/infrastructure/prisma/prisma-client';
+import { DryingSessionRepositoryPrismaAdapter } from '@/core/infrastructure/prisma/drying-session-repository-prisma-adapter';
 import { Container } from 'inversify';
 import 'reflect-metadata';
 
@@ -38,11 +51,15 @@ const container = new Container();
 
 container
   .bind(BIGDATACLOUD_REST_CLIENT)
-  .toConstantValue(new RestClientService('BigDataCloud', process.env.BIGDATACLOUD_HOST!));
+  .toConstantValue(
+    new RestClientService('BigDataCloud', process.env.BIGDATACLOUD_HOST!),
+  );
 
 container
   .bind(NOMINATIM_REST_CLIENT)
-  .toConstantValue(new RestClientService('Nominatim', process.env.NOMINATIM_HOST!));
+  .toConstantValue(
+    new RestClientService('Nominatim', process.env.NOMINATIM_HOST!),
+  );
 
 container
   .bind(VIACEP_REST_CLIENT)
@@ -50,7 +67,9 @@ container
 
 container
   .bind(OPENMETEO_REST_CLIENT)
-  .toConstantValue(new RestClientService('Open-Meteo', process.env.OPENMETEO_HOST!));
+  .toConstantValue(
+    new RestClientService('Open-Meteo', process.env.OPENMETEO_HOST!),
+  );
 
 container
   .bind(BIGDATACLOUD_CLIENT_SERVICE)
@@ -80,6 +99,19 @@ container
 container
   .bind<WasherApplicationService>(WASHER_APPLICATION_SERVICE)
   .to(WasherApplicationService)
+  .inSingletonScope();
+
+// Drying Sessions
+container.bind(PRISMA_CLIENT).toConstantValue(getPrismaClient());
+
+container
+  .bind<DryingSessionRepository>(DRYING_SESSION_REPOSITORY)
+  .to(DryingSessionRepositoryPrismaAdapter)
+  .inSingletonScope();
+
+container
+  .bind<DryingSessionApplicationService>(START_SESSION_APPLICATION_SERVICE)
+  .to(DryingSessionApplicationService)
   .inSingletonScope();
 
 export { container };

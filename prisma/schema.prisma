@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model DryingSession {
+  id        Int      @id @default(autoincrement())
+  category  String
+  startedAt DateTime @default(now())
+  endedAt   DateTime?
+
+  @@index([category, startedAt])
+}
