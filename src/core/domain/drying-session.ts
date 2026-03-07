@@ -33,7 +33,9 @@ export class DryingSession {
     const conflicting: ClothingWeightCategory[] = [];
     const created: DryingSession[] = [];
     const now = new Date();
-    const FIVE_MINUTES_MS = 5 * 60 * 1000;
+    const FIVE_MINUTES_MS = process.env.SESSION_CONFLICT_WINDOW_MS
+      ? parseInt(process.env.SESSION_CONFLICT_WINDOW_MS, 10)
+      : 5 * 60 * 1000;
 
     for (const category of categories) {
       // Find if this category has an active session within 5 minutes

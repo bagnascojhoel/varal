@@ -26,6 +26,8 @@ export default defineConfig({
         NOMINATIM_HOST: 'http://localhost:9999/nominatim',
         VIACEP_HOST: 'http://localhost:9999/via-cep',
         BIGDATACLOUD_API_KEY: 'mock-key',
+        SESSION_CONFLICT_WINDOW_MS: '5000',
+        TEST_HELPERS: 'true',
       },
     },
   ],

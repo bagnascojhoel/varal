@@ -1,10 +1,14 @@
-# ADR {{YYYY-MM-DD}} — {{Feature Title}}
+# ADR-{{feature-description}} — {{Feature Title}}
+
+> **File naming convention**: `ADR-<feature-description>.md`
+> Use kebab-case for the feature description, e.g. `ADR-start-drying-session.md`.
 
 ## 1. Title and Metadata
 
 **Title**: {{Short descriptive title}}
 **Status**: 🔄 Draft | ✅ Approved | ❌ Rejected
 **Date**: {{YYYY-MM-DD}}
+**File**: `ADR-{{feature-description}}.md`
 **Decision Makers**: {{@handle}}
 **Related Features**: {{List of related domain entities, services, or components}}
 
@@ -100,6 +104,62 @@
 ### 5.2 {{Additional implementation note, e.g. "ID / Key Format"}}
 
 {{Prose explaining any non-obvious implementation constraint}}
+
+### 5.3 BDD Test Scenarios
+
+```gherkin
+Feature: {{Feature Name}}
+
+  Scenario: 1 - {{Happy path}}
+    Given {{precondition}}
+    When {{action}}
+    Then {{outcome}}
+
+  Scenario: 2 - {{Validation / edge case}}
+    Given {{precondition}}
+    When {{action}}
+    Then {{outcome}}
+
+  Scenario: 3 - {{Error / conflict case}}
+    Given {{precondition}}
+    When {{action}}
+    Then {{outcome}}
+```
+
+### 5.4 E2E API Tests (Playwright)
+
+**Spec file**: `e2e/tests/{{feature-description}}.spec.ts`
+**Client helper**: `e2e/tests/helpers/{{feature-description}}-client.ts`
+
+Create a typed client class (modelled after `RestClientService`) that wraps the Playwright `APIRequestContext`. The client encapsulates all requests and response parsing for the endpoint, keeping test bodies focused on assertions.
+
+```typescript
+// e2e/tests/helpers/{{feature-description}}-client.ts
+export class {{Feature}}ApiClient {
+  constructor(private readonly request: APIRequestContext) {}
+
+  async {{action}}(payload: {{PayloadType}}): Promise<{ status: number; body: {{ResponseType}} }> {
+    const res = await this.request.{{method}}('/api/{{endpoint}}', { data: payload });
+    return { status: res.status(), body: await res.json() };
+  }
+
+  // Add a cleanup method if the endpoint persists data (test-only, env-guarded)
+  async deleteAll(): Promise<void> {
+    await this.request.delete('/api/{{endpoint}}');
+  }
+}
+```
+
+> Note any test infrastructure requirements: DB cleanup strategy, env guards, time-seeding limitations.
+
+#### Test Scenarios
+
+| # | Scenario name | Expected status |
+| - | ------------- | --------------- |
+| 1 | {{Scenario 1}} | {{status}} |
+| 2 | {{Scenario 2}} | {{status}} |
+
+> **Note**: Document any BDD scenario that cannot be exercised through the API alone (e.g. time-based or DB-seeded preconditions) and defer it with a clear explanation.
 
 ---
 

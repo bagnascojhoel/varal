@@ -5,6 +5,7 @@ import {
   StartSessionResponse,
 } from '../_lib/types/sessions';
 import { wrapApi } from '../_lib/wrap-api';
+import { getPrismaClient } from '@/core/infrastructure/prisma/prisma-client';
 
 export const POST = wrapApi(async (req: Request) => {
   // 1. Parse JSON body
@@ -56,4 +57,15 @@ export const POST = wrapApi(async (req: Request) => {
   };
 
   return NextResponse.json(response, { status: statusCode });
+});
+
+export const DELETE = wrapApi(async (_req: Request) => {
+  if (process.env.TEST_HELPERS !== 'true') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
+  const prisma = getPrismaClient();
+  await prisma.dryingSession.deleteMany();
+
+  return NextResponse.json({ deleted: true }, { status: 200 });
 });
