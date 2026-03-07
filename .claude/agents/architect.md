@@ -1,5 +1,5 @@
 ---
-name: feature-architect
+name: architect
 description:
   "Use this agent when a user presents a new product requirement, feature
   request, or significant technical change that needs to be analyzed,
@@ -85,8 +85,7 @@ without user consent.
    on the requirement:
    - `CLAUDE.md` and `.ai/AGENTS.md` for project conventions and agent
      capabilities.
-   - `.ai/docs/ui-ux-rules.md` and `.ai/docs/style-guide.md` for frontend
-     requirements.
+   - `frontend-implementation` skill for frontend requirements.
    - Relevant domain entities in `src/core/domain/`.
    - Relevant ports in `src/core/domain/` (`*-repository.ts` files).
    - Relevant adapters in `src/core/infrastructure/`.
@@ -104,8 +103,8 @@ without user consent.
 
 ### Phase 4 — Write the ADR
 
-1. Use the template at `.ai/templates/ADR.md` as your base structure. Read it if
-   you have not already.
+1. Use the `write-adr` skill. Read the template at
+   `.claude/skills/write-adr/templates/ADR.md`.
 2. Propose **one or more concrete solutions**. For each solution include:
    - **Description**: What is built and how does it fit into the existing
      architecture?
@@ -124,7 +123,8 @@ without user consent.
 ### Phase 5 — Implementation Plan & Task Breakdown
 
 1. After the ADR is approved, use the template at
-   `.ai/templates/implementation-plan.md`. Read it first.
+   `.claude/skills/write-implementation-plan/templates/implementation-plan.md`.
+   Read it first.
 2. Break the approved solution into **independently executable tasks**. Each
    task must:
    - Have a single, clear responsibility.

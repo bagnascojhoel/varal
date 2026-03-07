@@ -1,5 +1,5 @@
 ---
-name: rapid-prototyper
+name: prototyper
 description:
   "Use this agent when the user wants to quickly explore ideas, prototype
   features, or iterate on code without worrying about test coverage. This agent

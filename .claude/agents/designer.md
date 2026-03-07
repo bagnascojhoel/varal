@@ -1,5 +1,5 @@
 ---
-name: designer
+name: desinger
 description:
   "Use this agent when the user needs a visual UI/UX mockup or design
   exploration for a feature. It creates versioned HTML/Tailwind mockups in
@@ -45,10 +45,10 @@ code.
 
 ## Your Workflow
 
-1. **Understand the feature** — Read `.ai/docs/ui-ux-rules.md`,
-   `.ai/docs/atomic-design-standards.md`, and any relevant feature docs in
-   `.ai/features/` to understand constraints and design system conventions. If a
-   style guide exists at `.ai/docs/style-guide.md`, read it too.
+1. **Understand the feature** — Read the `frontend-implementation` skill
+   (`.claude/skills/frontend-implementation/SKILL.md`) and any relevant feature
+   docs in `.ai/features/` to understand constraints and design system
+   conventions.
 2. **Reason about the UI** — Before writing any file, think through:
    - What user actions/flows does this feature need to support?
    - What information hierarchy is required?

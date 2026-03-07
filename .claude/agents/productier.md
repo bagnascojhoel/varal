@@ -1,5 +1,5 @@
 ---
-name: product-owner
+name: productier
 description:
   "Use this agent when a developer needs product ownership guidance,
   requirements specification, feature validation, or strategic product

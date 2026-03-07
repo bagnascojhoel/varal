@@ -122,8 +122,27 @@ Zod → container → response controllers.
 - **Fetch calls in `core/infrastructure/`** — domain and components must not
   call fetch directly.
 - **DI tokens as `Symbol.for()`** — defined alongside their port interface.
-- **Conventional Commits** — all commits follow the standard; see
-  `.ai/docs/semantic-commits.md`.
+- **Conventional Commits** — all commits follow the standard.
+
+## Branch Workflow
+
+At the start of every new work session, ask the user whether they want to switch to a new branch before making any changes.
+
+Branch naming convention:
+- `<developer-username>/<short-work-description>` — for general work (e.g. `bagnascojhoel/add-location-picker`)
+- `<developer-username>/<story-number>` — when there is a numbered US/task (e.g. `bagnascojhoel/US-42`)
+
+Never work directly on `main`.
+
+## Skills
+
+Project knowledge is available as skills in `.claude/skills/`. Key skills:
+- `frontend-implementation` — theming, colors, typography, buttons, accessibility
+- `ports-and-adapters` — architecture, DI wiring, adding new features
+- `write-adr` — ADR template and writing guide
+- `write-implementation-plan` — implementation plan template and guide
+- `commit-message` — conventional commits quick-reference
+- `product-context` — product vision, audience, scope boundaries, PRD template
 
 ## Branch Workflow
 
@@ -137,13 +156,7 @@ Never work directly on `main`.
 
 ## AI Agent Documentation
 
-The `.ai/` directory contains project-specific standards and documentation for
-AI agents. See `.ai/AGENTS.md` for the full directory overview.
-
-**Before implementing a frontend feature**: read `.ai/docs/ui-ux-rules.md` and
-`.ai/docs/style-guide.md`.
-
-**Before planning a multi-file feature**: use `.ai/templates/ADR.md` and
-`.ai/templates/implementation-plan.md`.
+The `.ai/` directory contains per-feature ADRs, design mockups, and product docs.
+See `.ai/AGENTS.md` for the directory overview.
 
 **Feature decisions are persisted in** `.ai/features/<feature-name>/`.
