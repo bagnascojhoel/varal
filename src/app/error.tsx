@@ -37,7 +37,9 @@ export default function Error({
           {t('title')}
         </p>
         <p className="text-sm font-light text-white/[52%] day:text-ink/[62%] text-center">
-          {error.digest ? t('digest', { digest: error.digest }) : t('tryAgainLater')}
+          {error.digest
+            ? t('digest', { digest: error.digest })
+            : t('tryAgainLater')}
         </p>
         <button
           onClick={reset}

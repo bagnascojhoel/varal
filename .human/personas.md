@@ -42,7 +42,8 @@ the backoffice.
 
 ## Laundry Expert
 
-> _"I'm tracking how long my clothes really take to dry under different conditions."_
+> _"I'm tracking how long my clothes really take to dry under different
+> conditions."_
 
 ### Profile
 
@@ -50,8 +51,8 @@ the backoffice.
 - **Access**: Backoffice only (not the public app UI).
 - **Domain knowledge**: High. Understands fabrics, drying conditions, and the
   relationship between weather variables and drying time.
-- **Technical literacy**: Moderate. Comfortable with forms and dashboards;
-  does not need a developer-level interface.
+- **Technical literacy**: Moderate. Comfortable with forms and dashboards; does
+  not need a developer-level interface.
 
 ### Goals
 
@@ -84,11 +85,11 @@ over time.
 
 ## Persona-to-Feature Mapping
 
-| Feature area              | Washer | Laundry Expert |
-|---------------------------|:------:|:--------------:|
-| Wash Forecast             | ✓      |                |
-| Fabric & Garment Awareness| ✓      |                |
-| Label Decoder             | ✓      |                |
-| Laundry Knowledge Base    | ✓      |                |
-| Drying Session Tracker    |        | ✓              |
-| Threshold Management      |        | ✓ _(future)_   |
+| Feature area               | Washer | Laundry Expert |
+| -------------------------- | :----: | :------------: |
+| Wash Forecast              |   ✓    |                |
+| Fabric & Garment Awareness |   ✓    |                |
+| Label Decoder              |   ✓    |                |
+| Laundry Knowledge Base     |   ✓    |                |
+| Drying Session Tracker     |        |       ✓        |
+| Threshold Management       |        |  ✓ _(future)_  |

@@ -6,9 +6,14 @@ import {
 } from '@/core/domain/localization-repository';
 import { Washer } from '@/core/domain/washer';
 import { WasherSetupCommand } from '../domain/washer-setup-command';
-import { determineWashDecision, type WashDecision } from '../domain/wash-decision';
+import {
+  determineWashDecision,
+  type WashDecision,
+} from '../domain/wash-decision';
 
-export const WASHER_APPLICATION_SERVICE = Symbol.for('WasherApplicationService');
+export const WASHER_APPLICATION_SERVICE = Symbol.for(
+  'WasherApplicationService',
+);
 
 @injectable()
 export class WasherApplicationService {
@@ -22,7 +27,12 @@ export class WasherApplicationService {
     return new Washer(location);
   }
 
-  getWashRecommendations(dayForecasts: Array<{ precipitationProbabilityMax: number; precipitationSum: number }>): WashDecision[] {
+  getWashRecommendations(
+    dayForecasts: Array<{
+      precipitationProbabilityMax: number;
+      precipitationSum: number;
+    }>,
+  ): WashDecision[] {
     return dayForecasts.map((day) =>
       determineWashDecision(
         day.precipitationProbabilityMax,

@@ -1,6 +1,7 @@
 # PRD: Drying Session Tracker (Backoffice)
 
-> **Status:** Draft **Author:** bagnascojhoel **Date:** 2026-02-28 **Version:** 0.1
+> **Status:** Draft **Author:** bagnascojhoel **Date:** 2026-02-28 **Version:**
+> 0.1
 
 ---
 
@@ -12,6 +13,7 @@ chosen by intuition — no empirical dataset links actual weather conditions to
 real drying outcomes.
 
 Without real data:
+
 - Accuracy cannot be measured objectively.
 - Thresholds cannot be tuned or replaced with learned models.
 - Edge cases (high humidity but no rain, strong wind, covered balcony) are
@@ -26,11 +28,11 @@ recommendation logic.
 
 ## 2. Goals & Success Metrics
 
-| Goal                           | Metric                                          | Target                      |
-| ------------------------------ | ----------------------------------------------- | --------------------------- |
-| Build labelled dataset         | Number of completed sessions                    | ≥ 50 in first 3 months      |
-| Rich environmental context     | Weather snapshots per session (≥ 2 sources)     | ≥ 2 snapshots at start + end |
-| Complete per-category outcomes | Sessions with driedAt recorded for all categories selected | 100%           |
+| Goal                           | Metric                                                     | Target                       |
+| ------------------------------ | ---------------------------------------------------------- | ---------------------------- |
+| Build labelled dataset         | Number of completed sessions                               | ≥ 50 in first 3 months       |
+| Rich environmental context     | Weather snapshots per session (≥ 2 sources)                | ≥ 2 snapshots at start + end |
+| Complete per-category outcomes | Sessions with driedAt recorded for all categories selected | 100%                         |
 
 ---
 
@@ -41,8 +43,8 @@ recommendation logic.
 - **Context:** Uses the app regularly to decide when to hang laundry; has direct
   access to the `/backoffice` route.
 - **Motivation:** Wants the app's recommendations to be grounded in real
-  observations rather than guesswork; willing to invest effort in logging sessions
-  accurately.
+  observations rather than guesswork; willing to invest effort in logging
+  sessions accurately.
 - **Constraints:** Single user, no authentication overhead warranted for MVP.
   Session logging must be low-friction — otherwise it won't happen consistently.
 
@@ -50,17 +52,18 @@ recommendation logic.
 
 ## 4. User Stories
 
-_See `user-stories.md` — Feature: Drying Session Tracker (Backoffice), stories 46–52._
+_See `user-stories.md` — Feature: Drying Session Tracker (Backoffice), stories
+46–52._
 
-| Priority | Story                                                                                     |
-| -------- | ----------------------------------------------------------------------------------------- |
-| Must     | Start a session by selecting clothing weight categories (story 46)                        |
-| Must     | Auto-record weather conditions every 15 min from multiple sources (story 47)              |
-| Must     | Mark individual categories as dried during the session (story 50)                         |
-| Must     | End a session and record collection time + per-category dried times (story 51)            |
-| Must     | Sessions survive a page refresh (story 52)                                                |
-| Should   | Per-category elapsed timer visible in the UI (story 48)                                   |
-| Should   | 30-minute browser notification to check clothes (story 49)                                |
+| Priority | Story                                                                          |
+| -------- | ------------------------------------------------------------------------------ |
+| Must     | Start a session by selecting clothing weight categories (story 46)             |
+| Must     | Auto-record weather conditions every 15 min from multiple sources (story 47)   |
+| Must     | Mark individual categories as dried during the session (story 50)              |
+| Must     | End a session and record collection time + per-category dried times (story 51) |
+| Must     | Sessions survive a page refresh (story 52)                                     |
+| Should   | Per-category elapsed timer visible in the UI (story 48)                        |
+| Should   | 30-minute browser notification to check clothes (story 49)                     |
 
 ---
 
@@ -94,8 +97,8 @@ _See `user-stories.md` — Feature: Drying Session Tracker (Backoffice), stories
 
 ### 6.1 Session Lifecycle
 
-- **Input:** User clicks "Start Session" and selects at least one clothing weight
-  category.
+- **Input:** User clicks "Start Session" and selects at least one clothing
+  weight category.
 - **Behavior:**
   - A new session record is created in the database with `startedAt = now()` and
     `status = ACTIVE`.
@@ -124,8 +127,8 @@ _See `user-stories.md` — Feature: Drying Session Tracker (Backoffice), stories
 - **Input:** Client-side polling every 15 minutes while the session is active.
 - **Behavior:**
   - The client calls a server endpoint that fans out to all configured weather
-    sources (Open-Meteo current conditions, OpenWeatherMap, WeatherAPI.com) using
-    Inversify `@multiInject`.
+    sources (Open-Meteo current conditions, OpenWeatherMap, WeatherAPI.com)
+    using Inversify `@multiInject`.
   - Each source response is stored as a separate snapshot record linked to the
     session, tagged with the source name and `recordedAt = now()`.
   - If a source fails, that snapshot is skipped/logged but polling continues.
@@ -156,7 +159,8 @@ _See `user-stories.md` — Feature: Drying Session Tracker (Backoffice), stories
     1. "When did you collect the clothes?" — options: "Just now" or "Earlier"
        (time picker, defaults to now minus 15 min).
     2. For each category not yet marked as dried: "Did this dry?" — Yes (records
-       `driedAt` as the collection time) or "Not dried" (records `driedAt = null`).
+       `driedAt` as the collection time) or "Not dried" (records
+       `driedAt = null`).
   - On confirmation, the session record is updated: `endedAt = collectedAt`,
     `status = COMPLETED`.
   - `localStorage` session ID is cleared.
@@ -207,31 +211,31 @@ Mockup to be created in `.ai/design/` before implementation begins. Key screens:
   cron or background job needed).
 - **Session persistence:** Active session ID stored in `localStorage`; on mount,
   the page checks for an existing active session and resumes it.
-- **API route:** `POST /api/backoffice/sessions` (start), `PATCH
-  /api/backoffice/sessions/[id]` (end), `POST
-  /api/backoffice/sessions/[id]/snapshots` (record snapshot).
+- **API route:** `POST /api/backoffice/sessions` (start),
+  `PATCH /api/backoffice/sessions/[id]` (end),
+  `POST /api/backoffice/sessions/[id]/snapshots` (record snapshot).
 
 ---
 
 ## 10. Risks & Open Questions
 
-| Risk / Question                                            | Mitigation / Answer                                                              |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| OpenWeatherMap / WeatherAPI free tier call limits          | Polling every 15 min ≈ 96 calls/day — well within free tier limits for both APIs |
-| User forgets to end the session (leaves browser open)      | 30-min notifications serve as reminders; session recovery is non-destructive     |
-| Weather source API keys in environment variables           | Store in `.env.local`; document required vars in README                          |
-| Data quality if user records times imprecisely             | Acceptable for MVP; approximate data is better than no data                      |
+| Risk / Question                                       | Mitigation / Answer                                                              |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------- |
+| OpenWeatherMap / WeatherAPI free tier call limits     | Polling every 15 min ≈ 96 calls/day — well within free tier limits for both APIs |
+| User forgets to end the session (leaves browser open) | 30-min notifications serve as reminders; session recovery is non-destructive     |
+| Weather source API keys in environment variables      | Store in `.env.local`; document required vars in README                          |
+| Data quality if user records times imprecisely        | Acceptable for MVP; approximate data is better than no data                      |
 
 ---
 
 ## 11. Timeline & Milestones
 
-| Milestone                            | Target Date | Notes                                     |
-| ------------------------------------ | ----------- | ----------------------------------------- |
-| Design mockups approved              |             | Prerequisite for front-end implementation |
-| MVP implementation complete          |             |                                           |
-| First 10 sessions recorded           |             | Smoke-test data quality                   |
-| 50 sessions collected                |             | Dataset sufficient for initial analysis   |
+| Milestone                   | Target Date | Notes                                     |
+| --------------------------- | ----------- | ----------------------------------------- |
+| Design mockups approved     |             | Prerequisite for front-end implementation |
+| MVP implementation complete |             |                                           |
+| First 10 sessions recorded  |             | Smoke-test data quality                   |
+| 50 sessions collected       |             | Dataset sufficient for initial analysis   |
 
 ---
 

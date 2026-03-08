@@ -2,9 +2,10 @@
 
 ## Instructions for AI Agents
 
-This template guides you in creating comprehensive implementation plans for new features or
-architectural changes in the Next.js portfolio website project. Each section serves a specific
-purpose and should be filled with thorough analysis and actionable details.
+This template guides you in creating comprehensive implementation plans for new
+features or architectural changes in the Next.js portfolio website project. Each
+section serves a specific purpose and should be filled with thorough analysis
+and actionable details.
 
 **Key Principles:**
 
@@ -231,13 +232,15 @@ purpose and should be filled with thorough analysis and actionable details.
 **Before starting implementation:**
 
 1. Run semantic search to find similar patterns in the codebase
-2. Validate against `.ai/ui-ux-rules.md` and `.github/instructions/*.instructions.md`
+2. Validate against `.ai/ui-ux-rules.md` and
+   `.github/instructions/*.instructions.md`
 3. Check existing tests for patterns to follow
 4. Use MCP tools (Context7) for library-specific documentation
 
 **During implementation:**
 
-1. Follow the solution section order (Domain → Infrastructure → Application → UI → Tests)
+1. Follow the solution section order (Domain → Infrastructure → Application → UI
+   → Tests)
 2. Run tests after completing each layer
 3. Update this document if scope changes
 

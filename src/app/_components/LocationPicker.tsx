@@ -17,7 +17,10 @@ export function LocationPicker() {
   const cep = useCep(washers, onResolved);
   const savedLocation =
     washers.state.status === 'success'
-      ? { lat: String(washers.state.data.lat), lon: String(washers.state.data.lon) }
+      ? {
+          lat: String(washers.state.data.lat),
+          lon: String(washers.state.data.lon),
+        }
       : null;
   const isLoading = gps.loading() || cep.loading();
 

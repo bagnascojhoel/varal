@@ -44,8 +44,8 @@ A web app that:
   language explanations.
 - **Laundry knowledge base:** Answers common questions — powder vs. liquid soap,
   how to sort clothes, wash frequency, water temperature per fabric, stain
-  removal tips, when to use laundry bags, which products to use for each type
-  of garment, and why to avoid certain products on delicate fabrics.
+  removal tips, when to use laundry bags, which products to use for each type of
+  garment, and why to avoid certain products on delicate fabrics.
 
 ## 5. Channels
 

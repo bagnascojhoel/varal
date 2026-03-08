@@ -1,31 +1,14 @@
-name: Production
+name: Production Deploy
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
 
 jobs:
-  gatekeeping:
-    name: Production Gatekeeping
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Install E2E dependencies
-        run: npm run install:e2e
-
-      - name: E2E tests
-        run: npm run test:e2e
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

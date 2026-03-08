@@ -3,7 +3,9 @@ import { ExternalServiceError } from '@/core/domain/external-service-error';
 import type { RestClient } from '@/core/infrastructure/rest/rest-client';
 import { inject, injectable } from 'inversify';
 
-export const BIGDATACLOUD_CLIENT_SERVICE = Symbol.for('BigDataCloudClientService');
+export const BIGDATACLOUD_CLIENT_SERVICE = Symbol.for(
+  'BigDataCloudClientService',
+);
 export const BIGDATACLOUD_REST_CLIENT = Symbol.for('BigDataCloudRestClient');
 export const NOMINATIM_REST_CLIENT = Symbol.for('NominatimRestClient');
 
@@ -55,7 +57,8 @@ export interface BigDataCloudLocalityResponse extends BigDataCloudLocationRespon
 @injectable()
 export class BigDataCloudClientService {
   constructor(
-    @inject(BIGDATACLOUD_REST_CLIENT) private readonly bigDataCloudClient: RestClient,
+    @inject(BIGDATACLOUD_REST_CLIENT)
+    private readonly bigDataCloudClient: RestClient,
     @inject(NOMINATIM_REST_CLIENT) private readonly nominatimClient: RestClient,
   ) {}
 

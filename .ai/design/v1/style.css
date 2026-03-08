@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap');
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -10,16 +12,35 @@ html,
 body {
   height: 100%;
   min-height: 100svh;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* ─── Sky background ─── */
 
 .sky {
   background:
-    radial-gradient(ellipse 60% 50% at 70% 15%, rgba(80, 100, 160, 0.5) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 60% at 15% 65%, rgba(40, 50, 110, 0.55) 0%, transparent 70%),
-    linear-gradient(170deg, #0b0d19 0%, #131726 25%, #1c2033 50%, #20243e 75%, #181b2d 100%);
+    radial-gradient(
+      ellipse 60% 50% at 70% 15%,
+      rgba(80, 100, 160, 0.5) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 40% 60% at 15% 65%,
+      rgba(40, 50, 110, 0.55) 0%,
+      transparent 70%
+    ),
+    linear-gradient(
+      170deg,
+      #0b0d19 0%,
+      #131726 25%,
+      #1c2033 50%,
+      #20243e 75%,
+      #181b2d 100%
+    );
   position: relative;
   overflow: hidden;
 }
@@ -76,9 +97,27 @@ body {
 
 /* ─── Card top accent bars ─── */
 
-.accent-red   { background: linear-gradient(90deg, rgba(248, 113, 113, 0.9), rgba(239,  68,  68, 0.15)); }
-.accent-amber { background: linear-gradient(90deg, rgba(251, 191,  36, 0.9), rgba(245, 158,  11, 0.15)); }
-.accent-sky   { background: linear-gradient(90deg, rgba( 56, 189, 248, 0.9), rgba( 34, 211, 238, 0.15)); }
+.accent-red {
+  background: linear-gradient(
+    90deg,
+    rgba(248, 113, 113, 0.9),
+    rgba(239, 68, 68, 0.15)
+  );
+}
+.accent-amber {
+  background: linear-gradient(
+    90deg,
+    rgba(251, 191, 36, 0.9),
+    rgba(245, 158, 11, 0.15)
+  );
+}
+.accent-sky {
+  background: linear-gradient(
+    90deg,
+    rgba(56, 189, 248, 0.9),
+    rgba(34, 211, 238, 0.15)
+  );
+}
 
 /* ─── Cards grid ─── */
 
@@ -138,24 +177,42 @@ body {
 }
 
 /* Mobile sizes */
-.card-today    .answer { font-size: 3.2rem; }
-.card-secondary .answer { font-size: 2.4rem; }
+.card-today .answer {
+  font-size: 3.2rem;
+}
+.card-secondary .answer {
+  font-size: 2.4rem;
+}
 
 /* Tablet+ */
 @media (min-width: 640px) {
-  .card-today    .answer { font-size: 3.8rem; }
-  .card-secondary .answer { font-size: 3rem; }
+  .card-today .answer {
+    font-size: 3.8rem;
+  }
+  .card-secondary .answer {
+    font-size: 3rem;
+  }
 }
 
 /* Desktop */
 @media (min-width: 1024px) {
-  .card-today    .answer { font-size: 4rem; }
-  .card-secondary .answer { font-size: 3.5rem; }
+  .card-today .answer {
+    font-size: 4rem;
+  }
+  .card-secondary .answer {
+    font-size: 3.5rem;
+  }
 }
 
-.answer-no    { color: rgb(252, 165, 165); }
-.answer-yes   { color: rgb(253, 230, 138); }
-.answer-clear { color: rgb(125, 211, 252); }
+.answer-no {
+  color: rgb(252, 165, 165);
+}
+.answer-yes {
+  color: rgb(253, 230, 138);
+}
+.answer-clear {
+  color: rgb(125, 211, 252);
+}
 
 .sub-text {
   color: rgba(255, 255, 255, 0.32);
@@ -224,10 +281,26 @@ body {
   }
 }
 
-.pill-no     { background: rgba(239,  68,  68, 0.15); color: rgb(252, 165, 165); border: 1px solid rgba(239,  68,  68, 0.25); }
-.pill-yes    { background: rgba(251, 191,  36, 0.15); color: rgb(253, 230, 138); border: 1px solid rgba(251, 191,  36, 0.25); }
-.pill-clear  { background: rgba( 56, 189, 248, 0.15); color: rgb(125, 211, 252); border: 1px solid rgba( 56, 189, 248, 0.25); }
-.pill-unsure { background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.38); border: 1px solid rgba(255, 255, 255, 0.10); }
+.pill-no {
+  background: rgba(239, 68, 68, 0.15);
+  color: rgb(252, 165, 165);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.pill-yes {
+  background: rgba(251, 191, 36, 0.15);
+  color: rgb(253, 230, 138);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+.pill-clear {
+  background: rgba(56, 189, 248, 0.15);
+  color: rgb(125, 211, 252);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+.pill-unsure {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
 /* ─── Footer ─── */
 
@@ -267,7 +340,10 @@ body {
   cursor: pointer;
   font-size: 1rem;
   line-height: 1;
-  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.15s;
 }
 
 @media (min-width: 1024px) {
@@ -319,11 +395,19 @@ body {
   transition: opacity 0.15s;
 }
 
-.t-bar:hover { opacity: 0.72; }
+.t-bar:hover {
+  opacity: 0.72;
+}
 
-.t-good { background: rgba(56,  189, 248, 0.60); }
-.t-warn { background: rgba(251, 191,  36, 0.65); }
-.t-bad  { background: rgba(239,  68,  68, 0.65); }
+.t-good {
+  background: rgba(56, 189, 248, 0.6);
+}
+.t-warn {
+  background: rgba(251, 191, 36, 0.65);
+}
+.t-bad {
+  background: rgba(239, 68, 68, 0.65);
+}
 
 .timeline-labels {
   display: flex;
@@ -341,9 +425,24 @@ body {
 
 .sky.light {
   background:
-    radial-gradient(ellipse 60% 50% at 70% 15%, rgba(180, 215, 255, 0.55) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 60% at 15% 65%, rgba(155, 200, 250, 0.4) 0%, transparent 70%),
-    linear-gradient(170deg, #aac8f0 0%, #bed5f5 25%, #cfe4fa 50%, #dceef8 75%, #c5dff5 100%);
+    radial-gradient(
+      ellipse 60% 50% at 70% 15%,
+      rgba(180, 215, 255, 0.55) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 40% 60% at 15% 65%,
+      rgba(155, 200, 250, 0.4) 0%,
+      transparent 70%
+    ),
+    linear-gradient(
+      170deg,
+      #aac8f0 0%,
+      #bed5f5 25%,
+      #cfe4fa 50%,
+      #dceef8 75%,
+      #c5dff5 100%
+    );
 }
 
 .sky.light #scrim {
@@ -411,17 +510,23 @@ body {
 }
 
 .sky.light .timeline-caption {
-  color: rgba(18, 48, 100, 0.30);
+  color: rgba(18, 48, 100, 0.3);
 }
 
 .sky.light .timeline-bars {
-  border-bottom-color: rgba(18, 48, 100, 0.10);
+  border-bottom-color: rgba(18, 48, 100, 0.1);
 }
 
 .sky.light .timeline-label {
   color: rgba(18, 48, 100, 0.32);
 }
 
-.sky.light .t-good { background: rgba(2,  132, 199, 0.45); }
-.sky.light .t-warn { background: rgba(217, 119,  6, 0.50); }
-.sky.light .t-bad  { background: rgba(185,  28, 28, 0.45); }
+.sky.light .t-good {
+  background: rgba(2, 132, 199, 0.45);
+}
+.sky.light .t-warn {
+  background: rgba(217, 119, 6, 0.5);
+}
+.sky.light .t-bad {
+  background: rgba(185, 28, 28, 0.45);
+}

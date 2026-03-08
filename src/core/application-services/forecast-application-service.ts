@@ -55,7 +55,9 @@ export class ForecastApplicationService {
     );
     const timeState = determineTimeState(washer.locality.zonedHour());
     const dayEnded = !washer.locality.isStillUsable(washer.locality.zonedNow());
-    const relevantForecasts = dayEnded ? forecasts.slice(1) : forecasts.slice(0, 4);
+    const relevantForecasts = dayEnded
+      ? forecasts.slice(1)
+      : forecasts.slice(0, 4);
     return {
       forecasts: relevantForecasts.map((f) => this.toDto(f)),
       cityName: washer.locality.cityName,
@@ -75,8 +77,12 @@ export class ForecastApplicationService {
     return {
       date,
       phrase: pickPhrase(canWash, date),
-      morningWindow: determineWindowState(sliceWindow(DayWindow.MORNING, hourly)),
-      afternoonWindow: determineWindowState(sliceWindow(DayWindow.AFTERNOON, hourly)),
+      morningWindow: determineWindowState(
+        sliceWindow(DayWindow.MORNING, hourly),
+      ),
+      afternoonWindow: determineWindowState(
+        sliceWindow(DayWindow.AFTERNOON, hourly),
+      ),
       dayWeatherState: dayForecast.dayWeatherState,
       hourlyPrecipitationProbability: hourly,
       isStillUsableNow: dayForecast.isStillUsableNow(),

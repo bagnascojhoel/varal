@@ -7,10 +7,18 @@ export class MockedRestClientService implements RestClient {
     this.responses.set(pathPattern, body);
   }
 
-  async get<T>(path: string): Promise<T> { return this.resolve(path); }
-  async post<T>(path: string): Promise<T> { return this.resolve(path); }
-  async put<T>(path: string): Promise<T> { return this.resolve(path); }
-  async patch<T>(path: string): Promise<T> { return this.resolve(path); }
+  async get<T>(path: string): Promise<T> {
+    return this.resolve(path);
+  }
+  async post<T>(path: string): Promise<T> {
+    return this.resolve(path);
+  }
+  async put<T>(path: string): Promise<T> {
+    return this.resolve(path);
+  }
+  async patch<T>(path: string): Promise<T> {
+    return this.resolve(path);
+  }
 
   private resolve<T>(path: string): T {
     for (const [pattern, body] of this.responses)

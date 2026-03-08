@@ -22,7 +22,10 @@ export const GET = wrapApi(async function (request: Request) {
   }
 
   const { latitude, longitude } = parsed.data;
-  const data = await ApplicationServices.getWashRecommendation(latitude, longitude);
+  const data = await ApplicationServices.getWashRecommendation(
+    latitude,
+    longitude,
+  );
 
   return NextResponse.json(data);
 });

@@ -1,24 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>[DESIGN MOCKUP] Varal — v2 GIF Background + Carousel + Clock</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- [DESIGN NOTE] This is a static mockup. Do not ship this file. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; min-height: 100svh; font-family: 'Inter', system-ui, sans-serif; }
-    body { position: relative; overflow-x: hidden; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>[DESIGN MOCKUP] Varal — v2 GIF Background + Carousel + Clock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- [DESIGN NOTE] This is a static mockup. Do not ship this file. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        min-height: 100svh;
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+      body {
+        position: relative;
+        overflow-x: hidden;
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        WEATHER GIF BACKGROUND
        ════════════════════════════════════════════════ */
 
-    /* [IMPLEMENT] Component: WeatherBackground
+      /* [IMPLEMENT] Component: WeatherBackground
        Props: weatherState derived from today's API data and set as body[data-weather]
          - "rainy"  → precipitationProbabilityMax ≥ 40 OR precipitationSum ≥ 1mm
          - "cloudy" → precipitationProbabilityMax 20–39%
@@ -31,84 +48,115 @@
          - sunny.gif  → giphy.com/explore "sunny blue sky timelapse loop"
        The CSS fallback gradient (::before pseudo) always renders underneath the GIF. */
 
-    .weather-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-    }
+      .weather-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+      }
 
-    /* Fallback gradients — visible even when GIF src is a local placeholder */
-    body[data-weather="rainy"]  .weather-bg::before,
-    body:not([data-weather])    .weather-bg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(170deg, #0b0d19 0%, #131726 25%, #1c2033 50%, #20243e 75%, #181b2d 100%);
-    }
-    body[data-weather="cloudy"] .weather-bg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(170deg, #1a1e2e 0%, #252a3d 40%, #2d3350 100%);
-    }
-    body[data-weather="sunny"]  .weather-bg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(170deg, #aac8f0 0%, #bed5f5 25%, #cfe4fa 50%, #dceef8 75%, #c5dff5 100%);
-    }
+      /* Fallback gradients — visible even when GIF src is a local placeholder */
+      body[data-weather='rainy'] .weather-bg::before,
+      body:not([data-weather]) .weather-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          170deg,
+          #0b0d19 0%,
+          #131726 25%,
+          #1c2033 50%,
+          #20243e 75%,
+          #181b2d 100%
+        );
+      }
+      body[data-weather='cloudy'] .weather-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          170deg,
+          #1a1e2e 0%,
+          #252a3d 40%,
+          #2d3350 100%
+        );
+      }
+      body[data-weather='sunny'] .weather-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          170deg,
+          #aac8f0 0%,
+          #bed5f5 25%,
+          #cfe4fa 50%,
+          #dceef8 75%,
+          #c5dff5 100%
+        );
+      }
 
-    /* [STYLE] GIF fills the layer at partial opacity so fallback gradient shows through.
+      /* [STYLE] GIF fills the layer at partial opacity so fallback gradient shows through.
        Hides broken-image icon when src is a bare filename (no http//) — fallback takes over. */
-    .weather-gif {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.58;
-    }
-    .weather-gif[src]:not([src^="http"]):not([src^="/"]):not([src^="data"]) {
-      opacity: 0;
-    }
+      .weather-gif {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.58;
+      }
+      .weather-gif[src]:not([src^='http']):not([src^='/']):not([src^='data']) {
+        opacity: 0;
+      }
 
-    /* [STYLE] Dim overlay over the GIF for card readability. Adjust per weather state. */
-    .weather-scrim {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-    }
-    body[data-weather="rainy"]  .weather-scrim,
-    body:not([data-weather])    .weather-scrim { background: rgba(5, 7, 20, 0.45); }
-    body[data-weather="cloudy"] .weather-scrim { background: rgba(5, 7, 20, 0.35); }
-    body[data-weather="sunny"]  .weather-scrim { background: rgba(255, 255, 255, 0.12); }
+      /* [STYLE] Dim overlay over the GIF for card readability. Adjust per weather state. */
+      .weather-scrim {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+      body[data-weather='rainy'] .weather-scrim,
+      body:not([data-weather]) .weather-scrim {
+        background: rgba(5, 7, 20, 0.45);
+      }
+      body[data-weather='cloudy'] .weather-scrim {
+        background: rgba(5, 7, 20, 0.35);
+      }
+      body[data-weather='sunny'] .weather-scrim {
+        background: rgba(255, 255, 255, 0.12);
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        GLASS SURFACES
        ════════════════════════════════════════════════ */
 
-    .glass {
-      background: rgba(255, 255, 255, 0.07);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-    }
-    .glass-inner {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    body[data-weather="sunny"] .glass       { background: rgba(255,255,255,0.42); border-color: rgba(255,255,255,0.72); }
-    body[data-weather="sunny"] .glass-inner { background: rgba(255,255,255,0.38); border-color: rgba(255,255,255,0.55); }
+      .glass {
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+      .glass-inner {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      body[data-weather='sunny'] .glass {
+        background: rgba(255, 255, 255, 0.42);
+        border-color: rgba(255, 255, 255, 0.72);
+      }
+      body[data-weather='sunny'] .glass-inner {
+        background: rgba(255, 255, 255, 0.38);
+        border-color: rgba(255, 255, 255, 0.55);
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        APP HEADER
        ════════════════════════════════════════════════ */
 
-    /* [IMPLEMENT] Component: AppHeader
+      /* [IMPLEMENT] Component: AppHeader
        Layout: space-between row.
          Left  → App title (h1, weight 300) + location subtitle below it.
          Right → LiveClock displaying HH:MM, updated every second.
@@ -117,687 +165,1085 @@
          Use Open-Meteo or a free reverse geocoding API (nominatim.openstreetmap.org).
          Show "—" until resolved. */
 
-    .app-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      padding-bottom: 1.5rem;
-    }
+      .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-bottom: 1.5rem;
+      }
 
-    .header-app-title {
-      font-size: 1.1rem;
-      font-weight: 300;
-      letter-spacing: -0.01em;
-      line-height: 1.2;
-      color: rgba(255,255,255,0.90);
-    }
+      .header-app-title {
+        font-size: 1.1rem;
+        font-weight: 300;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        color: rgba(255, 255, 255, 0.9);
+      }
 
-    /* [IMPLEMENT] Subtitle: resolved city + country code after geolocation.
+      /* [IMPLEMENT] Subtitle: resolved city + country code after geolocation.
        Example: "São Paulo, BR". Hide if not resolved yet — use CSS visibility, not display:none,
        to prevent layout jump. */
-    .header-subtitle {
-      color: rgba(255,255,255,0.32);
-      font-size: 0.62rem;
-      font-weight: 300;
-      letter-spacing: 0.04em;
-      margin-top: 0.2rem;
-    }
+      .header-subtitle {
+        color: rgba(255, 255, 255, 0.32);
+        font-size: 0.62rem;
+        font-weight: 300;
+        letter-spacing: 0.04em;
+        margin-top: 0.2rem;
+      }
 
-    /* [IMPLEMENT] Component: LiveClock
+      /* [IMPLEMENT] Component: LiveClock
        Behavior: setInterval(1000) to update inner text.
        Format: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
        Accessibility: set datetime attribute to full ISO string on each tick.
        Font: tabular-nums so colon doesn't cause layout shift each second. */
-    .header-time {
-      font-size: 2.2rem;
-      font-weight: 200;
-      line-height: 1;
-      letter-spacing: -0.03em;
-      color: rgba(255,255,255,0.88);
-      font-variant-numeric: tabular-nums;
-    }
+      .header-time {
+        font-size: 2.2rem;
+        font-weight: 200;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        color: rgba(255, 255, 255, 0.88);
+        font-variant-numeric: tabular-nums;
+      }
 
-    body[data-weather="sunny"] .header-app-title { color: rgba(18,48,100,0.88); }
-    body[data-weather="sunny"] .header-subtitle   { color: rgba(18,48,100,0.45); }
-    body[data-weather="sunny"] .header-time        { color: rgba(18,48,100,0.82); }
+      body[data-weather='sunny'] .header-app-title {
+        color: rgba(18, 48, 100, 0.88);
+      }
+      body[data-weather='sunny'] .header-subtitle {
+        color: rgba(18, 48, 100, 0.45);
+      }
+      body[data-weather='sunny'] .header-time {
+        color: rgba(18, 48, 100, 0.82);
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        CARDS: CAROUSEL (mobile) / GRID (desktop)
        ════════════════════════════════════════════════ */
 
-    /* [IMPLEMENT] Component: DayCarousel
+      /* [IMPLEMENT] Component: DayCarousel
        Mobile  (<1024px): horizontal scroll-snap carousel, one card per screen.
        Desktop (≥1024px): CSS grid with 3 columns (1.15fr 1fr 1fr), no overflow.
        Today card is always the first (leftmost) in both layouts. */
 
-    .cards-track {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      gap: 0.75rem;
-      /* Right padding so last card snaps cleanly away from edge */
-      padding-right: 1.5rem;
-      /* Hide scrollbar — navigation via dots */
-      scrollbar-width: none;
-    }
-    .cards-track::-webkit-scrollbar { display: none; }
-
-    /* [STYLE] Each card: fixed width on mobile so only one fills the screen at a time.
-       snap-align: start so the card's left edge aligns with the track's left edge. */
-    .card {
-      flex: 0 0 min(88vw, 320px);
-      scroll-snap-align: start;
-      transition: transform 0.3s ease;
-    }
-
-    /* Desktop: revert to grid */
-    @media (min-width: 1024px) {
       .cards-track {
-        display: grid;
-        grid-template-columns: 1.15fr 1fr 1fr;
-        gap: 1rem;
-        overflow-x: visible;
-        scroll-snap-type: none;
-        padding-right: 0;
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        gap: 0.75rem;
+        /* Right padding so last card snaps cleanly away from edge */
+        padding-right: 1.5rem;
+        /* Hide scrollbar — navigation via dots */
+        scrollbar-width: none;
       }
-      .card {
-        flex: none;
+      .cards-track::-webkit-scrollbar {
+        display: none;
       }
-      .card:hover { transform: translateY(-3px); }
-    }
 
-    /* ════════════════════════════════════════════════
+      /* [STYLE] Each card: fixed width on mobile so only one fills the screen at a time.
+       snap-align: start so the card's left edge aligns with the track's left edge. */
+      .card {
+        flex: 0 0 min(88vw, 320px);
+        scroll-snap-align: start;
+        transition: transform 0.3s ease;
+      }
+
+      /* Desktop: revert to grid */
+      @media (min-width: 1024px) {
+        .cards-track {
+          display: grid;
+          grid-template-columns: 1.15fr 1fr 1fr;
+          gap: 1rem;
+          overflow-x: visible;
+          scroll-snap-type: none;
+          padding-right: 0;
+        }
+        .card {
+          flex: none;
+        }
+        .card:hover {
+          transform: translateY(-3px);
+        }
+      }
+
+      /* ════════════════════════════════════════════════
        CAROUSEL DOT INDICATORS
        ════════════════════════════════════════════════ */
 
-    /* [IMPLEMENT] Component: CarouselDots
+      /* [IMPLEMENT] Component: CarouselDots
        Visible on mobile only (display:none at ≥1024px).
        3 dots, one per card. Active dot expands (pill shape).
        Track via IntersectionObserver (threshold: 0.6) on each card, or via scroll event.
        Dot click → track.scrollTo({ left: card.offsetLeft, behavior: 'smooth' }) */
 
-    .carousel-dots {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.35rem;
-      padding-top: 0.85rem;
-    }
-    @media (min-width: 1024px) { .carousel-dots { display: none; } }
+      .carousel-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.35rem;
+        padding-top: 0.85rem;
+      }
+      @media (min-width: 1024px) {
+        .carousel-dots {
+          display: none;
+        }
+      }
 
-    /* Each <button> has a 44×44px tap target but visually shows only a small pill */
-    .dot {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 44px;
-      min-height: 44px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-    }
-    .dot::after {
-      content: '';
-      display: block;
-      width: 6px;
-      height: 6px;
-      border-radius: 9999px;
-      background: rgba(255,255,255,0.28);
-      transition: width 0.25s ease, background 0.25s ease;
-    }
-    .dot.active::after {
-      width: 20px;
-      background: rgba(255,255,255,0.85);
-    }
-    body[data-weather="sunny"] .dot::after        { background: rgba(18,48,100,0.28); }
-    body[data-weather="sunny"] .dot.active::after { background: rgba(18,48,100,0.75); }
+      /* Each <button> has a 44×44px tap target but visually shows only a small pill */
+      .dot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      }
+      .dot::after {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.28);
+        transition:
+          width 0.25s ease,
+          background 0.25s ease;
+      }
+      .dot.active::after {
+        width: 20px;
+        background: rgba(255, 255, 255, 0.85);
+      }
+      body[data-weather='sunny'] .dot::after {
+        background: rgba(18, 48, 100, 0.28);
+      }
+      body[data-weather='sunny'] .dot.active::after {
+        background: rgba(18, 48, 100, 0.75);
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        CARD ACCENT BARS
        ════════════════════════════════════════════════ */
 
-    .accent-red   { background: linear-gradient(90deg, rgba(248,113,113,0.9), rgba(239,68,68,0.15)); }
-    .accent-amber { background: linear-gradient(90deg, rgba(251,191,36,0.9), rgba(245,158,11,0.15)); }
-    .accent-sky   { background: linear-gradient(90deg, rgba(56,189,248,0.9), rgba(34,211,238,0.15)); }
+      .accent-red {
+        background: linear-gradient(
+          90deg,
+          rgba(248, 113, 113, 0.9),
+          rgba(239, 68, 68, 0.15)
+        );
+      }
+      .accent-amber {
+        background: linear-gradient(
+          90deg,
+          rgba(251, 191, 36, 0.9),
+          rgba(245, 158, 11, 0.15)
+        );
+      }
+      .accent-sky {
+        background: linear-gradient(
+          90deg,
+          rgba(56, 189, 248, 0.9),
+          rgba(34, 211, 238, 0.15)
+        );
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        TYPOGRAPHY
        ════════════════════════════════════════════════ */
 
-    .label-day {
-      color: rgba(255,255,255,0.32);
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-    }
-    .label-weekday {
-      color: rgba(255,255,255,0.52);
-      font-size: 0.75rem;
-      font-weight: 300;
-      margin-top: 0.15rem;
-    }
-    .section-divider {
-      border: none;
-      border-top: 1px solid rgba(255,255,255,0.08);
-    }
-    .windows-label {
-      color: rgba(255,255,255,0.22);
-      font-size: 0.55rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      margin-bottom: 0.5rem;
-    }
-    .window-label {
-      color: rgba(255,255,255,0.58);
-      font-size: 0.8rem;
-      font-weight: 300;
-    }
+      .label-day {
+        color: rgba(255, 255, 255, 0.32);
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+      }
+      .label-weekday {
+        color: rgba(255, 255, 255, 0.52);
+        font-size: 0.75rem;
+        font-weight: 300;
+        margin-top: 0.15rem;
+      }
+      .section-divider {
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .windows-label {
+        color: rgba(255, 255, 255, 0.22);
+        font-size: 0.55rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin-bottom: 0.5rem;
+      }
+      .window-label {
+        color: rgba(255, 255, 255, 0.58);
+        font-size: 0.8rem;
+        font-weight: 300;
+      }
 
-    body[data-weather="sunny"] .label-day      { color: rgba(18,48,100,0.45); }
-    body[data-weather="sunny"] .label-weekday  { color: rgba(18,48,100,0.62); }
-    body[data-weather="sunny"] .section-divider{ border-top-color: rgba(18,48,100,0.10); }
-    body[data-weather="sunny"] .windows-label  { color: rgba(18,48,100,0.32); }
-    body[data-weather="sunny"] .window-label   { color: rgba(18,48,100,0.68); }
+      body[data-weather='sunny'] .label-day {
+        color: rgba(18, 48, 100, 0.45);
+      }
+      body[data-weather='sunny'] .label-weekday {
+        color: rgba(18, 48, 100, 0.62);
+      }
+      body[data-weather='sunny'] .section-divider {
+        border-top-color: rgba(18, 48, 100, 0.1);
+      }
+      body[data-weather='sunny'] .windows-label {
+        color: rgba(18, 48, 100, 0.32);
+      }
+      body[data-weather='sunny'] .window-label {
+        color: rgba(18, 48, 100, 0.68);
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        STATUS PILLS
        ════════════════════════════════════════════════ */
 
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.62rem;
-      padding: 0.18rem 0.5rem;
-      border-radius: 9999px;
-      font-weight: 500;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    @media (min-width: 640px) { .pill { font-size: 0.68rem; padding: 0.2rem 0.6rem; } }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.62rem;
+        padding: 0.18rem 0.5rem;
+        border-radius: 9999px;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      @media (min-width: 640px) {
+        .pill {
+          font-size: 0.68rem;
+          padding: 0.2rem 0.6rem;
+        }
+      }
 
-    .pill-no     { background: rgba(239,68,68,0.15);  color: rgb(252,165,165); border: 1px solid rgba(239,68,68,0.25); }
-    .pill-yes    { background: rgba(251,191,36,0.15); color: rgb(253,230,138); border: 1px solid rgba(251,191,36,0.25); }
-    .pill-clear  { background: rgba(56,189,248,0.15); color: rgb(125,211,252); border: 1px solid rgba(56,189,248,0.25); }
-    .pill-unsure { background: rgba(255,255,255,0.06);color: rgba(255,255,255,0.38); border: 1px solid rgba(255,255,255,0.10); }
+      .pill-no {
+        background: rgba(239, 68, 68, 0.15);
+        color: rgb(252, 165, 165);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+      }
+      .pill-yes {
+        background: rgba(251, 191, 36, 0.15);
+        color: rgb(253, 230, 138);
+        border: 1px solid rgba(251, 191, 36, 0.25);
+      }
+      .pill-clear {
+        background: rgba(56, 189, 248, 0.15);
+        color: rgb(125, 211, 252);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+      }
+      .pill-unsure {
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.38);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        TIMELINE BARS
        ════════════════════════════════════════════════ */
 
-    .timeline-caption {
-      display: block;
-      color: rgba(255,255,255,0.22);
-      font-size: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin-bottom: 5px;
-    }
-    .timeline-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 48px;
-      padding-bottom: 4px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .t-bar { flex: 1; min-width: 0; min-height: 2px; border-radius: 2px 2px 0 0; transition: opacity 0.15s; }
-    .t-bar:hover { opacity: 0.72; }
-    .t-good { background: rgba(56,189,248,0.60); }
-    .t-warn { background: rgba(251,191,36,0.65); }
-    .t-bad  { background: rgba(239,68,68,0.65); }
-    .timeline-labels { display: flex; justify-content: space-between; margin-top: 4px; }
-    .timeline-label  { color: rgba(255,255,255,0.28); font-size: 0.52rem; letter-spacing: 0.04em; }
+      .timeline-caption {
+        display: block;
+        color: rgba(255, 255, 255, 0.22);
+        font-size: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        margin-bottom: 5px;
+      }
+      .timeline-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 48px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .t-bar {
+        flex: 1;
+        min-width: 0;
+        min-height: 2px;
+        border-radius: 2px 2px 0 0;
+        transition: opacity 0.15s;
+      }
+      .t-bar:hover {
+        opacity: 0.72;
+      }
+      .t-good {
+        background: rgba(56, 189, 248, 0.6);
+      }
+      .t-warn {
+        background: rgba(251, 191, 36, 0.65);
+      }
+      .t-bad {
+        background: rgba(239, 68, 68, 0.65);
+      }
+      .timeline-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4px;
+      }
+      .timeline-label {
+        color: rgba(255, 255, 255, 0.28);
+        font-size: 0.52rem;
+        letter-spacing: 0.04em;
+      }
 
-    body[data-weather="sunny"] .timeline-caption      { color: rgba(18,48,100,0.30); }
-    body[data-weather="sunny"] .timeline-bars          { border-bottom-color: rgba(18,48,100,0.10); }
-    body[data-weather="sunny"] .timeline-label         { color: rgba(18,48,100,0.32); }
-    body[data-weather="sunny"] .t-good { background: rgba(2,132,199,0.45); }
-    body[data-weather="sunny"] .t-warn { background: rgba(217,119,6,0.50); }
-    body[data-weather="sunny"] .t-bad  { background: rgba(185,28,28,0.45); }
+      body[data-weather='sunny'] .timeline-caption {
+        color: rgba(18, 48, 100, 0.3);
+      }
+      body[data-weather='sunny'] .timeline-bars {
+        border-bottom-color: rgba(18, 48, 100, 0.1);
+      }
+      body[data-weather='sunny'] .timeline-label {
+        color: rgba(18, 48, 100, 0.32);
+      }
+      body[data-weather='sunny'] .t-good {
+        background: rgba(2, 132, 199, 0.45);
+      }
+      body[data-weather='sunny'] .t-warn {
+        background: rgba(217, 119, 6, 0.5);
+      }
+      body[data-weather='sunny'] .t-bad {
+        background: rgba(185, 28, 28, 0.45);
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        FOOTER
        ════════════════════════════════════════════════ */
 
-    .footer-text { color: rgba(255,255,255,0.18); font-size: 0.65rem; }
-    .footer-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; opacity: 0.7; }
-    .footer-link:hover { opacity: 1; }
-    body[data-weather="sunny"] .footer-text { color: rgba(18,48,100,0.30); }
+      .footer-text {
+        color: rgba(255, 255, 255, 0.18);
+        font-size: 0.65rem;
+      }
+      .footer-link {
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        opacity: 0.7;
+      }
+      .footer-link:hover {
+        opacity: 1;
+      }
+      body[data-weather='sunny'] .footer-text {
+        color: rgba(18, 48, 100, 0.3);
+      }
 
-    /* ════════════════════════════════════════════════
+      /* ════════════════════════════════════════════════
        MOCKUP DEMO CONTROLS (NOT part of real UI)
        ════════════════════════════════════════════════ */
 
-    .demo-bar {
-      position: fixed;
-      bottom: 1rem;
-      right: 1rem;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(10px);
-      padding: 0.3rem 0.5rem;
-      border-radius: 9999px;
-      border: 1px solid rgba(255,255,255,0.10);
-    }
-    .demo-label {
-      font-size: 0.5rem;
-      color: rgba(255,255,255,0.3);
-      letter-spacing: 0.08em;
-      padding-right: 0.4rem;
-      border-right: 1px solid rgba(255,255,255,0.10);
-    }
-    .demo-btn {
-      font-size: 0.58rem;
-      padding: 0.18rem 0.5rem;
-      border-radius: 9999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: transparent;
-      color: rgba(255,255,255,0.45);
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.15s;
-    }
-    .demo-btn:hover, .demo-btn.active {
-      background: rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.90);
-    }
-  </style>
-</head>
+      .demo-bar {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(10px);
+        padding: 0.3rem 0.5rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .demo-label {
+        font-size: 0.5rem;
+        color: rgba(255, 255, 255, 0.3);
+        letter-spacing: 0.08em;
+        padding-right: 0.4rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .demo-btn {
+        font-size: 0.58rem;
+        padding: 0.18rem 0.5rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: transparent;
+        color: rgba(255, 255, 255, 0.45);
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+      }
+      .demo-btn:hover,
+      .demo-btn.active {
+        background: rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.9);
+      }
+    </style>
+  </head>
 
-<body data-weather="rainy">
+  <body data-weather="rainy">
+    <!-- ══ MOCKUP DEMO CONTROLS ══ -->
+    <!-- [DESIGN NOTE] These controls are for previewing weather states only. Remove in production. -->
+    <div
+      class="demo-bar"
+      role="group"
+      aria-label="Mockup: trocar estado de tempo"
+    >
+      <span class="demo-label">MOCKUP</span>
+      <button class="demo-btn active" onclick="setWeather('rainy', this)">
+        🌧 Chuva
+      </button>
+      <button class="demo-btn" onclick="setWeather('cloudy', this)">
+        ⛅ Nublado
+      </button>
+      <button class="demo-btn" onclick="setWeather('sunny', this)">
+        ☀️ Sol
+      </button>
+    </div>
 
-  <!-- ══ MOCKUP DEMO CONTROLS ══ -->
-  <!-- [DESIGN NOTE] These controls are for previewing weather states only. Remove in production. -->
-  <div class="demo-bar" role="group" aria-label="Mockup: trocar estado de tempo">
-    <span class="demo-label">MOCKUP</span>
-    <button class="demo-btn active" onclick="setWeather('rainy',this)">🌧 Chuva</button>
-    <button class="demo-btn" onclick="setWeather('cloudy',this)">⛅ Nublado</button>
-    <button class="demo-btn" onclick="setWeather('sunny',this)">☀️ Sol</button>
-  </div>
-
-  <!-- ══════════════════════════════════════════════
+    <!-- ══════════════════════════════════════════════
        WEATHER GIF BACKGROUND LAYER
        z-index: 0 — beneath everything
        ══════════════════════════════════════════════ -->
 
-  <!-- [IMPLEMENT] Component: WeatherBackground
+    <!-- [IMPLEMENT] Component: WeatherBackground
        Render as a <div> with position:fixed, inset:0, z-index:0, overflow:hidden.
        Inside: <Image unoptimized fill style={{objectFit:'cover'}} src={gifSrc} alt="" aria-hidden />
        Derive gifSrc from today's weather state (set server-side, passed as prop).
        CSS fallback gradient (::before) always renders; remove once real GIFs are in /public/weather/. -->
-  <div class="weather-bg" aria-hidden="true">
-    <!-- [STYLE] object-fit:cover, opacity:0.58. Invisible when src is bare filename (no protocol). -->
-    <img class="weather-gif" id="weather-gif" src="rain.gif" alt="" aria-hidden="true" />
-    <!-- Fallback gradient renders via CSS ::before on .weather-bg (keyed to body[data-weather]) -->
-  </div>
+    <div class="weather-bg" aria-hidden="true">
+      <!-- [STYLE] object-fit:cover, opacity:0.58. Invisible when src is bare filename (no protocol). -->
+      <img
+        class="weather-gif"
+        id="weather-gif"
+        src="rain.gif"
+        alt=""
+        aria-hidden="true"
+      />
+      <!-- Fallback gradient renders via CSS ::before on .weather-bg (keyed to body[data-weather]) -->
+    </div>
 
-  <!-- [STYLE] Readability scrim over the GIF. Opacity varies by weather state (see CSS above). -->
-  <div class="weather-scrim" aria-hidden="true"></div>
+    <!-- [STYLE] Readability scrim over the GIF. Opacity varies by weather state (see CSS above). -->
+    <div class="weather-scrim" aria-hidden="true"></div>
 
-  <!-- ══════════════════════════════════════════════
+    <!-- ══════════════════════════════════════════════
        PAGE CONTENT (z-index: 10)
        ══════════════════════════════════════════════ -->
 
-  <div style="position:relative;z-index:10;min-height:100svh;display:flex;flex-direction:column;
-              padding:1.5rem 1.25rem 1.75rem;max-width:64rem;margin:0 auto;">
+    <div
+      style="
+        position: relative;
+        z-index: 10;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem 1.25rem 1.75rem;
+        max-width: 64rem;
+        margin: 0 auto;
+      "
+    >
+      <!-- ══ APP HEADER ══ -->
 
-    <!-- ══ APP HEADER ══ -->
-
-    <!-- [IMPLEMENT] Component: AppHeader
+      <!-- [IMPLEMENT] Component: AppHeader
          Left: <h1> "Varal" (weight 300) with city/country subtitle below.
          Right: <LiveClock /> — client component, setInterval(1000ms).
          Not sticky. Renders server-side with time "—:—" then hydrates client-side. -->
-    <header class="app-header">
-      <div>
-        <h1 class="header-app-title">Varal</h1>
-        <!-- [IMPLEMENT] Subtitle: resolved via reverse geocoding after navigator.geolocation succeeds.
+      <header class="app-header">
+        <div>
+          <h1 class="header-app-title">Varal</h1>
+          <!-- [IMPLEMENT] Subtitle: resolved via reverse geocoding after navigator.geolocation succeeds.
              API: nominatim.openstreetmap.org/reverse?lat=X&lon=Y&format=json → address.city + country_code
              Show nothing (visibility:hidden) until resolved; avoids layout jump. -->
-        <p class="header-subtitle" id="location-label">São Paulo, BR</p>
-      </div>
+          <p class="header-subtitle" id="location-label">São Paulo, BR</p>
+        </div>
 
-      <!-- [IMPLEMENT] Component: LiveClock
+        <!-- [IMPLEMENT] Component: LiveClock
            <time> element, datetime attr = ISO string, inner text = HH:MM.
            useEffect: const tick = () => { setTime(new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'})) }
                       tick(); const id = setInterval(tick, 1000); return () => clearInterval(id);
            SSR renders "—:—" to avoid hydration mismatch. -->
-      <time class="header-time" id="header-time" datetime="">—:—</time>
-    </header>
+        <time class="header-time" id="header-time" datetime="">—:—</time>
+      </header>
 
-    <!-- ══ 3-DAY CARDS ══ -->
+      <!-- ══ 3-DAY CARDS ══ -->
 
-    <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem;">
-
-      <!-- [IMPLEMENT] Component: DayCarousel
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem">
+        <!-- [IMPLEMENT] Component: DayCarousel
            Mobile  (<1024px): flex row, overflow-x:auto, scroll-snap-type:x mandatory.
                                Each card: flex:0 0 min(88vw, 320px), scroll-snap-align:start.
            Desktop (≥1024px): CSS grid 1.15fr 1fr 1fr, no overflow.
            aria-label on the track: "Previsão para os próximos 3 dias"
            Add aria-roledescription="carousel" and aria-live="polite" on the track for a11y. -->
-      <div class="cards-track" id="cards-track"
-           role="region" aria-label="Previsão para os próximos 3 dias"
-           aria-roledescription="carrossel">
-
-        <!-- ════ TODAY ════ -->
-        <!-- [IMPLEMENT] Card: Today
+        <div
+          class="cards-track"
+          id="cards-track"
+          role="region"
+          aria-label="Previsão para os próximos 3 dias"
+          aria-roledescription="carrossel"
+        >
+          <!-- ════ TODAY ════ -->
+          <!-- [IMPLEMENT] Card: Today
              data-card-index="0" — used by carousel dot tracking logic.
              Top accent: red (bad forecast / no wash today).
              Weather icon: switch based on weatherState:
                rainy → 🌧️, cloudy → 🌦️, sunny → ☀️ -->
-        <article class="card glass rounded-2xl flex flex-col overflow-hidden"
-                 data-card-index="0"
-                 role="group" aria-roledescription="slide" aria-label="Hoje">
-          <div class="accent-red h-[3px] shrink-0"></div>
+          <article
+            class="card glass rounded-2xl flex flex-col overflow-hidden"
+            data-card-index="0"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="Hoje"
+          >
+            <div class="accent-red h-[3px] shrink-0"></div>
 
-          <div style="display:flex;flex-direction:column;flex:1;padding:1.25rem 1.25rem 1rem;">
-
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;">
-              <div>
-                <p class="label-day">Hoje</p>
-                <p class="label-weekday" id="weekday-0">—</p>
-              </div>
-              <span style="font-size:1.6rem;line-height:1;user-select:none;" id="today-icon" aria-hidden="true">🌧️</span>
-            </div>
-
-            <!-- [IMPLEMENT] Timeline: hourly drying-chance bars from API precipitationProbability[] array (6h–20h). -->
-            <div style="margin-bottom:1.25rem;">
-              <span class="timeline-caption">chance de secar ao natural</span>
-              <div class="timeline-bars">
-                <div class="t-bar t-bad"  style="height:14px" title="6h · 30%"></div>
-                <div class="t-bar t-bad"  style="height:11px" title="7h · 22%"></div>
-                <div class="t-bar t-bad"  style="height:9px"  title="8h · 18%"></div>
-                <div class="t-bar t-bad"  style="height:8px"  title="9h · 16%"></div>
-                <div class="t-bar t-bad"  style="height:9px"  title="10h · 18%"></div>
-                <div class="t-bar t-bad"  style="height:11px" title="11h · 22%"></div>
-                <div class="t-bar t-bad"  style="height:12px" title="12h · 26%"></div>
-                <div class="t-bar t-bad"  style="height:14px" title="13h · 30%"></div>
-                <div class="t-bar t-bad"  style="height:15px" title="14h · 32%"></div>
-                <div class="t-bar t-bad"  style="height:13px" title="15h · 28%"></div>
-                <div class="t-bar t-bad"  style="height:11px" title="16h · 22%"></div>
-                <div class="t-bar t-bad"  style="height:12px" title="17h · 25%"></div>
-                <div class="t-bar t-bad"  style="height:13px" title="18h · 28%"></div>
-                <div class="t-bar t-warn" style="height:17px" title="19h · 35%"></div>
-                <div class="t-bar t-warn" style="height:19px" title="20h · 40%"></div>
-              </div>
-              <div class="timeline-labels">
-                <span class="timeline-label">6h</span>
-                <span class="timeline-label">13h</span>
-                <span class="timeline-label">20h</span>
-              </div>
-            </div>
-
-            <hr class="section-divider" style="margin-top:auto;margin-bottom:0.75rem;" />
-            <p class="windows-label">Janelas do dia</p>
-
-            <div style="display:flex;flex-direction:column;gap:0.5rem;">
-              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                  <span style="font-size:0.875rem;line-height:1;" aria-hidden="true">🌅</span>
-                  <span class="window-label">Manhã</span>
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                padding: 1.25rem 1.25rem 1rem;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-start;
+                  margin-bottom: 1.25rem;
+                "
+              >
+                <div>
+                  <p class="label-day">Hoje</p>
+                  <p class="label-weekday" id="weekday-0">—</p>
                 </div>
-                <span class="pill pill-no">Chuva</span>
+                <span
+                  style="font-size: 1.6rem; line-height: 1; user-select: none"
+                  id="today-icon"
+                  aria-hidden="true"
+                  >🌧️</span
+                >
               </div>
-              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                  <span style="font-size:0.875rem;line-height:1;" aria-hidden="true">🌆</span>
-                  <span class="window-label">Tarde</span>
+
+              <!-- [IMPLEMENT] Timeline: hourly drying-chance bars from API precipitationProbability[] array (6h–20h). -->
+              <div style="margin-bottom: 1.25rem">
+                <span class="timeline-caption">chance de secar ao natural</span>
+                <div class="timeline-bars">
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 14px"
+                    title="6h · 30%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 11px"
+                    title="7h · 22%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 9px"
+                    title="8h · 18%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 8px"
+                    title="9h · 16%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 9px"
+                    title="10h · 18%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 11px"
+                    title="11h · 22%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 12px"
+                    title="12h · 26%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 14px"
+                    title="13h · 30%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 15px"
+                    title="14h · 32%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 13px"
+                    title="15h · 28%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 11px"
+                    title="16h · 22%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 12px"
+                    title="17h · 25%"
+                  ></div>
+                  <div
+                    class="t-bar t-bad"
+                    style="height: 13px"
+                    title="18h · 28%"
+                  ></div>
+                  <div
+                    class="t-bar t-warn"
+                    style="height: 17px"
+                    title="19h · 35%"
+                  ></div>
+                  <div
+                    class="t-bar t-warn"
+                    style="height: 19px"
+                    title="20h · 40%"
+                  ></div>
                 </div>
-                <span class="pill pill-no">Chuva</span>
+                <div class="timeline-labels">
+                  <span class="timeline-label">6h</span>
+                  <span class="timeline-label">13h</span>
+                  <span class="timeline-label">20h</span>
+                </div>
+              </div>
+
+              <hr
+                class="section-divider"
+                style="margin-top: auto; margin-bottom: 0.75rem"
+              />
+              <p class="windows-label">Janelas do dia</p>
+
+              <div style="display: flex; flex-direction: column; gap: 0.5rem">
+                <div
+                  class="glass-inner"
+                  style="
+                    border-radius: 0.75rem;
+                    padding: 0.5rem 0.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <div style="display: flex; align-items: center; gap: 0.5rem">
+                    <span
+                      style="font-size: 0.875rem; line-height: 1"
+                      aria-hidden="true"
+                      >🌅</span
+                    >
+                    <span class="window-label">Manhã</span>
+                  </div>
+                  <span class="pill pill-no">Chuva</span>
+                </div>
+                <div
+                  class="glass-inner"
+                  style="
+                    border-radius: 0.75rem;
+                    padding: 0.5rem 0.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <div style="display: flex; align-items: center; gap: 0.5rem">
+                    <span
+                      style="font-size: 0.875rem; line-height: 1"
+                      aria-hidden="true"
+                      >🌆</span
+                    >
+                    <span class="window-label">Tarde</span>
+                  </div>
+                  <span class="pill pill-no">Chuva</span>
+                </div>
               </div>
             </div>
+          </article>
 
-          </div>
-        </article>
-
-        <!-- ════ TOMORROW ════ -->
-        <!-- [IMPLEMENT] Card: Tomorrow
+          <!-- ════ TOMORROW ════ -->
+          <!-- [IMPLEMENT] Card: Tomorrow
              data-card-index="1". Accent: amber. Icon: ⛅. -->
-        <article class="card glass rounded-2xl flex flex-col overflow-hidden"
-                 data-card-index="1"
-                 role="group" aria-roledescription="slide" aria-label="Amanhã">
-          <div class="accent-amber h-[3px] shrink-0"></div>
+          <article
+            class="card glass rounded-2xl flex flex-col overflow-hidden"
+            data-card-index="1"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="Amanhã"
+          >
+            <div class="accent-amber h-[3px] shrink-0"></div>
 
-          <div style="display:flex;flex-direction:column;flex:1;padding:1rem 1.25rem;">
-
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
-              <div>
-                <p class="label-day">Amanhã</p>
-                <p class="label-weekday" id="weekday-1">—</p>
-              </div>
-              <span style="font-size:1.4rem;line-height:1;user-select:none;" aria-hidden="true">⛅</span>
-            </div>
-
-            <div style="margin-bottom:1rem;">
-              <span class="timeline-caption">chance de secar ao natural</span>
-              <div class="timeline-bars" style="height:36px;">
-                <div class="t-bar t-good" style="height:28px"></div>
-                <div class="t-bar t-good" style="height:29px"></div>
-                <div class="t-bar t-good" style="height:28px"></div>
-                <div class="t-bar t-good" style="height:26px"></div>
-                <div class="t-bar t-good" style="height:24px"></div>
-                <div class="t-bar t-warn" style="height:22px"></div>
-                <div class="t-bar t-warn" style="height:20px"></div>
-                <div class="t-bar t-warn" style="height:17px"></div>
-                <div class="t-bar t-warn" style="height:19px"></div>
-                <div class="t-bar t-warn" style="height:21px"></div>
-                <div class="t-bar t-warn" style="height:23px"></div>
-                <div class="t-bar t-good" style="height:26px"></div>
-                <div class="t-bar t-good" style="height:28px"></div>
-                <div class="t-bar t-good" style="height:29px"></div>
-                <div class="t-bar t-good" style="height:28px"></div>
-              </div>
-              <div class="timeline-labels">
-                <span class="timeline-label">6h</span>
-                <span class="timeline-label">13h</span>
-                <span class="timeline-label">20h</span>
-              </div>
-            </div>
-
-            <hr class="section-divider" style="margin-top:auto;margin-bottom:0.75rem;" />
-            <p class="windows-label">Janelas do dia</p>
-
-            <div style="display:flex;flex-direction:column;gap:0.5rem;">
-              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                  <span style="font-size:0.875rem;" aria-hidden="true">🌅</span>
-                  <span class="window-label">Manhã</span>
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                padding: 1rem 1.25rem;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-start;
+                  margin-bottom: 1rem;
+                "
+              >
+                <div>
+                  <p class="label-day">Amanhã</p>
+                  <p class="label-weekday" id="weekday-1">—</p>
                 </div>
-                <span class="pill pill-yes">Livre ✓</span>
+                <span
+                  style="font-size: 1.4rem; line-height: 1; user-select: none"
+                  aria-hidden="true"
+                  >⛅</span
+                >
               </div>
-              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                  <span style="font-size:0.875rem;" aria-hidden="true">🌆</span>
-                  <span class="window-label">Tarde</span>
+
+              <div style="margin-bottom: 1rem">
+                <span class="timeline-caption">chance de secar ao natural</span>
+                <div class="timeline-bars" style="height: 36px">
+                  <div class="t-bar t-good" style="height: 28px"></div>
+                  <div class="t-bar t-good" style="height: 29px"></div>
+                  <div class="t-bar t-good" style="height: 28px"></div>
+                  <div class="t-bar t-good" style="height: 26px"></div>
+                  <div class="t-bar t-good" style="height: 24px"></div>
+                  <div class="t-bar t-warn" style="height: 22px"></div>
+                  <div class="t-bar t-warn" style="height: 20px"></div>
+                  <div class="t-bar t-warn" style="height: 17px"></div>
+                  <div class="t-bar t-warn" style="height: 19px"></div>
+                  <div class="t-bar t-warn" style="height: 21px"></div>
+                  <div class="t-bar t-warn" style="height: 23px"></div>
+                  <div class="t-bar t-good" style="height: 26px"></div>
+                  <div class="t-bar t-good" style="height: 28px"></div>
+                  <div class="t-bar t-good" style="height: 29px"></div>
+                  <div class="t-bar t-good" style="height: 28px"></div>
                 </div>
-                <span class="pill pill-unsure">Incerto</span>
+                <div class="timeline-labels">
+                  <span class="timeline-label">6h</span>
+                  <span class="timeline-label">13h</span>
+                  <span class="timeline-label">20h</span>
+                </div>
+              </div>
+
+              <hr
+                class="section-divider"
+                style="margin-top: auto; margin-bottom: 0.75rem"
+              />
+              <p class="windows-label">Janelas do dia</p>
+
+              <div style="display: flex; flex-direction: column; gap: 0.5rem">
+                <div
+                  class="glass-inner"
+                  style="
+                    border-radius: 0.75rem;
+                    padding: 0.5rem 0.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <div style="display: flex; align-items: center; gap: 0.5rem">
+                    <span style="font-size: 0.875rem" aria-hidden="true"
+                      >🌅</span
+                    >
+                    <span class="window-label">Manhã</span>
+                  </div>
+                  <span class="pill pill-yes">Livre ✓</span>
+                </div>
+                <div
+                  class="glass-inner"
+                  style="
+                    border-radius: 0.75rem;
+                    padding: 0.5rem 0.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <div style="display: flex; align-items: center; gap: 0.5rem">
+                    <span style="font-size: 0.875rem" aria-hidden="true"
+                      >🌆</span
+                    >
+                    <span class="window-label">Tarde</span>
+                  </div>
+                  <span class="pill pill-unsure">Incerto</span>
+                </div>
               </div>
             </div>
+          </article>
 
-          </div>
-        </article>
-
-        <!-- ════ DAY AFTER TOMORROW ════ -->
-        <!-- [IMPLEMENT] Card: Day after tomorrow
+          <!-- ════ DAY AFTER TOMORROW ════ -->
+          <!-- [IMPLEMENT] Card: Day after tomorrow
              data-card-index="2". Accent: sky blue. Icon: ☀️. -->
-        <article class="card glass rounded-2xl flex flex-col overflow-hidden"
-                 data-card-index="2"
-                 role="group" aria-roledescription="slide" aria-label="Depois de amanhã">
-          <div class="accent-sky h-[3px] shrink-0"></div>
+          <article
+            class="card glass rounded-2xl flex flex-col overflow-hidden"
+            data-card-index="2"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="Depois de amanhã"
+          >
+            <div class="accent-sky h-[3px] shrink-0"></div>
 
-          <div style="display:flex;flex-direction:column;flex:1;padding:1rem 1.25rem;">
-
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
-              <div>
-                <p class="label-day">Depois de amanhã</p>
-                <p class="label-weekday" id="weekday-2">—</p>
-              </div>
-              <span style="font-size:1.4rem;line-height:1;user-select:none;" aria-hidden="true">☀️</span>
-            </div>
-
-            <div style="margin-bottom:1rem;">
-              <span class="timeline-caption">chance de secar ao natural</span>
-              <div class="timeline-bars" style="height:36px;">
-                <div class="t-bar t-good" style="height:33px"></div>
-                <div class="t-bar t-good" style="height:34px"></div>
-                <div class="t-bar t-good" style="height:34px"></div>
-                <div class="t-bar t-good" style="height:33px"></div>
-                <div class="t-bar t-good" style="height:34px"></div>
-                <div class="t-bar t-good" style="height:35px"></div>
-                <div class="t-bar t-good" style="height:34px"></div>
-                <div class="t-bar t-good" style="height:34px"></div>
-                <div class="t-bar t-good" style="height:33px"></div>
-                <div class="t-bar t-good" style="height:34px"></div>
-                <div class="t-bar t-good" style="height:33px"></div>
-                <div class="t-bar t-good" style="height:32px"></div>
-                <div class="t-bar t-good" style="height:33px"></div>
-                <div class="t-bar t-good" style="height:32px"></div>
-                <div class="t-bar t-good" style="height:31px"></div>
-              </div>
-              <div class="timeline-labels">
-                <span class="timeline-label">6h</span>
-                <span class="timeline-label">13h</span>
-                <span class="timeline-label">20h</span>
-              </div>
-            </div>
-
-            <hr class="section-divider" style="margin-top:auto;margin-bottom:0.75rem;" />
-            <p class="windows-label">Janelas do dia</p>
-
-            <div style="display:flex;flex-direction:column;gap:0.5rem;">
-              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                  <span style="font-size:0.875rem;" aria-hidden="true">🌅</span>
-                  <span class="window-label">Manhã</span>
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                padding: 1rem 1.25rem;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-start;
+                  margin-bottom: 1rem;
+                "
+              >
+                <div>
+                  <p class="label-day">Depois de amanhã</p>
+                  <p class="label-weekday" id="weekday-2">—</p>
                 </div>
-                <span class="pill pill-clear">Livre ✓</span>
+                <span
+                  style="font-size: 1.4rem; line-height: 1; user-select: none"
+                  aria-hidden="true"
+                  >☀️</span
+                >
               </div>
-              <div class="glass-inner" style="border-radius:0.75rem;padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                  <span style="font-size:0.875rem;" aria-hidden="true">🌆</span>
-                  <span class="window-label">Tarde</span>
+
+              <div style="margin-bottom: 1rem">
+                <span class="timeline-caption">chance de secar ao natural</span>
+                <div class="timeline-bars" style="height: 36px">
+                  <div class="t-bar t-good" style="height: 33px"></div>
+                  <div class="t-bar t-good" style="height: 34px"></div>
+                  <div class="t-bar t-good" style="height: 34px"></div>
+                  <div class="t-bar t-good" style="height: 33px"></div>
+                  <div class="t-bar t-good" style="height: 34px"></div>
+                  <div class="t-bar t-good" style="height: 35px"></div>
+                  <div class="t-bar t-good" style="height: 34px"></div>
+                  <div class="t-bar t-good" style="height: 34px"></div>
+                  <div class="t-bar t-good" style="height: 33px"></div>
+                  <div class="t-bar t-good" style="height: 34px"></div>
+                  <div class="t-bar t-good" style="height: 33px"></div>
+                  <div class="t-bar t-good" style="height: 32px"></div>
+                  <div class="t-bar t-good" style="height: 33px"></div>
+                  <div class="t-bar t-good" style="height: 32px"></div>
+                  <div class="t-bar t-good" style="height: 31px"></div>
                 </div>
-                <span class="pill pill-clear">Livre ✓</span>
+                <div class="timeline-labels">
+                  <span class="timeline-label">6h</span>
+                  <span class="timeline-label">13h</span>
+                  <span class="timeline-label">20h</span>
+                </div>
+              </div>
+
+              <hr
+                class="section-divider"
+                style="margin-top: auto; margin-bottom: 0.75rem"
+              />
+              <p class="windows-label">Janelas do dia</p>
+
+              <div style="display: flex; flex-direction: column; gap: 0.5rem">
+                <div
+                  class="glass-inner"
+                  style="
+                    border-radius: 0.75rem;
+                    padding: 0.5rem 0.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <div style="display: flex; align-items: center; gap: 0.5rem">
+                    <span style="font-size: 0.875rem" aria-hidden="true"
+                      >🌅</span
+                    >
+                    <span class="window-label">Manhã</span>
+                  </div>
+                  <span class="pill pill-clear">Livre ✓</span>
+                </div>
+                <div
+                  class="glass-inner"
+                  style="
+                    border-radius: 0.75rem;
+                    padding: 0.5rem 0.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <div style="display: flex; align-items: center; gap: 0.5rem">
+                    <span style="font-size: 0.875rem" aria-hidden="true"
+                      >🌆</span
+                    >
+                    <span class="window-label">Tarde</span>
+                  </div>
+                  <span class="pill pill-clear">Livre ✓</span>
+                </div>
               </div>
             </div>
+          </article>
+        </div>
+        <!-- /cards-track -->
 
-          </div>
-        </article>
-
-      </div><!-- /cards-track -->
-
-      <!-- [IMPLEMENT] Component: CarouselDots
+        <!-- [IMPLEMENT] Component: CarouselDots
            3 <button> elements. Each has a 44×44px tap target area (see CSS .dot).
            Use IntersectionObserver (threshold: 0.6) on each article[data-card-index] to set active dot.
            Alternatively: scroll event on #cards-track → find card closest to center.
            Dot onclick → scrollToCard(index). -->
-      <div class="carousel-dots" role="tablist" aria-label="Navegar entre dias">
-        <button class="dot active" role="tab" aria-selected="true"  aria-label="Hoje"              onclick="scrollToCard(0)"></button>
-        <button class="dot"        role="tab" aria-selected="false" aria-label="Amanhã"            onclick="scrollToCard(1)"></button>
-        <button class="dot"        role="tab" aria-selected="false" aria-label="Depois de amanhã" onclick="scrollToCard(2)"></button>
+        <div
+          class="carousel-dots"
+          role="tablist"
+          aria-label="Navegar entre dias"
+        >
+          <button
+            class="dot active"
+            role="tab"
+            aria-selected="true"
+            aria-label="Hoje"
+            onclick="scrollToCard(0)"
+          ></button>
+          <button
+            class="dot"
+            role="tab"
+            aria-selected="false"
+            aria-label="Amanhã"
+            onclick="scrollToCard(1)"
+          ></button>
+          <button
+            class="dot"
+            role="tab"
+            aria-selected="false"
+            aria-label="Depois de amanhã"
+            onclick="scrollToCard(2)"
+          ></button>
+        </div>
       </div>
+      <!-- /flex-col wrapper -->
 
-    </div><!-- /flex-col wrapper -->
+      <!-- ══ FOOTER ══ -->
+      <footer
+        style="
+          margin-top: 1.75rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <p class="footer-text">
+          Precipitação via
+          <a href="https://open-meteo.com" class="footer-link">Open-Meteo</a>
+        </p>
+        <p class="footer-text">Atualizado agora</p>
+      </footer>
+    </div>
+    <!-- /page content -->
 
-    <!-- ══ FOOTER ══ -->
-    <footer style="margin-top:1.75rem;display:flex;justify-content:space-between;align-items:center;">
-      <p class="footer-text">Precipitação via <a href="https://open-meteo.com" class="footer-link">Open-Meteo</a></p>
-      <p class="footer-text">Atualizado agora</p>
-    </footer>
+    <script>
+      /* ── Live clock ──────────────────────────────────── */
+      // [IMPLEMENT] Client component: LiveClock
+      // useEffect(() => {
+      //   const tick = () => setTime(new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }));
+      //   tick();
+      //   const id = setInterval(tick, 1000);
+      //   return () => clearInterval(id);
+      // }, []);
+      (function liveClock() {
+        function tick() {
+          var now = new Date();
+          var t = now.toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          var el = document.getElementById('header-time');
+          el.textContent = t;
+          el.setAttribute('datetime', now.toISOString());
+        }
+        tick();
+        setInterval(tick, 1000);
+      })();
 
-  </div><!-- /page content -->
-
-  <script>
-    /* ── Live clock ──────────────────────────────────── */
-    // [IMPLEMENT] Client component: LiveClock
-    // useEffect(() => {
-    //   const tick = () => setTime(new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }));
-    //   tick();
-    //   const id = setInterval(tick, 1000);
-    //   return () => clearInterval(id);
-    // }, []);
-    (function liveClock() {
-      function tick() {
-        var now = new Date();
-        var t   = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        var el  = document.getElementById('header-time');
-        el.textContent = t;
-        el.setAttribute('datetime', now.toISOString());
-      }
-      tick();
-      setInterval(tick, 1000);
-    })();
-
-    /* ── Day labels ──────────────────────────────────── */
-    (function setDayLabels() {
-      var days = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
-      var today = new Date();
-      [0, 1, 2].forEach(function(offset) {
-        var d = new Date(today);
-        d.setDate(today.getDate() + offset);
-        var el = document.getElementById('weekday-' + offset);
-        if (el) el.textContent = days[d.getDay()];
-      });
-    })();
-
-    /* ── Carousel dot tracking ───────────────────────── */
-    // [IMPLEMENT] Use IntersectionObserver (threshold: 0.6) on each card for robust tracking.
-    // Fallback: scroll event shown here.
-    (function initCarousel() {
-      var track = document.getElementById('cards-track');
-      var dots  = Array.from(document.querySelectorAll('.carousel-dots .dot'));
-      var cards = Array.from(document.querySelectorAll('.card[data-card-index]'));
-
-      function setActiveDot(index) {
-        dots.forEach(function(d, i) {
-          d.classList.toggle('active', i === index);
-          d.setAttribute('aria-selected', String(i === index));
+      /* ── Day labels ──────────────────────────────────── */
+      (function setDayLabels() {
+        var days = [
+          'Domingo',
+          'Segunda-feira',
+          'Terça-feira',
+          'Quarta-feira',
+          'Quinta-feira',
+          'Sexta-feira',
+          'Sábado',
+        ];
+        var today = new Date();
+        [0, 1, 2].forEach(function (offset) {
+          var d = new Date(today);
+          d.setDate(today.getDate() + offset);
+          var el = document.getElementById('weekday-' + offset);
+          if (el) el.textContent = days[d.getDay()];
         });
-      }
+      })();
 
-      track.addEventListener('scroll', function() {
-        if (window.innerWidth >= 1024) return;
-        var midX = track.scrollLeft + track.clientWidth / 2;
-        var closest = 0, minDist = Infinity;
-        cards.forEach(function(card, i) {
-          var dist = Math.abs((card.offsetLeft + card.offsetWidth / 2) - midX);
-          if (dist < minDist) { minDist = dist; closest = i; }
-        });
-        setActiveDot(closest);
-      }, { passive: true });
-    })();
+      /* ── Carousel dot tracking ───────────────────────── */
+      // [IMPLEMENT] Use IntersectionObserver (threshold: 0.6) on each card for robust tracking.
+      // Fallback: scroll event shown here.
+      (function initCarousel() {
+        var track = document.getElementById('cards-track');
+        var dots = Array.from(document.querySelectorAll('.carousel-dots .dot'));
+        var cards = Array.from(
+          document.querySelectorAll('.card[data-card-index]'),
+        );
 
-    /* [IMPLEMENT] scrollToCard: exposed as carousel dot click handler.
+        function setActiveDot(index) {
+          dots.forEach(function (d, i) {
+            d.classList.toggle('active', i === index);
+            d.setAttribute('aria-selected', String(i === index));
+          });
+        }
+
+        track.addEventListener(
+          'scroll',
+          function () {
+            if (window.innerWidth >= 1024) return;
+            var midX = track.scrollLeft + track.clientWidth / 2;
+            var closest = 0,
+              minDist = Infinity;
+            cards.forEach(function (card, i) {
+              var dist = Math.abs(
+                card.offsetLeft + card.offsetWidth / 2 - midX,
+              );
+              if (dist < minDist) {
+                minDist = dist;
+                closest = i;
+              }
+            });
+            setActiveDot(closest);
+          },
+          { passive: true },
+        );
+      })();
+
+      /* [IMPLEMENT] scrollToCard: exposed as carousel dot click handler.
        In React, use a ref on the track and call ref.current.scrollTo(). */
-    function scrollToCard(index) {
-      if (window.innerWidth >= 1024) return;
-      var track = document.getElementById('cards-track');
-      var card  = document.querySelector('.card[data-card-index="' + index + '"]');
-      if (card) track.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
-    }
+      function scrollToCard(index) {
+        if (window.innerWidth >= 1024) return;
+        var track = document.getElementById('cards-track');
+        var card = document.querySelector(
+          '.card[data-card-index="' + index + '"]',
+        );
+        if (card) track.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
+      }
 
-    /* ── MOCKUP DEMO: weather state switcher ─────────── */
-    // [DESIGN NOTE] Remove in production — weather state is server-determined.
-    var GIF_SRCS = {
-      rainy:  'rain.gif',    // place at /public/weather/rain.gif
-      cloudy: 'cloudy.gif',  // place at /public/weather/cloudy.gif
-      sunny:  'sunny.gif'    // place at /public/weather/sunny.gif
-    };
-    function setWeather(state, btn) {
-      document.body.setAttribute('data-weather', state);
-      var gif = document.getElementById('weather-gif');
-      if (gif) gif.src = GIF_SRCS[state];
-      document.querySelectorAll('.demo-btn').forEach(function(b) {
-        b.classList.remove('active');
-      });
-      if (btn) btn.classList.add('active');
-    }
-  </script>
-
-</body>
+      /* ── MOCKUP DEMO: weather state switcher ─────────── */
+      // [DESIGN NOTE] Remove in production — weather state is server-determined.
+      var GIF_SRCS = {
+        rainy: 'rain.gif', // place at /public/weather/rain.gif
+        cloudy: 'cloudy.gif', // place at /public/weather/cloudy.gif
+        sunny: 'sunny.gif', // place at /public/weather/sunny.gif
+      };
+      function setWeather(state, btn) {
+        document.body.setAttribute('data-weather', state);
+        var gif = document.getElementById('weather-gif');
+        if (gif) gif.src = GIF_SRCS[state];
+        document.querySelectorAll('.demo-btn').forEach(function (b) {
+          b.classList.remove('active');
+        });
+        if (btn) btn.classList.add('active');
+      }
+    </script>
+  </body>
 </html>

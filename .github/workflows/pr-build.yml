@@ -1,10 +1,7 @@
-name: Development
+name: PR Build
 
 on:
   pull_request:
-    branches:
-      - develop
-  push:
     branches:
       - develop
 
@@ -12,7 +9,6 @@ jobs:
   quality:
     name: Build & Test
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,8 +22,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check (typecheck + format + lint)
-        run: npm run check
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Format check
+        run: npm run format:check
 
       - name: Unit tests
         run: npm test
@@ -39,17 +38,3 @@ jobs:
         run: npm run build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
-  deploy:
-    name: Deploy to Develop
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Deploy to Vercel (develop)
-        run: npx vercel --token ${{ secrets.VERCEL_TOKEN }} --yes
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

@@ -8,7 +8,9 @@ export class BigDataCloudMocker {
       city: cityName,
       countryCode: 'BR',
       localityInfo: {
-        informative: [{ description: 'fuso horário', name: timezone, order: 1 }],
+        informative: [
+          { description: 'fuso horário', name: timezone, order: 1 },
+        ],
       },
     });
   }
