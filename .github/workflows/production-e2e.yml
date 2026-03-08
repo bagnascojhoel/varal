@@ -1,0 +1,19 @@
+name: Production E2E
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  gatekeeping:
+    name: Production Gatekeeping
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install E2E dependencies
+        run: npm run install:e2e
+
+      - name: E2E tests
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
