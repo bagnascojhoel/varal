@@ -27,7 +27,9 @@ Given('I have no active drying sessions', function (this: TestWorld) {
 Given(
   'I have active drying sessions for {string} started {int} minutes ago',
   function (this: TestWorld, categoriesStr: string, minutesAgo: number) {
-    const categories = categoriesStr.split(',').map((c) => c.trim() as ClothingWeightCategory);
+    const categories = categoriesStr
+      .split(',')
+      .map((c) => c.trim() as ClothingWeightCategory);
     const startedAt = new Date(Date.now() - minutesAgo * 60 * 1000);
 
     const sessions = categories.map(

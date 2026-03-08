@@ -8,7 +8,8 @@ export class InMemoryDryingSessionRepository implements DryingSessionRepository 
 
   async createMany(sessions: DryingSession[]): Promise<DryingSession[]> {
     const persisted = sessions.map(
-      (s) => new DryingSession(this.nextId++, s.category, s.startedAt, s.endedAt),
+      (s) =>
+        new DryingSession(this.nextId++, s.category, s.startedAt, s.endedAt),
     );
     this.sessions.push(...persisted);
     return persisted;
