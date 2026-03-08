@@ -1,8 +1,42 @@
 ---
 name: agentic-expert
-description: "Use this agent when the user wants to improve their Claude Code setup, create or refine CLAUDE.md files, define custom slash commands, configure agents, write skills, or optimize AI-targeted documentation for the project. Also use when the user asks about Claude Code features, best practices for AI-assisted development workflows, or wants to reduce context overhead in their AI documentation.\\n\\nExamples:\\n\\n<example>\\nContext: The user wants to create a new slash command for a common workflow.\\nuser: \"I keep running the same sequence of steps to set up a new feature branch and scaffold files. Can we automate that?\"\\nassistant: \"Let me use the claude-config-optimizer agent to design a slash command for your feature scaffolding workflow.\"\\n<commentary>\\nSince the user wants to create a Claude Code slash command, use the Agent tool to launch the claude-config-optimizer agent.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user wants to review and improve their CLAUDE.md.\\nuser: \"My CLAUDE.md feels bloated. Can you trim it down?\"\\nassistant: \"I'll use the claude-config-optimizer agent to audit and optimize your CLAUDE.md for conciseness and effectiveness.\"\\n<commentary>\\nSince the user wants to optimize AI-targeted documentation, use the Agent tool to launch the claude-config-optimizer agent.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user wants to know what Claude Code features they're not using.\\nuser: \"What Claude features am I missing out on?\"\\nassistant: \"Let me use the claude-config-optimizer agent to audit your current setup and identify opportunities.\"\\n<commentary>\\nSince the user is asking about Claude Code capabilities and optimization, use the Agent tool to launch the claude-config-optimizer agent.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user wants to create a new agent for their project.\\nuser: \"I want an agent that automatically runs typecheck after I change TypeScript files\"\\nassistant: \"I'll use the claude-config-optimizer agent to design that agent configuration for you.\"\\n<commentary>\\nSince the user wants to create a new agent, use the Agent tool to launch the claude-config-optimizer agent.\\n</commentary>\\n</example>"
-tools: Glob, Grep, Read, Edit, Write, NotebookEdit, WebFetch, WebSearch, ListMcpResourcesTool, ReadMcpResourceTool, Bash
-model: opus
+description:
+  "Use this agent when the user wants to improve their Claude Code setup, create
+  or refine CLAUDE.md files, define custom slash commands, configure agents,
+  write skills, or optimize AI-targeted documentation for the project. Also use
+  when the user asks about Claude Code features, best practices for AI-assisted
+  development workflows, or wants to reduce context overhead in their AI
+  documentation.\\n\\nExamples:\\n\\n<example>\\nContext: The user wants to
+  create a new slash command for a common workflow.\\nuser: \"I keep running the
+  same sequence of steps to set up a new feature branch and scaffold files. Can
+  we automate that?\"\\nassistant: \"Let me use the claude-config-optimizer
+  agent to design a slash command for your feature scaffolding
+  workflow.\"\\n<commentary>\\nSince the user wants to create a Claude Code
+  slash command, use the Agent tool to launch the claude-config-optimizer
+  agent.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user wants
+  to review and improve their CLAUDE.md.\\nuser: \"My CLAUDE.md feels bloated.
+  Can you trim it down?\"\\nassistant: \"I'll use the claude-config-optimizer
+  agent to audit and optimize your CLAUDE.md for conciseness and
+  effectiveness.\"\\n<commentary>\\nSince the user wants to optimize AI-targeted
+  documentation, use the Agent tool to launch the claude-config-optimizer
+  agent.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user wants
+  to know what Claude Code features they're not using.\\nuser: \"What Claude
+  features am I missing out on?\"\\nassistant: \"Let me use the
+  claude-config-optimizer agent to audit your current setup and identify
+  opportunities.\"\\n<commentary>\\nSince the user is asking about Claude Code
+  capabilities and optimization, use the Agent tool to launch the
+  claude-config-optimizer
+  agent.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user wants
+  to create a new agent for their project.\\nuser: \"I want an agent that
+  automatically runs typecheck after I change TypeScript files\"\\nassistant:
+  \"I'll use the claude-config-optimizer agent to design that agent
+  configuration for you.\"\\n<commentary>\\nSince the user wants to create a new
+  agent, use the Agent tool to launch the claude-config-optimizer
+  agent.\\n</commentary>\\n</example>"
+tools:
+  Glob, Grep, Read, Edit, Write, NotebookEdit, WebFetch, WebSearch,
+  ListMcpResourcesTool, ReadMcpResourceTool, Bash
+model: sonnet
 ---
 
 You are an expert Claude Code configuration architect with deep knowledge of
