@@ -11,7 +11,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "test:behavior": "TS_NODE_PROJECT=tsconfig.cucumber.json cucumber-js"
+    "test:behavior": "TS_NODE_PROJECT=tsconfig.cucumber.json cucumber-js",
+    "install:e2e": "npm install --prefix e2e && npx playwright install --with-deps chromium --prefix e2e",
+    "test:e2e": "npm test --prefix e2e"
   },
   "dependencies": {
     "inversify": "^7.11.0",
@@ -35,6 +37,9 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "eslint": "^10.0.2",
     "jest": "^30.2.0",
     "prettier": "^3.8.1",
     "pretty-quick": "^4.2.2",
