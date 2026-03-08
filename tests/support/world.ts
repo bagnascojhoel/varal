@@ -43,10 +43,8 @@ import {
   OPENMETEO_REST_CLIENT,
   WeatherRepositoryOpenMeteoAdapter,
 } from '../../src/core/infrastructure/rest/weather-repository-open-meteo-adapter';
-import { DryingSessionRepositoryPrismaAdapter } from '../../src/core/infrastructure/prisma/drying-session-repository-prisma-adapter';
-import { PRISMA_CLIENT } from '../../src/core/infrastructure/prisma/prisma-client';
-import { PrismaClient } from '@prisma/client';
 import { MockedRestClientService } from './mocked-rest-client-service';
+import { InMemoryDryingSessionRepository } from './in-memory-drying-session-repository';
 import { BigDataCloudMocker } from './mockers/bigdatacloud-mocker';
 import { NominatimMocker } from './mockers/nominatim-mocker';
 import { OpenMeteoMocker } from './mockers/open-meteo-mocker';
@@ -56,7 +54,7 @@ export class TestWorld extends World {
   forecastService!: ForecastApplicationService;
   washerService!: WasherApplicationService;
   dryingSessionService!: DryingSessionApplicationService;
-  prismaClient!: PrismaClient;
+  dryingSessionRepository!: InMemoryDryingSessionRepository;
   washer: Washer | null = null;
   forecast: ForecastPageResponse | null = null;
 
@@ -70,19 +68,19 @@ export class TestWorld extends World {
     const nominatimMock = new MockedRestClientService();
     const viacepMock = new MockedRestClientService();
     const openMeteoMock = new MockedRestClientService();
-    const prismaClient = new PrismaClient();
+    const dryingSessionRepository = new InMemoryDryingSessionRepository();
 
     this.bigDataCloudMocker = new BigDataCloudMocker(bigDataCloudMock);
     this.nominatimMocker = new NominatimMocker(nominatimMock);
     this.viacepMocker = new ViacepMocker(viacepMock);
     this.openMeteoMocker = new OpenMeteoMocker(openMeteoMock);
+    this.dryingSessionRepository = dryingSessionRepository;
 
     const container = new Container();
     container.bind(BIGDATACLOUD_REST_CLIENT).toConstantValue(bigDataCloudMock);
     container.bind(NOMINATIM_REST_CLIENT).toConstantValue(nominatimMock);
     container.bind(VIACEP_REST_CLIENT).toConstantValue(viacepMock);
     container.bind(OPENMETEO_REST_CLIENT).toConstantValue(openMeteoMock);
-    container.bind(PRISMA_CLIENT).toConstantValue(prismaClient);
     container.bind(BIGDATACLOUD_CLIENT_SERVICE).to(BigDataCloudClientService);
     container.bind(VIACEP_CLIENT_SERVICE).to(ViacepClientService);
     container
@@ -99,7 +97,7 @@ export class TestWorld extends World {
       .to(WasherApplicationService);
     container
       .bind<DryingSessionRepository>(DRYING_SESSION_REPOSITORY)
-      .to(DryingSessionRepositoryPrismaAdapter);
+      .toConstantValue(dryingSessionRepository);
     container
       .bind<DryingSessionApplicationService>(START_SESSION_APPLICATION_SERVICE)
       .to(DryingSessionApplicationService);
@@ -112,7 +110,6 @@ export class TestWorld extends World {
     this.dryingSessionService = container.get<DryingSessionApplicationService>(
       START_SESSION_APPLICATION_SERVICE,
     );
-    this.prismaClient = prismaClient;
   }
 
   reset(): void {

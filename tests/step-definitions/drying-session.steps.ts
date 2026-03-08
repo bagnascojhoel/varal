@@ -6,52 +6,34 @@ import {
   CLOTHING_WEIGHT_CATEGORIES,
   type ClothingWeightCategory,
 } from '../../src/core/domain/clothing-weight-category';
+import { DryingSession } from '../../src/core/domain/drying-session';
 
 let result: StartSessionResult;
 
-Before({ tags: '@drying-session' }, async function (this: TestWorld) {
+Before({ tags: '@drying-session' }, function (this: TestWorld) {
   this.setupContainer();
-
-  try {
-    await this.prismaClient.dryingSession.findMany();
-  } catch {
-    await this.prismaClient.$executeRawUnsafe(`
-      CREATE TABLE IF NOT EXISTS "DryingSession" (
-        "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-        "category" TEXT NOT NULL,
-        "startedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "endedAt" DATETIME
-      );
-      CREATE INDEX IF NOT EXISTS "DryingSession_category_startedAt_idx"
-        ON "DryingSession"("category", "startedAt");
-    `);
-  }
-
-  await this.prismaClient.dryingSession.deleteMany({});
 });
 
-After({ tags: '@drying-session' }, async function (this: TestWorld) {
-  await this.prismaClient.dryingSession.deleteMany({}).catch(() => {});
+After({ tags: '@drying-session' }, function (this: TestWorld) {
+  this.dryingSessionRepository.clear();
 });
 
 // ===== GIVEN steps =====
 
-Given('I have no active drying sessions', async function (this: TestWorld) {
-  const count = await this.prismaClient.dryingSession.count();
-  assert.strictEqual(count, 0);
+Given('I have no active drying sessions', function (this: TestWorld) {
+  this.dryingSessionRepository.clear();
 });
 
 Given(
   'I have active drying sessions for {string} started {int} minutes ago',
-  async function (this: TestWorld, categoriesStr: string, minutesAgo: number) {
-    const categories = categoriesStr.split(',').map((c) => c.trim());
+  function (this: TestWorld, categoriesStr: string, minutesAgo: number) {
+    const categories = categoriesStr.split(',').map((c) => c.trim() as ClothingWeightCategory);
     const startedAt = new Date(Date.now() - minutesAgo * 60 * 1000);
 
-    for (const category of categories) {
-      await this.prismaClient.dryingSession.create({
-        data: { category, startedAt, endedAt: null },
-      });
-    }
+    const sessions = categories.map(
+      (category) => new DryingSession(null, category, startedAt, null),
+    );
+    this.dryingSessionRepository.seed(sessions);
   },
 );
 
