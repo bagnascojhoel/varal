@@ -2,8 +2,14 @@ import { test, expect } from '@playwright/test';
 import { SAO_PAULO, getJson } from './helpers/api';
 
 test.describe('GET /api/wash-recommendation', () => {
-  test('returns wash recommendation for valid coordinates', async ({ request }) => {
-    const { res, body } = await getJson(request, '/api/wash-recommendation', SAO_PAULO);
+  test('returns wash recommendation for valid coordinates', async ({
+    request,
+  }) => {
+    const { res, body } = await getJson(
+      request,
+      '/api/wash-recommendation',
+      SAO_PAULO,
+    );
 
     expect(res.status()).toBe(200);
     expect(Array.isArray(body)).toBe(true);

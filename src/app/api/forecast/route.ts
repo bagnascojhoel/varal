@@ -23,7 +23,11 @@ export const GET = wrapApi(async function (request: Request) {
 
   const { latitude, longitude } = parsed.data;
   const acceptLocale = request.headers.get('Accept-Language') ?? undefined;
-  const data = await ApplicationServices.getForecast(latitude, longitude, acceptLocale);
+  const data = await ApplicationServices.getForecast(
+    latitude,
+    longitude,
+    acceptLocale,
+  );
 
   return NextResponse.json(data);
 });

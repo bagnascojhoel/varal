@@ -14,21 +14,22 @@ npm run typecheck    # TypeScript type check (no lint or test scripts exist)
 
 ## Running E2E Tests
 
-After completing a major change (new feature, significant refactor, API change), run the API e2e tests:
+After completing a major change (new feature, significant refactor, API change),
+run the API e2e tests:
 
 ```bash
 cd e2e && npm test
 ```
 
-This requires the Next.js dev server to be running (Playwright starts it automatically via `webServer` config).
+This requires the Next.js dev server to be running (Playwright starts it
+automatically via `webServer` config).
 
 **Exception**: The `rapid-prototyper` agent is exempt from this requirement.
 
 ## Architecture
 
-**"Varal"** — a Next.js 16 (App Router) app that answers "should I
-wash my clothes today?" based on the day's rain forecast from the Open-Meteo
-API.
+**"Varal"** — a Next.js 16 (App Router) app that answers "should I wash my
+clothes today?" based on the day's rain forecast from the Open-Meteo API.
 
 ### Layer Structure (Ports & Adapters / Hexagonal)
 
@@ -89,13 +90,14 @@ Path alias `@/*` resolves to `./src/`.
   objects; no class instantiation in UI code.
 - **Server components resolve container directly** — `page.tsx` calls
   `container.get(FORECAST_SERVICE).getForecast(lat, lon)` with no self-fetch.
-- **Server Components First**: `app/page.tsx` is a server component;
-  client components (`"use client"`) only when browser APIs are needed.
+- **Server Components First**: `app/page.tsx` is a server component; client
+  components (`"use client"`) only when browser APIs are needed.
 - **Type Safety**: All API boundaries validated with Zod (`app/api/`).
 
 ### Data Sources
 
-- **Open-Meteo API**: Weather data fetched by `WeatherRepositoryOpenMeteoAdapter`.
+- **Open-Meteo API**: Weather data fetched by
+  `WeatherRepositoryOpenMeteoAdapter`.
 - **Nominatim (OpenStreetMap)**: Reverse geocoding in `GeocodingClientService`.
 - **ViaCEP**: Brazilian postal code lookup in `ViacepClientService`.
 
@@ -126,18 +128,24 @@ Zod → container → response controllers.
 
 ## Branch Workflow
 
-At the start of every new work session, ask the user whether they want to switch to a new branch before making any changes.
+At the start of every new work session, ask the user whether they want to switch
+to a new branch before making any changes.
 
 Branch naming convention:
-- `<developer-username>/<short-work-description>` — for general work (e.g. `bagnascojhoel/add-location-picker`)
-- `<developer-username>/<story-number>` — when there is a numbered US/task (e.g. `bagnascojhoel/US-42`)
+
+- `<developer-username>/<short-work-description>` — for general work (e.g.
+  `bagnascojhoel/add-location-picker`)
+- `<developer-username>/<story-number>` — when there is a numbered US/task (e.g.
+  `bagnascojhoel/US-42`)
 
 Never work directly on `main`.
 
 ## Skills
 
 Project knowledge is available as skills in `.claude/skills/`. Key skills:
-- `frontend-implementation` — theming, colors, typography, buttons, accessibility
+
+- `frontend-implementation` — theming, colors, typography, buttons,
+  accessibility
 - `ports-and-adapters` — architecture, DI wiring, adding new features
 - `write-adr` — ADR template and writing guide
 - `write-implementation-plan` — implementation plan template and guide
@@ -146,18 +154,24 @@ Project knowledge is available as skills in `.claude/skills/`. Key skills:
 
 ## Branch Workflow
 
-At the start of every new work session, ask the user whether they want to switch to a new branch before making any changes.
+At the start of every new work session, ask the user whether they want to switch
+to a new branch before making any changes.
 
 Branch naming convention:
-- `<developer-username>/<short-work-description>` — for general work (e.g. `bagnascojhoel/add-location-picker`)
-- `<developer-username>/<story-number>` — when there is a numbered US/task (e.g. `bagnascojhoel/US-42`)
+
+- `<developer-username>/<short-work-description>` — for general work (e.g.
+  `bagnascojhoel/add-location-picker`)
+- `<developer-username>/<story-number>` — when there is a numbered US/task (e.g.
+  `bagnascojhoel/US-42`)
 
 Never work directly on `main`.
 
 ## Skills
 
 Project knowledge is available as skills in `.claude/skills/`. Key skills:
-- `frontend-implementation` — theming, colors, typography, buttons, accessibility
+
+- `frontend-implementation` — theming, colors, typography, buttons,
+  accessibility
 - `ports-and-adapters` — architecture, DI wiring, adding new features
 - `write-adr` — ADR template and writing guide
 - `write-implementation-plan` — implementation plan template and guide
@@ -166,7 +180,7 @@ Project knowledge is available as skills in `.claude/skills/`. Key skills:
 
 ## AI Agent Documentation
 
-The `.ai/` directory contains per-feature ADRs, design mockups, and product docs.
-See `.ai/AGENTS.md` for the directory overview.
+The `.ai/` directory contains per-feature ADRs, design mockups, and product
+docs. See `.ai/AGENTS.md` for the directory overview.
 
 **Feature decisions are persisted in** `.ai/features/<feature-name>/`.

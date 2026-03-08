@@ -1,30 +1,38 @@
 # Varal
 
-**Varal** is a Next.js 16 (App Router) web app that answers one question: _should I wash my clothes today?_ It fetches a 4-day rain forecast from the Open-Meteo API and classifies each day into a wash recommendation, giving you morning and afternoon laundry windows at a glance.
+**Varal** is a Next.js 16 (App Router) web app that answers one question:
+_should I wash my clothes today?_ It fetches a 4-day rain forecast from the
+Open-Meteo API and classifies each day into a wash recommendation, giving you
+morning and afternoon laundry windows at a glance.
 
 ## Features
 
 - **4-day forecast cards** — Today, tomorrow, and two more days ahead
-- **Wash recommendation** — `canWash` decision based on precipitation probability and daily rainfall sum
-- **Hourly bar chart** — Precipitation probability from 6h–20h, inverted to show "chance of drying naturally"
-- **Morning / Afternoon windows** — Quick summary pills (Clear / Unsure / Rain) per half-day
-- **Time-aware UI** — Day/night theming and "past" bars greyed out as the day progresses
-- **Location input** — GPS detection or Brazilian CEP (postal code) lookup via ViaCEP
+- **Wash recommendation** — `canWash` decision based on precipitation
+  probability and daily rainfall sum
+- **Hourly bar chart** — Precipitation probability from 6h–20h, inverted to show
+  "chance of drying naturally"
+- **Morning / Afternoon windows** — Quick summary pills (Clear / Unsure / Rain)
+  per half-day
+- **Time-aware UI** — Day/night theming and "past" bars greyed out as the day
+  progresses
+- **Location input** — GPS detection or Brazilian CEP (postal code) lookup via
+  ViaCEP
 - **Live clock** — Displays current time in the header (client component)
 - **OpenAPI / Swagger docs** — Available at `/api/docs`
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16, React 19 (App Router) |
-| Styling | Tailwind CSS v4 |
-| Dependency Injection | Inversify |
-| Validation | Zod |
-| Language | TypeScript 5 |
-| Weather data | [Open-Meteo](https://open-meteo.com) |
-| Geocoding | Nominatim (OpenStreetMap) |
-| CEP lookup | [ViaCEP](https://viacep.com.br) |
+| Layer                | Technology                           |
+| -------------------- | ------------------------------------ |
+| Framework            | Next.js 16, React 19 (App Router)    |
+| Styling              | Tailwind CSS v4                      |
+| Dependency Injection | Inversify                            |
+| Validation           | Zod                                  |
+| Language             | TypeScript 5                         |
+| Weather data         | [Open-Meteo](https://open-meteo.com) |
+| Geocoding            | Nominatim (OpenStreetMap)            |
+| CEP lookup           | [ViaCEP](https://viacep.com.br)      |
 
 ## Getting Started
 
@@ -38,7 +46,8 @@ npm run typecheck    # TypeScript type check
 
 ## Architecture
 
-The project follows a **Ports & Adapters (Hexagonal)** architecture with Inversify for dependency injection.
+The project follows a **Ports & Adapters (Hexagonal)** architecture with
+Inversify for dependency injection.
 
 ```
 src/
@@ -79,17 +88,22 @@ src/
 ### Request Flow
 
 1. User visits `/?lat=X&lon=Y` (or is prompted to pick a location).
-2. `page.tsx` (server component) resolves `ForecastService` from the Inversify container.
-3. `ForecastService.getForecast(lat, lon)` calls **Open-Meteo** and **Nominatim** in parallel.
+2. `page.tsx` (server component) resolves `ForecastService` from the Inversify
+   container.
+3. `ForecastService.getForecast(lat, lon)` calls **Open-Meteo** and
+   **Nominatim** in parallel.
 4. `DayForecast.build()` classifies each day's weather and wash recommendation.
 5. `DayCard` renders the result inside a `CarouselTrack`.
 
 ### Key Conventions
 
 - **No default exports** — named exports throughout.
-- **Business logic lives in `core/domain/`** — components and routes contain no decision logic.
-- **Fetch calls live in `core/infrastructure/`** — domain and components never call `fetch` directly.
-- **Server components by default** — `"use client"` only when browser APIs are needed.
+- **Business logic lives in `core/domain/`** — components and routes contain no
+  decision logic.
+- **Fetch calls live in `core/infrastructure/`** — domain and components never
+  call `fetch` directly.
+- **Server components by default** — `"use client"` only when browser APIs are
+  needed.
 - **DI tokens as `Symbol.for()`** — defined alongside their port interface.
 - **Conventional Commits** — see `.ai/docs/semantic-commits.md`.
 
@@ -97,28 +111,28 @@ src/
 
 Wash decisions are computed in `src/core/domain/wash-decision.ts`:
 
-| Condition | Result |
-|---|---|
-| `precipProbabilityMax < 40%` **and** `precipSum < 1 mm` | ✅ `canWash: true` |
-| Otherwise | ❌ `canWash: false` |
+| Condition                                               | Result              |
+| ------------------------------------------------------- | ------------------- |
+| `precipProbabilityMax < 40%` **and** `precipSum < 1 mm` | ✅ `canWash: true`  |
+| Otherwise                                               | ❌ `canWash: false` |
 
 Weather state thresholds:
 
-| Threshold | State |
-|---|---|
-| `precipProb >= 60%` or `precipSum >= 5 mm` | Rainy |
+| Threshold                                  | State  |
+| ------------------------------------------ | ------ |
+| `precipProb >= 60%` or `precipSum >= 5 mm` | Rainy  |
 | `precipProb >= 20%` or `precipSum >= 1 mm` | Cloudy |
-| Below both | Sunny |
+| Below both                                 | Sunny  |
 
 ## API Routes
 
-| Route | Description |
-|---|---|
-| `GET /api/forecast?lat=&lon=` | 4-day forecast with wash decisions |
-| `GET /api/wash-recommendation?lat=&lon=` | Single wash recommendation |
-| `GET /api/cep?cep=` | CEP → coordinates lookup |
-| `GET /api/docs` | Swagger UI |
-| `GET /api/openapi` | Raw OpenAPI JSON spec |
+| Route                                    | Description                        |
+| ---------------------------------------- | ---------------------------------- |
+| `GET /api/forecast?lat=&lon=`            | 4-day forecast with wash decisions |
+| `GET /api/wash-recommendation?lat=&lon=` | Single wash recommendation         |
+| `GET /api/cep?cep=`                      | CEP → coordinates lookup           |
+| `GET /api/docs`                          | Swagger UI                         |
+| `GET /api/openapi`                       | Raw OpenAPI JSON spec              |
 
 ## AI Agent Documentation
 

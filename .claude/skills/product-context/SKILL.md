@@ -1,6 +1,10 @@
 ---
 name: product-context
-description: Understand Varal's product vision, audience, scope boundaries, and feature validation criteria. Use when evaluating whether a feature belongs in Varal, writing PRDs, writing user stories, or making UX decisions that need product alignment.
+description:
+  Understand Varal's product vision, audience, scope boundaries, and feature
+  validation criteria. Use when evaluating whether a feature belongs in Varal,
+  writing PRDs, writing user stories, or making UX decisions that need product
+  alignment.
 ---
 
 # Product Context — Varal
@@ -21,12 +25,12 @@ recommendation based on weather data.
 
 ## Core Values
 
-| Value             | Meaning                                              |
-| ----------------- | ---------------------------------------------------- |
-| **Clarity**       | One question, one answer, no clutter                 |
-| **Trust**         | Decisions backed by real weather data                |
-| **Accessibility** | Works for non-technical users; GPS or Brazilian CEP  |
-| **Delight**       | Small moments of personality make it memorable       |
+| Value             | Meaning                                             |
+| ----------------- | --------------------------------------------------- |
+| **Clarity**       | One question, one answer, no clutter                |
+| **Trust**         | Decisions backed by real weather data               |
+| **Accessibility** | Works for non-technical users; GPS or Brazilian CEP |
+| **Delight**       | Small moments of personality make it memorable      |
 
 ## Feature Validation Checklist
 
@@ -49,23 +53,24 @@ If any check fails, the feature is out of scope or needs redesign.
 
 All detailed product documentation lives in `.ai/product/`:
 
-| Document | Path | Contains |
-| -------- | ---- | -------- |
-| Lean Canvas | `.ai/product/lean-canvas.md` | Problem, audience, UVP, revenue model, key metrics |
-| User Stories | `.ai/product/user-stories.md` | All user stories grouped by feature, with MoSCoW priority |
-| Per-feature stories | `.ai/product/user-stories/<feature>/` | Detailed stories for specific features |
-| Existing PRDs | `.ai/product/PRD-*.md` | Approved PRDs (use as examples) |
+| Document            | Path                                  | Contains                                                  |
+| ------------------- | ------------------------------------- | --------------------------------------------------------- |
+| Lean Canvas         | `.ai/product/lean-canvas.md`          | Problem, audience, UVP, revenue model, key metrics        |
+| User Stories        | `.ai/product/user-stories.md`         | All user stories grouped by feature, with MoSCoW priority |
+| Per-feature stories | `.ai/product/user-stories/<feature>/` | Detailed stories for specific features                    |
+| Existing PRDs       | `.ai/product/PRD-*.md`                | Approved PRDs (use as examples)                           |
 
-**Always read the lean canvas before writing a new PRD or evaluating a feature.**
+**Always read the lean canvas before writing a new PRD or evaluating a
+feature.**
 
 ## Feature Status
 
-| Feature | Status | Docs |
-| ------- | ------ | ---- |
-| Wash Forecast | Shipped (MVP) | `.ai/features/refactor-ports-and-adapters/` |
-| Drying Session Tracker | In Progress | `.ai/features/drying-session-tracker/`, `.ai/product/PRD-drying-session-tracker.md` |
-| Label Decoder | Not Started | — |
-| Laundry Knowledge Base | Not Started | — |
+| Feature                | Status        | Docs                                                                                |
+| ---------------------- | ------------- | ----------------------------------------------------------------------------------- |
+| Wash Forecast          | Shipped (MVP) | `.ai/features/refactor-ports-and-adapters/`                                         |
+| Drying Session Tracker | In Progress   | `.ai/features/drying-session-tracker/`, `.ai/product/PRD-drying-session-tracker.md` |
+| Label Decoder          | Not Started   | —                                                                                   |
+| Laundry Knowledge Base | Not Started   | —                                                                                   |
 
 ## Writing User Stories
 

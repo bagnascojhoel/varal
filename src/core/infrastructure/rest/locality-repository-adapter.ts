@@ -16,8 +16,10 @@ import 'reflect-metadata';
 @injectable()
 export class LocalityRepositoryAdapter implements LocalityRepository {
   constructor(
-    @inject(BIGDATACLOUD_CLIENT_SERVICE) private readonly bigDataCloudClient: BigDataCloudClientService,
-    @inject(VIACEP_CLIENT_SERVICE) private readonly viacepClient: ViacepClientService,
+    @inject(BIGDATACLOUD_CLIENT_SERVICE)
+    private readonly bigDataCloudClient: BigDataCloudClientService,
+    @inject(VIACEP_CLIENT_SERVICE)
+    private readonly viacepClient: ViacepClientService,
   ) {}
 
   async fetchLocality(command: WasherSetupCommand): Promise<Locality> {

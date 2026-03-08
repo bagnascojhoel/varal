@@ -12,14 +12,18 @@ test.describe('GET /api/forecast', () => {
   });
 
   test('returns 400 when latitude is missing', async ({ request }) => {
-    const { res, body } = await getJson(request, '/api/forecast', { longitude: SAO_PAULO.longitude });
+    const { res, body } = await getJson(request, '/api/forecast', {
+      longitude: SAO_PAULO.longitude,
+    });
 
     expect(res.status()).toBe(400);
     expect(body).toHaveProperty('error');
   });
 
   test('returns 400 when longitude is missing', async ({ request }) => {
-    const { res, body } = await getJson(request, '/api/forecast', { latitude: SAO_PAULO.latitude });
+    const { res, body } = await getJson(request, '/api/forecast', {
+      latitude: SAO_PAULO.latitude,
+    });
 
     expect(res.status()).toBe(400);
     expect(body).toHaveProperty('error');

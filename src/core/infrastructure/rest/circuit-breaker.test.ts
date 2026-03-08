@@ -20,18 +20,29 @@ describe('CircuitBreaker', () => {
 
   describe('CLOSED state', () => {
     it('returns the result of fn when it resolves', async () => {
-      const cb = new CircuitBreaker(SERVICE, { failureThreshold: 3, resetTimeoutMs: 5000 });
+      const cb = new CircuitBreaker(SERVICE, {
+        failureThreshold: 3,
+        resetTimeoutMs: 5000,
+      });
       await expect(cb.execute(() => Promise.resolve(42))).resolves.toBe(42);
     });
 
     it('re-throws the original error when fn rejects', async () => {
-      const cb = new CircuitBreaker(SERVICE, { failureThreshold: 3, resetTimeoutMs: 5000 });
+      const cb = new CircuitBreaker(SERVICE, {
+        failureThreshold: 3,
+        resetTimeoutMs: 5000,
+      });
       const cause = new Error('boom');
-      await expect(cb.execute(() => Promise.reject(cause))).rejects.toThrow(cause);
+      await expect(cb.execute(() => Promise.reject(cause))).rejects.toThrow(
+        cause,
+      );
     });
 
     it('does not open the circuit before failureThreshold is reached', async () => {
-      const cb = new CircuitBreaker(SERVICE, { failureThreshold: 3, resetTimeoutMs: 5000 });
+      const cb = new CircuitBreaker(SERVICE, {
+        failureThreshold: 3,
+        resetTimeoutMs: 5000,
+      });
       await expect(cb.execute(fail)).rejects.toThrow('boom');
       await expect(cb.execute(fail)).rejects.toThrow('boom');
       // still CLOSED — third call should attempt fn, not short-circuit
@@ -41,7 +52,10 @@ describe('CircuitBreaker', () => {
     });
 
     it('opens the circuit exactly at failureThreshold', async () => {
-      const cb = new CircuitBreaker(SERVICE, { failureThreshold: 2, resetTimeoutMs: 5000 });
+      const cb = new CircuitBreaker(SERVICE, {
+        failureThreshold: 2,
+        resetTimeoutMs: 5000,
+      });
       await expect(cb.execute(fail)).rejects.toThrow('boom');
       await expect(cb.execute(fail)).rejects.toThrow('boom');
 
@@ -53,7 +67,10 @@ describe('CircuitBreaker', () => {
 
   describe('OPEN state', () => {
     async function openCircuit(failureThreshold = 2, resetTimeoutMs = 5000) {
-      const cb = new CircuitBreaker(SERVICE, { failureThreshold, resetTimeoutMs });
+      const cb = new CircuitBreaker(SERVICE, {
+        failureThreshold,
+        resetTimeoutMs,
+      });
       for (let i = 0; i < failureThreshold; i++) {
         await expect(cb.execute(fail)).rejects.toThrow();
       }
@@ -151,7 +168,9 @@ describe('CircuitBreaker', () => {
     it('re-throws the original error when probe fails', async () => {
       const cb = await halfOpenCircuit();
       const cause = new Error('probe failed');
-      await expect(cb.execute(() => Promise.reject(cause))).rejects.toThrow(cause);
+      await expect(cb.execute(() => Promise.reject(cause))).rejects.toThrow(
+        cause,
+      );
     });
   });
 

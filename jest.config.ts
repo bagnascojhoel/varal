@@ -7,12 +7,15 @@ const config: Config = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
-      tsconfig: {
-        experimentalDecorators: true,
-        emitDecoratorMetadata: true,
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          experimentalDecorators: true,
+          emitDecoratorMetadata: true,
+        },
       },
-    }],
+    ],
   },
 };
 

@@ -1,4 +1,11 @@
-import { Given, When, Then, Before, After, setDefaultTimeout } from '@cucumber/cucumber';
+import {
+  Given,
+  When,
+  Then,
+  Before,
+  After,
+  setDefaultTimeout,
+} from '@cucumber/cucumber';
 import assert from 'assert';
 import type { TestWorld } from '../support/world';
 
@@ -88,9 +95,7 @@ Given(
   async function (this: TestWorld, categoriesStr: string, minutesAgo: number) {
     // Parse categories - comma-separated
     // e.g., "LIGHT" or "LIGHT, MEDIUM"
-    const categories = categoriesStr
-      .split(',')
-      .map((c) => c.trim());
+    const categories = categoriesStr.split(',').map((c) => c.trim());
     const startedAt = new Date(Date.now() - minutesAgo * 60 * 1000);
 
     for (const category of categories) {
@@ -117,9 +122,7 @@ When(
     } else {
       // Parse categories - comma-separated
       // e.g., "LIGHT" or "LIGHT, MEDIUM"
-      categories = categoriesStr
-        .split(',')
-        .map((c) => c.trim());
+      categories = categoriesStr.split(',').map((c) => c.trim());
     }
 
     try {
@@ -153,38 +156,23 @@ Then('I should get status code {int}', (expectedStatusCode: number) => {
   );
 });
 
-Then(
-  'I should receive {int} created session(s)',
-  (expectedCount: number) => {
-    const body = testContext.responseBody as SessionResponse;
-    assert(
-      body.created,
-      'Response should have "created" field',
-    );
-    assert(
-      Array.isArray(body.created),
-      'created should be an array',
-    );
-    assert.strictEqual(
-      body.created.length,
-      expectedCount,
-      `Expected ${expectedCount} created sessions, got ${body.created.length}`,
-    );
-  },
-);
+Then('I should receive {int} created session(s)', (expectedCount: number) => {
+  const body = testContext.responseBody as SessionResponse;
+  assert(body.created, 'Response should have "created" field');
+  assert(Array.isArray(body.created), 'created should be an array');
+  assert.strictEqual(
+    body.created.length,
+    expectedCount,
+    `Expected ${expectedCount} created sessions, got ${body.created.length}`,
+  );
+});
 
 Then(
   'I should receive {int} conflicting categories',
   (expectedCount: number) => {
     const body = testContext.responseBody as SessionResponse;
-    assert(
-      body.conflicting,
-      'Response should have "conflicting" field',
-    );
-    assert(
-      Array.isArray(body.conflicting),
-      'conflicting should be an array',
-    );
+    assert(body.conflicting, 'Response should have "conflicting" field');
+    assert(Array.isArray(body.conflicting), 'conflicting should be an array');
     assert.strictEqual(
       body.conflicting.length,
       expectedCount,
@@ -193,25 +181,16 @@ Then(
   },
 );
 
-Then(
-  'I should receive {int} conflicting category',
-  (expectedCount: number) => {
-    const body = testContext.responseBody as SessionResponse;
-    assert(
-      body.conflicting,
-      'Response should have "conflicting" field',
-    );
-    assert(
-      Array.isArray(body.conflicting),
-      'conflicting should be an array',
-    );
-    assert.strictEqual(
-      body.conflicting.length,
-      expectedCount,
-      `Expected ${expectedCount} conflicting categories, got ${body.conflicting.length}`,
-    );
-  },
-);
+Then('I should receive {int} conflicting category', (expectedCount: number) => {
+  const body = testContext.responseBody as SessionResponse;
+  assert(body.conflicting, 'Response should have "conflicting" field');
+  assert(Array.isArray(body.conflicting), 'conflicting should be an array');
+  assert.strictEqual(
+    body.conflicting.length,
+    expectedCount,
+    `Expected ${expectedCount} conflicting categories, got ${body.conflicting.length}`,
+  );
+});
 
 Then('the response should contain an error message', () => {
   const body = testContext.responseBody as ErrorResponse;

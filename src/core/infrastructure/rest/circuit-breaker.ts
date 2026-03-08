@@ -42,10 +42,16 @@ export class CircuitBreaker {
 
     if (this.state === 'OPEN') {
       const now = Date.now();
-      if (this.openedAt !== null && now - this.openedAt >= this.resetTimeoutMs) {
+      if (
+        this.openedAt !== null &&
+        now - this.openedAt >= this.resetTimeoutMs
+      ) {
         this.transitionTo('HALF_OPEN');
       } else {
-        throw new ExternalServiceError(this.serviceName, 'Circuit open — too many recent failures');
+        throw new ExternalServiceError(
+          this.serviceName,
+          'Circuit open — too many recent failures',
+        );
       }
     }
 
@@ -65,7 +71,9 @@ export class CircuitBreaker {
     const { maxRequests, windowMs } = this.rateLimit;
     const now = Date.now();
 
-    this.requestTimestamps = this.requestTimestamps.filter(ts => now - ts < windowMs);
+    this.requestTimestamps = this.requestTimestamps.filter(
+      (ts) => now - ts < windowMs,
+    );
 
     if (this.requestTimestamps.length >= maxRequests) {
       throw new ExternalServiceError(this.serviceName, 'Rate limit exceeded');
@@ -76,7 +84,10 @@ export class CircuitBreaker {
 
   private onSuccess(): void {
     this.successCount++;
-    if (this.state === 'HALF_OPEN' && this.successCount >= this.successThreshold) {
+    if (
+      this.state === 'HALF_OPEN' &&
+      this.successCount >= this.successThreshold
+    ) {
       this.transitionTo('CLOSED');
       this.failureCount = 0;
       this.successCount = 0;

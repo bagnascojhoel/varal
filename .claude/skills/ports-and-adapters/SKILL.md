@@ -1,6 +1,10 @@
 ---
 name: ports-and-adapters
-description: Implement features following the project's hexagonal architecture with Inversify DI. Use when adding new domain entities, ports, infrastructure adapters, application services, or DI bindings, and when understanding the data flow between layers.
+description:
+  Implement features following the project's hexagonal architecture with
+  Inversify DI. Use when adding new domain entities, ports, infrastructure
+  adapters, application services, or DI bindings, and when understanding the
+  data flow between layers.
 ---
 
 # Ports & Adapters Architecture
@@ -45,16 +49,19 @@ src/
 Two types of adapters:
 
 ### REST API adapters (`src/app/api/`)
+
 1. Parse + validate HTTP request (Zod)
 2. Resolve service from DI container
 3. Call service, serialize response
 
 ### UI adapters (`src/app/**/*.tsx`)
+
 - Server components resolve container directly: `container.get(SERVICE)`
 - Pass plain objects to client components
 - Client components (`"use client"`) only for browser APIs
 
 ### Rules for `app/` layer
+
 - No domain logic
 - No direct fetch calls
 - No class instantiation — plain destructurable objects only
@@ -126,6 +133,9 @@ Browser request
 ## Key Design Decisions
 
 - **Entities are plain classes** — no decorators, no framework coupling
-- **Builder pattern** for entities with many optional fields from multiple sources
-- **`Promise.allSettled`** over `Promise.all` for parallel fetches — partial failure tolerance
-- **Discriminated unions** over class hierarchies: `type Item = { itemType: ItemType } & (Foo | Bar)`
+- **Builder pattern** for entities with many optional fields from multiple
+  sources
+- **`Promise.allSettled`** over `Promise.all` for parallel fetches — partial
+  failure tolerance
+- **Discriminated unions** over class hierarchies:
+  `type Item = { itemType: ItemType } & (Foo | Bar)`

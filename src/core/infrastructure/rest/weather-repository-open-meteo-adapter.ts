@@ -15,7 +15,10 @@ export class WeatherRepositoryOpenMeteoAdapter implements WeatherRepository {
     @inject(OPENMETEO_REST_CLIENT) private readonly client: RestClient,
   ) {}
 
-  async fetchForecast(locality: Locality, days: number): Promise<DayForecast[]> {
+  async fetchForecast(
+    locality: Locality,
+    days: number,
+  ): Promise<DayForecast[]> {
     const params = new URLSearchParams({
       latitude: String(locality.coordinates.lat),
       longitude: String(locality.coordinates.lon),

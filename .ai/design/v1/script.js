@@ -37,11 +37,11 @@
     const drop = document.createElement('div');
     drop.className = 'rain-drop';
 
-    const height  = Math.random() * 80 + 40;         // 40 – 120 px
-    const left    = Math.random() * 110 - 5;         // –5 % to 105 %
-    const duration = Math.random() * 0.9 + 0.5;     // 0.5 – 1.4 s
-    const delay   = Math.random() * 4;              // stagger across 4 s
-    const opacity = Math.random() * 0.45 + 0.15;    // 0.15 – 0.6
+    const height = Math.random() * 80 + 40; // 40 – 120 px
+    const left = Math.random() * 110 - 5; // –5 % to 105 %
+    const duration = Math.random() * 0.9 + 0.5; // 0.5 – 1.4 s
+    const delay = Math.random() * 4; // stagger across 4 s
+    const opacity = Math.random() * 0.45 + 0.15; // 0.15 – 0.6
 
     drop.style.cssText = [
       `height:${height}px`,
@@ -69,13 +69,23 @@
   });
 
   // Capitalise first letter, strip trailing dot if locale adds one
-  el.textContent = formatted.replace(/^\w/, (c) => c.toUpperCase()).replace(/\.$/, '');
+  el.textContent = formatted
+    .replace(/^\w/, (c) => c.toUpperCase())
+    .replace(/\.$/, '');
 })();
 
 /* ─── Day labels relative to today ─── */
 
 (function setDayLabels() {
-  const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  const days = [
+    'Domingo',
+    'Segunda-feira',
+    'Terça-feira',
+    'Quarta-feira',
+    'Quinta-feira',
+    'Sexta-feira',
+    'Sábado',
+  ];
   const today = new Date();
 
   [0, 1, 2].forEach((offset) => {
