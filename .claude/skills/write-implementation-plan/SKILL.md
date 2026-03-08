@@ -1,3 +1,8 @@
+---
+name: write-implementation-plan
+description: Create step-by-step implementation plans for multi-file features or architectural changes. Use when a feature touches multiple layers (domain, infrastructure, services, UI) and needs an ordered plan to minimize broken intermediate states.
+---
+
 # Write an Implementation Plan
 
 Guide for creating implementation plans for multi-file features or architectural changes.

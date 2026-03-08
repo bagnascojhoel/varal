@@ -1,3 +1,8 @@
+---
+name: ports-and-adapters
+description: Implement features following the project's hexagonal architecture with Inversify DI. Use when adding new domain entities, ports, infrastructure adapters, application services, or DI bindings, and when understanding the data flow between layers.
+---
+
 # Ports & Adapters Architecture
 
 How this Next.js 16 project implements Hexagonal Architecture with Inversify DI.

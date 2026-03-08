@@ -6,7 +6,7 @@
 ## 1. Title and Metadata
 
 **Title**: {{Short descriptive title}}
-**Status**: 🔄 Draft | ✅ Approved | ❌ Rejected
+**Status**: Draft | Approved | Rejected
 **Date**: {{YYYY-MM-DD}}
 **File**: `ADR-{{feature-description}}.md`
 **Decision Makers**: {{@handle}}
@@ -14,40 +14,21 @@
 
 ---
 
-## 📋 FEATURE ANALYSIS
-
-**Story**: {{One sentence describing the user-facing goal}}
-**Type**: {{New Feature | Refactor | Bug Fix | Architecture Change}} — {{Domain | UI | Infrastructure | Full-stack}}
-
-**Functional Requirements**:
-
-- ✅ {{Requirement 1}}
-- ✅ {{Requirement 2}}
-- ✅ {{Requirement 3}}
-
-**UI/UX Requirements Identified** _(if applicable)_:
-
-- {{Interaction behavior, animations, accessibility, touch targets, etc.}}
-
----
-
 ## 2. Context
 
-### 2.1 Business Context & Problem Statement
+### 2.1 Problem Statement
 
 **Problem**: {{What problem exists today and why it matters}}
 
-**User Journey**:
+**User Journey** _(if applicable)_:
 
 1. {{Step 1}}
 2. {{Step 2}}
 3. {{Step 3}}
 
-**Acceptance Criteria**:
+### 2.2 Constraints
 
-- [ ] {{Criterion 1}}
-- [ ] {{Criterion 2}}
-- [ ] {{Criterion 3}}
+- {{Technical, business, or timeline constraint}}
 
 ---
 
@@ -61,11 +42,18 @@
 
 **{{Approach A}}** (vs. {{Alternative B}} / {{Alternative C}}):
 
-✅ {{Advantage 1}}
-✅ {{Advantage 2}}
-✅ {{Advantage 3}}
+- {{Advantage 1}}
+- {{Advantage 2}}
+- {{Advantage 3}}
 
-### {{Additional sub-decision title, e.g. "Server vs Client Component Strategy"}}
+### Alternatives Considered
+
+| Alternative | Pros | Cons | Why rejected |
+|-------------|------|------|--------------|
+| {{Alt B}} | {{Pro}} | {{Con}} | {{Reason}} |
+| {{Alt C}} | {{Pro}} | {{Con}} | {{Reason}} |
+
+### {{Sub-decision title}} _(optional, repeat as needed)_
 
 - {{Decision and rationale}}
 
@@ -85,7 +73,7 @@
 {{ASCII diagram or prose describing how data moves through the system}}
 ```
 
-### 4.3 UI States _(if applicable)_
+### 4.3 UI States _(if applicable, delete if not)_
 
 ```
 {{ASCII wireframes or state descriptions}}
@@ -93,14 +81,16 @@
 
 ---
 
-## 5. Implementation Details
+## 5. File Inventory
 
-### 5.1 File Structure
+List files to create or modify. Keep to names and intent — no implementation code.
 
 ```
-{{List of files to create (NEW) or modify (MODIFY), grouped by concern}}
+path/to/file.ts                [NEW]    — Brief purpose
+path/to/existing-file.ts       [MODIFY] — What changes and why
 ```
 
+<<<<<<< Updated upstream
 ### 5.2 {{Additional implementation note, e.g. "ID / Key Format"}}
 
 {{Prose explaining any non-obvious implementation constraint}}
@@ -161,21 +151,23 @@ export class {{Feature}}ApiClient {
 
 > **Note**: Document any BDD scenario that cannot be exercised through the API alone (e.g. time-based or DB-seeded preconditions) and defer it with a clear explanation.
 
+=======
+>>>>>>> Stashed changes
 ---
 
 ## 6. Consequences
 
-### 6.1 Positive
+### Positive
 
-✅ {{Benefit 1}}
-✅ {{Benefit 2}}
+- {{Benefit 1}}
+- {{Benefit 2}}
 
-### 6.2 Negative
+### Negative
 
-⚠️ {{Trade-off or limitation 1}}
-⚠️ {{Trade-off or limitation 2}}
+- {{Trade-off or limitation 1}}
+- {{Trade-off or limitation 2}}
 
-### 6.3 Risks
+### Risks
 
 | Risk | Mitigation |
 |------|------------|

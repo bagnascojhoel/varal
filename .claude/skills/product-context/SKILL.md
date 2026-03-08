@@ -1,60 +1,92 @@
+---
+name: product-context
+description: Understand Varal's product vision, audience, scope boundaries, and feature validation criteria. Use when evaluating whether a feature belongs in Varal, writing PRDs, writing user stories, or making UX decisions that need product alignment.
+---
+
 # Product Context — Varal
 
 Core product knowledge for making aligned decisions.
 
+## When to Use This Skill
+
+- Evaluating whether a proposed feature belongs in Varal
+- Writing or reviewing PRDs and user stories
+- Making UX decisions that need product alignment
+- Prioritizing work or scoping an MVP
+
 ## One-Liner
 
-**"Should I wash my clothes today?"** — a web app that gives a clear YES/NO recommendation based on weather data.
-
-## Target Audience
-
-- People who wash their own clothes at home and air-dry them
-- Primarily urban, living in apartments with limited drying space
-- Budget-conscious — prefer to avoid dryer costs
-- Located in regions with unpredictable weather (especially Brazilian coast/south)
-- Non-technical users who want a quick, zero-effort answer
+**"Should I wash my clothes today?"** — a web app that gives a clear YES/NO
+recommendation based on weather data.
 
 ## Core Values
 
-| Value | Meaning |
-|-------|---------|
-| **Clarity** | One question, one answer, no clutter |
-| **Trust** | Decisions backed by real weather data |
-| **Accessibility** | Works for non-technical users; GPS or Brazilian CEP |
-| **Delight** | Small moments of personality make it memorable |
+| Value             | Meaning                                              |
+| ----------------- | ---------------------------------------------------- |
+| **Clarity**       | One question, one answer, no clutter                 |
+| **Trust**         | Decisions backed by real weather data                |
+| **Accessibility** | Works for non-technical users; GPS or Brazilian CEP  |
+| **Delight**       | Small moments of personality make it memorable       |
 
-## Scope Boundaries
+## Feature Validation Checklist
 
-### In scope
-- Wash forecast (rain, humidity, wind → YES/NO recommendation)
-- Label decoder (clothing care symbols → plain language)
-- Laundry knowledge base (sorting, products, temperatures, stain removal)
+Before approving any feature, verify ALL of these:
 
-### Out of scope
-- Generic weather app features
-- E-commerce / product recommendations
-- Social features
+1. **Audience fit** — Would a person who air-dries clothes in a Brazilian
+   apartment understand and benefit from this?
+2. **Scope fit** — Does it serve laundry-day decisions? (wash forecast, label
+   decoder, or laundry knowledge base)
+3. **Simplicity** — Does the UI stay clean? Is the user journey ≤ 3
+   interactions?
+4. **Data integrity** — Does it work within existing data sources (Open-Meteo,
+   Nominatim, ViaCEP) or require a justified new one?
+5. **Zero-friction** — Does it preserve the no-sign-up, instant-answer
+   experience?
 
-## Feature Validation Filters
+If any check fails, the feature is out of scope or needs redesign.
 
-Before approving any feature, check:
-1. **Audience fit**: Would a typical Varal user understand and benefit?
-2. **Scope fit**: Does it stay within laundry-day decisions?
-3. **Simplicity**: Does the UI stay clean, user journey ≤3 interactions?
-4. **Data integrity**: Does it respect existing data sources (Open-Meteo, Nominatim, ViaCEP)?
+## Product Docs Reference
 
-## Revenue Model
+All detailed product documentation lives in `.ai/product/`:
 
-- **Free tier (ad-supported)**: Core recommendation with ads
-- **Paid plans**: Ad-free + premium features (multi-day forecast, fabric-specific advice, alerts)
+| Document | Path | Contains |
+| -------- | ---- | -------- |
+| Lean Canvas | `.ai/product/lean-canvas.md` | Problem, audience, UVP, revenue model, key metrics |
+| User Stories | `.ai/product/user-stories.md` | All user stories grouped by feature, with MoSCoW priority |
+| Per-feature stories | `.ai/product/user-stories/<feature>/` | Detailed stories for specific features |
+| Existing PRDs | `.ai/product/PRD-*.md` | Approved PRDs (use as examples) |
 
-## Prioritization (MoSCoW)
+**Always read the lean canvas before writing a new PRD or evaluating a feature.**
 
-- **Must Have**: Core to value proposition; app fails without it
-- **Should Have**: Significantly improves UX; high ROI
-- **Could Have**: Nice to have; implement if capacity allows
-- **Won't Have (now)**: Out of scope for current iteration
+## Feature Status
 
-## PRD Template
+| Feature | Status | Docs |
+| ------- | ------ | ---- |
+| Wash Forecast | Shipped (MVP) | `.ai/features/refactor-ports-and-adapters/` |
+| Drying Session Tracker | In Progress | `.ai/features/drying-session-tracker/`, `.ai/product/PRD-drying-session-tracker.md` |
+| Label Decoder | Not Started | — |
+| Laundry Knowledge Base | Not Started | — |
 
-When writing a new Product Requirements Document, use the template at `templates/PRD.md` (relative to this skill folder).
+## Writing User Stories
+
+- Format: `As a [persona], I want [goal] so that [reason].`
+- Add to `.ai/product/user-stories.md` under the appropriate feature group
+- Include task tags: `design`, `front-end`, `back-end`, `weather research`
+- Number sequentially (continue from the last number in the file)
+- Personas: **user** (end-user) or **Laundry Expert** (developer/backoffice)
+
+## Writing PRDs
+
+Use the template at `templates/PRD.md` (relative to this skill folder).
+
+Reference the existing PRD at `.ai/product/PRD-drying-session-tracker.md` as a
+concrete example of the template filled in.
+
+### PRD Checklist
+
+- [ ] Problem statement references lean canvas problems
+- [ ] Personas match or refine the audience from lean canvas
+- [ ] User stories have MoSCoW priority
+- [ ] Scope explicitly lists what's OUT
+- [ ] Technical considerations reference the Ports & Adapters architecture
+- [ ] Saved to `.ai/product/PRD-<feature-name>.md`

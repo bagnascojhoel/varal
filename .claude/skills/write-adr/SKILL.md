@@ -1,3 +1,8 @@
+---
+name: write-adr
+description: Write Architecture Decision Records documenting significant technical choices. Use when a new feature, refactor, or infrastructure change requires recording the decision context, alternatives considered, and trade-offs.
+---
+
 # Write an ADR
 
 Guide for writing Architecture Decision Records in this project.
@@ -8,6 +13,18 @@ Guide for writing Architecture Decision Records in this project.
 - Significant refactor affecting multiple layers
 - Infrastructure/integration changes
 - Any decision with trade-offs worth documenting
+
+## Scope — What an ADR Is and Isn't
+
+An ADR records **the decision and its rationale**, not the full feature spec.
+
+| Concern | Where it belongs |
+|---------|-----------------|
+| Product requirements, user stories, acceptance criteria | `product-context` skill / `.ai/product/` |
+| Step-by-step file changes, implementation order, test strategy | `write-implementation-plan` skill |
+| The architectural choice, alternatives, trade-offs, consequences | **This ADR** |
+
+If the ADR needs acceptance criteria or detailed implementation steps, reference the PRD or implementation plan rather than duplicating them.
 
 ## File Location
 
@@ -23,16 +40,22 @@ Use the template at `templates/ADR.md` (relative to this skill folder). Copy it 
 
 ## Section Guide
 
-| Section | Purpose | Quality Check |
-|---------|---------|---------------|
-| Title & Metadata | Identify the decision, status, date, decision makers | Status must be Draft/Approved/Rejected |
-| Feature Analysis | User-facing goal, type, functional + UI/UX requirements | Requirements are testable statements |
-| Context | Problem statement, user journey, acceptance criteria | Criteria are checkboxable |
-| Decision | Chosen approach + why, alternatives considered | Advantages justify the choice over alternatives |
-| Architectural Design | Component diagrams, data flow, UI states | ASCII diagrams showing structure |
-| Implementation Details | File structure (NEW/MODIFY), non-obvious constraints | Every file listed with intent |
-| Consequences | Positive, negative, risks with mitigations | Risks have concrete mitigations |
-| References | Related files, external docs | All paths are valid |
+| Section | Purpose | Detail Level |
+|---------|---------|-------------|
+| Title & Metadata | Identify the decision, status, date, decision makers | One-liners; status must be Draft/Approved/Rejected |
+| Context | Problem statement, constraints, user journey | 1-2 paragraphs; constraints as bullet list; journey only if it clarifies the problem |
+| Decision | Chosen approach, why, alternatives considered | 1-2 paragraphs + comparison table for alternatives |
+| Architectural Design | Component diagrams, data flow | ASCII diagrams + brief prose; NO implementation code |
+| File Inventory | Files to create/modify | File list with [NEW]/[MODIFY] and one-line intent; NO code snippets |
+| Consequences | Positive, negative, risks with mitigations | Bullet lists; risks in a table with concrete mitigations |
+| References | Related files, external docs | All paths must be verified as valid |
+
+## Typical Workflow
+
+1. Read the relevant user story or PRD from `.ai/product/`
+2. Research existing code to understand current architecture
+3. Write the ADR using this template
+4. Follow up with `write-implementation-plan` if the change is multi-layered
 
 ## Rules
 
@@ -41,3 +64,5 @@ Use the template at `templates/ADR.md` (relative to this skill folder). Copy it 
 - List alternatives considered with pros/cons
 - Keep diagrams as ASCII art for version control friendliness
 - Reference concrete file paths, not abstract layer names
+- No implementation code in the ADR — save that for the implementation plan
+- Before finalizing, verify all file paths in the References section exist

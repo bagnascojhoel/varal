@@ -1,3 +1,8 @@
+---
+name: commit-message
+description: Write conventional commit messages following the project's commit standards. Use when creating git commits to ensure correct type, scope, format, and breaking change notation.
+---
+
 # Commit Messages
 
 This project follows [Conventional Commits](https://www.conventionalcommits.org/).

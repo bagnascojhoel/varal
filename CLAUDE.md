@@ -154,6 +154,16 @@ Branch naming convention:
 
 Never work directly on `main`.
 
+## Skills
+
+Project knowledge is available as skills in `.claude/skills/`. Key skills:
+- `frontend-implementation` — theming, colors, typography, buttons, accessibility
+- `ports-and-adapters` — architecture, DI wiring, adding new features
+- `write-adr` — ADR template and writing guide
+- `write-implementation-plan` — implementation plan template and guide
+- `commit-message` — conventional commits quick-reference
+- `product-context` — product vision, audience, scope boundaries, PRD template
+
 ## AI Agent Documentation
 
 The `.ai/` directory contains per-feature ADRs, design mockups, and product docs.

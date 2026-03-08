@@ -1,3 +1,8 @@
+---
+name: frontend-implementation
+description: Build UI components following the project's design system — theming, color tokens, typography, glass surfaces, buttons, spacing, breakpoints, and accessibility rules. Use when creating or modifying React components, styling with Tailwind, or reviewing UI for design system compliance.
+---
+
 # Frontend Implementation
 
 Rules and tokens for building UI in this project. Combines the style guide, UI/UX rules, and atomic design standards.
