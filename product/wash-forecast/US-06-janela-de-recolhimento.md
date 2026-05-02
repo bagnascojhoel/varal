@@ -2,7 +2,9 @@
 
 ## História
 
-Como Lavador(a), quero definir a minha Janela de Recolhimento — o intervalo de tempo em que minhas roupas podem ficar estendidas (ex.: 9h–19h) —, para que o app só recomende lavar se as roupas secarem dentro desse intervalo.
+Como Lavador(a), quero definir a minha Janela de Recolhimento — o intervalo de
+tempo em que minhas roupas podem ficar estendidas (ex.: 9h–19h) —, para que o
+app só recomende lavar se as roupas secarem dentro desse intervalo.
 
 ## Contexto
 

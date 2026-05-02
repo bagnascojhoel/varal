@@ -81,20 +81,20 @@ necessário._
 
 ## 10. Design / UX
 
-_Vincule a mockups, wireframes ou arquivos de design. Refira-se a `product/design/`
-se aplicável._
+_Vincule a mockups, wireframes ou arquivos de design. Refira-se a
+`product/design/` se aplicável._
 
 ## 11. Glossário de Domínio
 
 _Termos específicos do negócio que precisam de definição clara para evitar
 ambiguidade no refinamento._
 
-| Termo | Definição |
-|-------|-----------|
+| Termo                         | Definição                                                                      |
+| ----------------------------- | ------------------------------------------------------------------------------ |
 | _ex.: Janela de recolhimento_ | _Intervalo de horas em que as roupas podem ser recolhidas sem risco de molhar_ |
 
 ## 12. Riscos e Perguntas Abertas
 
-| Risco / Pergunta | Mitigação / Resposta |
-|------------------|----------------------|
+| Risco / Pergunta                   | Mitigação / Resposta       |
+| ---------------------------------- | -------------------------- |
 | _ex.: Limites de taxa Open-Meteo?_ | _Tier gratuito é generoso_ |

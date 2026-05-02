@@ -2,7 +2,10 @@
 
 ## História
 
-Como Lavador(a), quero descrever meu ambiente de secagem (quintal aberto, varanda voltada para o norte, varanda coberta, interior com janela, sem espaço externo), para que a recomendação leve em conta o sol, o vento e a ventilação que tenho disponíveis.
+Como Lavador(a), quero descrever meu ambiente de secagem (quintal aberto,
+varanda voltada para o norte, varanda coberta, interior com janela, sem espaço
+externo), para que a recomendação leve em conta o sol, o vento e a ventilação
+que tenho disponíveis.
 
 ## Contexto
 

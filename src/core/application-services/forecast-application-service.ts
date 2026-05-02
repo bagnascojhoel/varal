@@ -32,7 +32,10 @@ export interface ForecastDayDto {
   isStillUsableNow: boolean;
   precipitationProbabilityMax: number;
   precipitationSum: number;
-  clothingRecommendations: Record<ClothingWeightCategory, ClothingRecommendation>;
+  clothingRecommendations: Record<
+    ClothingWeightCategory,
+    ClothingRecommendation
+  >;
 }
 
 export interface ForecastPageResponse {

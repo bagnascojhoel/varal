@@ -74,9 +74,9 @@ production code.
    JavaScript. Use a CDN `<script>` tag for Tailwind; no build step required.
 5. **Write a `README.md`** inside the version folder explaining the design
    decisions.
-6. **Update `product/design/<feature-name>/description.md`** — add a summary
-   of this version and why the previous one was superseded (or create the file
-   if it is missing).
+6. **Update `product/design/<feature-name>/description.md`** — add a summary of
+   this version and why the previous one was superseded (or create the file if
+   it is missing).
 
 ## Mockup File Standards
 
@@ -213,8 +213,8 @@ accomplish before producing any files.
 # Persistent Agent Memory
 
 You have a persistent agent memory directory at
-`/home/bagnascojhoel/workspace/varal/.claude/agent-memory/design/`. Its
-contents persist across conversations.
+`/home/bagnascojhoel/workspace/varal/.claude/agent-memory/design/`. Its contents
+persist across conversations.
 
 Consult memory files before starting work to pick up from prior design
 decisions.

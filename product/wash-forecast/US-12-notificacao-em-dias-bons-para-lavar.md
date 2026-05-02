@@ -2,7 +2,8 @@
 
 ## História
 
-Como Lavador(a), quero receber uma notificação nos dias bons para lavar roupas, para que eu não perca a oportunidade.
+Como Lavador(a), quero receber uma notificação nos dias bons para lavar roupas,
+para que eu não perca a oportunidade.
 
 ## Contexto
 

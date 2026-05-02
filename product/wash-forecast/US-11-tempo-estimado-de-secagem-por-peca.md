@@ -2,7 +2,9 @@
 
 ## História
 
-Como Lavador(a), quero saber o tempo estimado de secagem por tipo de peça nas condições de hoje, para que eu saiba se minha lavagem específica estará pronta a tempo.
+Como Lavador(a), quero saber o tempo estimado de secagem por tipo de peça nas
+condições de hoje, para que eu saiba se minha lavagem específica estará pronta a
+tempo.
 
 ## Contexto
 
@@ -13,7 +15,8 @@ Como Lavador(a), quero saber o tempo estimado de secagem por tipo de peça nas c
 - Per-category estimate, or per-specific-garment?
 - Show as a time range (e.g., "3-4 hours") or single point estimate?
 - Display on day card or in timeline view?
-- How to validate estimates against real data? (Session Tracker data in US-46–52)
+- How to validate estimates against real data? (Session Tracker data in
+  US-46–52)
 
 ## Restrições
 

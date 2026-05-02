@@ -44,9 +44,12 @@ const RECOMMENDATION_I18N_KEY: Record<ClothingRecommendation, string> = {
 };
 
 const TAG_DOT: Record<ClothingRecommendation, string> = {
-  [ClothingRecommendation.Recomendar]: 'bg-[rgba(34,197,94,0.9)] day:bg-[rgba(22,163,74,0.8)]',
-  [ClothingRecommendation.Condicional]: 'bg-[rgba(251,191,36,0.9)] day:bg-[rgba(217,119,6,0.8)]',
-  [ClothingRecommendation.Evitar]: 'bg-[rgba(239,68,68,0.9)] day:bg-[rgba(185,28,28,0.8)]',
+  [ClothingRecommendation.Recomendar]:
+    'bg-[rgba(34,197,94,0.9)] day:bg-[rgba(22,163,74,0.8)]',
+  [ClothingRecommendation.Condicional]:
+    'bg-[rgba(251,191,36,0.9)] day:bg-[rgba(217,119,6,0.8)]',
+  [ClothingRecommendation.Evitar]:
+    'bg-[rgba(239,68,68,0.9)] day:bg-[rgba(185,28,28,0.8)]',
 };
 
 const TAG_BADGE: Record<ClothingRecommendation, string> = {

@@ -2,7 +2,10 @@
 
 ## História
 
-Como Lavador(a), quero ver quais fatores climáticos influenciaram a recomendação (probabilidade de chuva, velocidade do vento, direção do vento, temperatura, umidade, índice UV), para que eu entenda por que as condições são ou não adequadas.
+Como Lavador(a), quero ver quais fatores climáticos influenciaram a recomendação
+(probabilidade de chuva, velocidade do vento, direção do vento, temperatura,
+umidade, índice UV), para que eu entenda por que as condições são ou não
+adequadas.
 
 ## Contexto
 

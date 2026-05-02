@@ -2,7 +2,8 @@
 
 ## História
 
-Como Lavador(a), quero definir meus dias preferidos para lavar roupas, para que as notificações sejam enviadas apenas nos dias em que realmente planejo lavar.
+Como Lavador(a), quero definir meus dias preferidos para lavar roupas, para que
+as notificações sejam enviadas apenas nos dias em que realmente planejo lavar.
 
 ## Contexto
 

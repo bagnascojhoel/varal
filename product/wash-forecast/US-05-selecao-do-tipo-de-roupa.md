@@ -2,7 +2,9 @@
 
 ## História
 
-Como Lavador(a), quero selecionar os tipos de roupas que pretendo lavar (ex.: lençóis, moletons pesados, algodão leve, delicadas), para que a recomendação me diga se aquelas peças específicas vão secar antes das condições mudarem.
+Como Lavador(a), quero selecionar os tipos de roupas que pretendo lavar (ex.:
+lençóis, moletons pesados, algodão leve, delicadas), para que a recomendação me
+diga se aquelas peças específicas vão secar antes das condições mudarem.
 
 ## Contexto
 
