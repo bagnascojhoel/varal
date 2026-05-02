@@ -29,7 +29,9 @@ test.describe('POST /api/washers', () => {
     expect(body).toHaveProperty('countryCode');
   });
 
-  test('returns 400 for invalid CEP format (too short)', async ({ request }) => {
+  test('returns 400 for invalid CEP format (too short)', async ({
+    request,
+  }) => {
     const res = await request.post('/api/washers', {
       data: { cep: '0131010' },
     });

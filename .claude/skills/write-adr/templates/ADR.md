@@ -1,16 +1,14 @@
 # ADR-{{feature-description}} — {{Feature Title}}
 
-> **File naming convention**: `ADR-<feature-description>.md`
-> Use kebab-case for the feature description, e.g. `ADR-start-drying-session.md`.
+> **File naming convention**: `ADR-<feature-description>.md` Use kebab-case for
+> the feature description, e.g. `ADR-start-drying-session.md`.
 
 ## 1. Title and Metadata
 
-**Title**: {{Short descriptive title}}
-**Status**: Draft | Approved | Rejected
-**Date**: {{YYYY-MM-DD}}
-**File**: `ADR-{{feature-description}}.md`
-**Decision Makers**: {{@handle}}
-**Related Features**: {{List of related domain entities, services, or components}}
+**Title**: {{Short descriptive title}} **Status**: Draft | Approved | Rejected
+**Date**: {{YYYY-MM-DD}} **File**: `ADR-{{feature-description}}.md` **Decision
+Makers**: {{@handle}} **Related Features**:
+{{List of related domain entities, services, or components}}
 
 ---
 
@@ -48,10 +46,10 @@
 
 ### Alternatives Considered
 
-| Alternative | Pros | Cons | Why rejected |
-|-------------|------|------|--------------|
-| {{Alt B}} | {{Pro}} | {{Con}} | {{Reason}} |
-| {{Alt C}} | {{Pro}} | {{Con}} | {{Reason}} |
+| Alternative | Pros    | Cons    | Why rejected |
+| ----------- | ------- | ------- | ------------ |
+| {{Alt B}}   | {{Pro}} | {{Con}} | {{Reason}}   |
+| {{Alt C}}   | {{Pro}} | {{Con}} | {{Reason}}   |
 
 ### {{Sub-decision title}} _(optional, repeat as needed)_
 
@@ -83,7 +81,8 @@
 
 ## 5. File Inventory
 
-List files to create or modify. Keep to names and intent — no implementation code.
+List files to create or modify. Keep to names and intent — no implementation
+code.
 
 ```
 path/to/file.ts                [NEW]    — Brief purpose
@@ -91,6 +90,7 @@ path/to/existing-file.ts       [MODIFY] — What changes and why
 ```
 
 <<<<<<< Updated upstream
+
 ### 5.2 {{Additional implementation note, e.g. "ID / Key Format"}}
 
 {{Prose explaining any non-obvious implementation constraint}}
@@ -118,10 +118,12 @@ Feature: {{Feature Name}}
 
 ### 5.4 E2E API Tests (Playwright)
 
-**Spec file**: `e2e/tests/{{feature-description}}.spec.ts`
-**Client helper**: `e2e/tests/helpers/{{feature-description}}-client.ts`
+**Spec file**: `e2e/tests/{{feature-description}}.spec.ts` **Client helper**:
+`e2e/tests/helpers/{{feature-description}}-client.ts`
 
-Create a typed client class (modelled after `RestClientService`) that wraps the Playwright `APIRequestContext`. The client encapsulates all requests and response parsing for the endpoint, keeping test bodies focused on assertions.
+Create a typed client class (modelled after `RestClientService`) that wraps the
+Playwright `APIRequestContext`. The client encapsulates all requests and
+response parsing for the endpoint, keeping test bodies focused on assertions.
 
 ```typescript
 // e2e/tests/helpers/{{feature-description}}-client.ts
@@ -140,19 +142,24 @@ export class {{Feature}}ApiClient {
 }
 ```
 
-> Note any test infrastructure requirements: DB cleanup strategy, env guards, time-seeding limitations.
+> Note any test infrastructure requirements: DB cleanup strategy, env guards,
+> time-seeding limitations.
 
 #### Test Scenarios
 
-| # | Scenario name | Expected status |
-| - | ------------- | --------------- |
-| 1 | {{Scenario 1}} | {{status}} |
-| 2 | {{Scenario 2}} | {{status}} |
+| #   | Scenario name  | Expected status |
+| --- | -------------- | --------------- |
+| 1   | {{Scenario 1}} | {{status}}      |
+| 2   | {{Scenario 2}} | {{status}}      |
 
-> **Note**: Document any BDD scenario that cannot be exercised through the API alone (e.g. time-based or DB-seeded preconditions) and defer it with a clear explanation.
+> **Note**: Document any BDD scenario that cannot be exercised through the API
+> alone (e.g. time-based or DB-seeded preconditions) and defer it with a clear
+> explanation.
 
 =======
->>>>>>> Stashed changes
+
+> > > > > > > Stashed changes
+
 ---
 
 ## 6. Consequences
@@ -169,8 +176,8 @@ export class {{Feature}}ApiClient {
 
 ### Risks
 
-| Risk | Mitigation |
-|------|------------|
+| Risk       | Mitigation       |
+| ---------- | ---------------- |
 | {{Risk 1}} | {{Mitigation 1}} |
 | {{Risk 2}} | {{Mitigation 2}} |
 

@@ -1,6 +1,10 @@
 import { MockedRestClientService } from '../mocked-rest-client-service';
 
-function buildOpenMeteoResponse(precipProb: number, precipSum: number, days: number) {
+function buildOpenMeteoResponse(
+  precipProb: number,
+  precipSum: number,
+  days: number,
+) {
   const dates = Array.from({ length: days }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + i);
@@ -24,6 +28,9 @@ export class OpenMeteoMocker {
   constructor(private readonly client: MockedRestClientService) {}
 
   mockForecast(precipProb: number, precipSum: number, days: number = 5): void {
-    this.client.register('/v1/forecast', buildOpenMeteoResponse(precipProb, precipSum, days));
+    this.client.register(
+      '/v1/forecast',
+      buildOpenMeteoResponse(precipProb, precipSum, days),
+    );
   }
 }

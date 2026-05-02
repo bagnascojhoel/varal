@@ -28,7 +28,10 @@ if (!fs.existsSync(prismaDir)) {
 // Convert relative DATABASE_URL to absolute path
 if (process.env.DATABASE_URL) {
   if (process.env.DATABASE_URL.startsWith('file:')) {
-    let dbPath = process.env.DATABASE_URL.replace('file:', '').replace(/["']/g, '');
+    let dbPath = process.env.DATABASE_URL.replace('file:', '').replace(
+      /["']/g,
+      '',
+    );
 
     // Convert relative path to absolute
     if (!path.isAbsolute(dbPath)) {

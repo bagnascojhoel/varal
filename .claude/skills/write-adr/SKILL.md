@@ -1,6 +1,9 @@
 ---
 name: write-adr
-description: Write Architecture Decision Records documenting significant technical choices. Use when a new feature, refactor, or infrastructure change requires recording the decision context, alternatives considered, and trade-offs.
+description:
+  Write Architecture Decision Records documenting significant technical choices.
+  Use when a new feature, refactor, or infrastructure change requires recording
+  the decision context, alternatives considered, and trade-offs.
 ---
 
 # Write an ADR
@@ -18,13 +21,14 @@ Guide for writing Architecture Decision Records in this project.
 
 An ADR records **the decision and its rationale**, not the full feature spec.
 
-| Concern | Where it belongs |
-|---------|-----------------|
-| Product requirements, user stories, acceptance criteria | `product-context` skill / `.ai/product/` |
-| Step-by-step file changes, implementation order, test strategy | `write-implementation-plan` skill |
-| The architectural choice, alternatives, trade-offs, consequences | **This ADR** |
+| Concern                                                          | Where it belongs                         |
+| ---------------------------------------------------------------- | ---------------------------------------- |
+| Product requirements, user stories, acceptance criteria          | `product-context` skill / `.ai/product/` |
+| Step-by-step file changes, implementation order, test strategy   | `write-implementation-plan` skill        |
+| The architectural choice, alternatives, trade-offs, consequences | **This ADR**                             |
 
-If the ADR needs acceptance criteria or detailed implementation steps, reference the PRD or implementation plan rather than duplicating them.
+If the ADR needs acceptance criteria or detailed implementation steps, reference
+the PRD or implementation plan rather than duplicating them.
 
 ## File Location
 
@@ -36,19 +40,20 @@ Use kebab-case for `<feature-name>`.
 
 ## Template
 
-Use the template at `templates/ADR.md` (relative to this skill folder). Copy it to the target location and fill in all sections.
+Use the template at `templates/ADR.md` (relative to this skill folder). Copy it
+to the target location and fill in all sections.
 
 ## Section Guide
 
-| Section | Purpose | Detail Level |
-|---------|---------|-------------|
-| Title & Metadata | Identify the decision, status, date, decision makers | One-liners; status must be Draft/Approved/Rejected |
-| Context | Problem statement, constraints, user journey | 1-2 paragraphs; constraints as bullet list; journey only if it clarifies the problem |
-| Decision | Chosen approach, why, alternatives considered | 1-2 paragraphs + comparison table for alternatives |
-| Architectural Design | Component diagrams, data flow | ASCII diagrams + brief prose; NO implementation code |
-| File Inventory | Files to create/modify | File list with [NEW]/[MODIFY] and one-line intent; NO code snippets |
-| Consequences | Positive, negative, risks with mitigations | Bullet lists; risks in a table with concrete mitigations |
-| References | Related files, external docs | All paths must be verified as valid |
+| Section              | Purpose                                              | Detail Level                                                                         |
+| -------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Title & Metadata     | Identify the decision, status, date, decision makers | One-liners; status must be Draft/Approved/Rejected                                   |
+| Context              | Problem statement, constraints, user journey         | 1-2 paragraphs; constraints as bullet list; journey only if it clarifies the problem |
+| Decision             | Chosen approach, why, alternatives considered        | 1-2 paragraphs + comparison table for alternatives                                   |
+| Architectural Design | Component diagrams, data flow                        | ASCII diagrams + brief prose; NO implementation code                                 |
+| File Inventory       | Files to create/modify                               | File list with [NEW]/[MODIFY] and one-line intent; NO code snippets                  |
+| Consequences         | Positive, negative, risks with mitigations           | Bullet lists; risks in a table with concrete mitigations                             |
+| References           | Related files, external docs                         | All paths must be verified as valid                                                  |
 
 ## Typical Workflow
 

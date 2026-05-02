@@ -86,11 +86,10 @@ export class RestClientService implements RestClient {
           ...(nextOptions && { next: nextOptions }),
         });
       } catch (cause) {
-        Logger.error('outbound request failed, serviceName={}, method={}, url={}', [
-          this.serviceName,
-          method,
-          urlString,
-        ]);
+        Logger.error(
+          'outbound request failed, serviceName={}, method={}, url={}',
+          [this.serviceName, method, urlString],
+        );
         throw new ExternalServiceError(
           this.serviceName,
           'Request failed',

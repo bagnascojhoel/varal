@@ -2,9 +2,7 @@
 
 import { useState } from 'react';
 
-export function useStorage<T>(
-  key: string,
-): [T | null, (value: T) => void] {
+export function useStorage<T>(key: string): [T | null, (value: T) => void] {
   const [value, setValue] = useState<T | null>(() => {
     if (typeof window === 'undefined') return null;
     try {
