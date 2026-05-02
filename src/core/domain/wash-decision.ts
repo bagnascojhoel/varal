@@ -3,6 +3,12 @@ import { TimeState } from '@/core/domain/time-state';
 import { WeatherState } from '@/core/domain/weather-state';
 import { WindowState } from '@/core/domain/window-state';
 
+export enum ClothingRecommendation {
+  Recomendar = 'RECOMENDAR',
+  Condicional = 'CONDICIONAL',
+  Evitar = 'EVITAR',
+}
+
 export interface WashDecision {
   canWash: boolean;
   reason: string;

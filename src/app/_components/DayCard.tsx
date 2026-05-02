@@ -3,9 +3,15 @@
 import type { ForecastDayDto } from '@/core/application-services/forecast-application-service';
 import type { TimeState } from '@/core/domain/time-state';
 import type { Timezone } from '@/core/domain/time-zone';
-import { determineBarState } from '@/core/domain/wash-decision';
+import {
+  ClothingRecommendation,
+  determineBarState,
+} from '@/core/domain/wash-decision';
 import type { WeatherState } from '@/core/domain/weather-state';
-import type { WindowState } from '@/core/domain/window-state';
+import {
+  CLOTHING_WEIGHT_CATEGORIES,
+  type ClothingWeightCategory,
+} from '@/core/domain/clothing-weight-category';
 import { DateTime } from 'luxon';
 import { useClock } from '@/app/_lib/use-clock-hook';
 import { useTranslations } from 'next-intl';
@@ -21,6 +27,35 @@ const WEATHER_EMOJI: Record<WeatherState, string> = {
   rainy: '🌧️',
   cloudy: '⛅',
   sunny: '☀️',
+};
+
+const CATEGORY_I18N_KEY: Record<ClothingWeightCategory, string> = {
+  EXTRA_LIGHT: 'extraLeve',
+  LIGHT: 'leve',
+  MEDIUM: 'medio',
+  HEAVY: 'pesado',
+  EXTRA_HEAVY: 'extraPesado',
+};
+
+const RECOMMENDATION_I18N_KEY: Record<ClothingRecommendation, string> = {
+  [ClothingRecommendation.Recomendar]: 'recomendar',
+  [ClothingRecommendation.Condicional]: 'condicional',
+  [ClothingRecommendation.Evitar]: 'evitar',
+};
+
+const TAG_DOT: Record<ClothingRecommendation, string> = {
+  [ClothingRecommendation.Recomendar]: 'bg-[rgba(34,197,94,0.9)] day:bg-[rgba(22,163,74,0.8)]',
+  [ClothingRecommendation.Condicional]: 'bg-[rgba(251,191,36,0.9)] day:bg-[rgba(217,119,6,0.8)]',
+  [ClothingRecommendation.Evitar]: 'bg-[rgba(239,68,68,0.9)] day:bg-[rgba(185,28,28,0.8)]',
+};
+
+const TAG_BADGE: Record<ClothingRecommendation, string> = {
+  [ClothingRecommendation.Recomendar]:
+    'bg-[rgba(34,197,94,0.12)] border-[rgba(34,197,94,0.22)] text-green-300 day:text-green-700 day:bg-[rgba(22,163,74,0.1)] day:border-[rgba(22,163,74,0.2)]',
+  [ClothingRecommendation.Condicional]:
+    'bg-[rgba(251,191,36,0.12)] border-[rgba(251,191,36,0.22)] text-amber-300 day:text-amber-700 day:bg-[rgba(217,119,6,0.1)] day:border-[rgba(217,119,6,0.2)]',
+  [ClothingRecommendation.Evitar]:
+    'bg-[rgba(239,68,68,0.12)] border-[rgba(239,68,68,0.22)] text-red-300 day:text-red-700 day:bg-[rgba(185,28,28,0.1)] day:border-[rgba(185,28,28,0.2)]',
 };
 
 function getWeekday(dateStr: string): string {
@@ -43,33 +78,26 @@ function barHeight(prob: number): number {
   return Math.max(2, Math.round(((100 - prob) / 100) * 44));
 }
 
-function WindowPill({ state }: { state: WindowState }) {
-  const t = useTranslations('DayCard');
-  const base =
-    'inline-flex items-center text-[0.62rem] px-[0.5rem] py-[0.18rem] rounded-full font-medium whitespace-nowrap shrink-0 sm:text-[0.68rem] sm:px-[0.6rem] sm:py-[0.2rem]';
-  if (state === 'clear') {
-    return (
-      <span
-        className={`${base} bg-[rgba(56,189,248,0.15)] text-sky-300 border border-[rgba(56,189,248,0.25)]`}
-      >
-        {t('windowClear')}
-      </span>
-    );
-  }
-  if (state === 'unsure') {
-    return (
-      <span
-        className={`${base} bg-[rgba(255,255,255,0.06)] text-white/[38%] border border-[rgba(255,255,255,0.1)]`}
-      >
-        {t('windowUnsure')}
-      </span>
-    );
-  }
+function ClothingTag({
+  category,
+  recommendation,
+}: {
+  category: ClothingWeightCategory;
+  recommendation: ClothingRecommendation;
+}) {
+  const t = useTranslations('ClothingTag');
+  const categoryName = t(CATEGORY_I18N_KEY[category]);
+  const stateLabel = t(RECOMMENDATION_I18N_KEY[recommendation]);
   return (
     <span
-      className={`${base} bg-[rgba(239,68,68,0.15)] text-red-300 border border-[rgba(239,68,68,0.25)]`}
+      className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[0.65rem] font-medium border ${TAG_BADGE[recommendation]}`}
+      aria-label={`${categoryName}: ${stateLabel}`}
     >
-      {t('windowRain')}
+      <span
+        className={`w-1.5 h-1.5 rounded-full shrink-0 ${TAG_DOT[recommendation]}`}
+        aria-hidden="true"
+      />
+      {categoryName}
     </span>
   );
 }
@@ -98,7 +126,6 @@ export function DayCard({
 
   const pastThreshold = isToday && timeState === 'afternoon' ? currentHour : -1;
 
-  // Now marker: only for today in afternoon, within 6h–20h range
   let nowMarkerStyle: React.CSSProperties | undefined;
   if (
     isToday &&
@@ -200,38 +227,16 @@ export function DayCard({
           </div>
         </div>
 
-        <hr className="border-0 border-t border-[rgba(255,255,255,0.08)] day:border-[rgba(18,48,100,0.1)] mt-auto mb-3" />
-        <p className="text-white/[22%] day:text-ink/[32%] text-[0.55rem] uppercase tracking-[0.2em] mb-2">
-          {t('windowsOfDay')}
-        </p>
-
-        <div className="flex flex-col gap-2">
-          {/* Morning window — hidden at afternoon/night on today card */}
-          <div
-            className={`bg-[rgba(255,255,255,0.05)] [backdrop-filter:blur(8px)] [-webkit-backdrop-filter:blur(8px)] border border-[rgba(255,255,255,0.08)] day:bg-[rgba(255,255,255,0.38)] day:border-[rgba(255,255,255,0.55)] rounded-xl px-3 py-2 flex items-center justify-between${isToday ? " [html[data-time='afternoon']_&]:hidden [html[data-time='night']_&]:hidden" : ''}`}
-          >
-            <div className="flex items-center gap-2">
-              <span style={{ fontSize: '0.875rem' }} aria-hidden="true">
-                🌅
-              </span>
-              <span className="text-white/[58%] day:text-ink/[68%] text-[0.8rem] font-light">
-                {t('morning')}
-              </span>
-            </div>
-            <WindowPill state={forecast.morningWindow} />
-          </div>
-
-          {/* Afternoon window */}
-          <div className="bg-[rgba(255,255,255,0.05)] [backdrop-filter:blur(8px)] [-webkit-backdrop-filter:blur(8px)] border border-[rgba(255,255,255,0.08)] day:bg-[rgba(255,255,255,0.38)] day:border-[rgba(255,255,255,0.55)] rounded-xl px-3 py-2 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span style={{ fontSize: '0.875rem' }} aria-hidden="true">
-                🌆
-              </span>
-              <span className="text-white/[58%] day:text-ink/[68%] text-[0.8rem] font-light">
-                {t('afternoon')}
-              </span>
-            </div>
-            <WindowPill state={forecast.afternoonWindow} />
+        {/* Clothing type recommendations */}
+        <div className="mt-auto pt-3 border-t border-[rgba(255,255,255,0.08)] day:border-[rgba(18,48,100,0.1)]">
+          <div className="flex flex-wrap gap-1.5">
+            {CLOTHING_WEIGHT_CATEGORIES.map((category) => (
+              <ClothingTag
+                key={category}
+                category={category}
+                recommendation={forecast.clothingRecommendations[category]}
+              />
+            ))}
           </div>
         </div>
       </div>
