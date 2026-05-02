@@ -19,13 +19,25 @@
   "DayCard": {
     "dayEnded": "encerrado",
     "dayEndedAriaLabel": "dia encerrado",
-    "dryingChance": "chance de secar ao natural",
-    "windowsOfDay": "Janelas do dia",
-    "morning": "Manhã",
-    "afternoon": "Tarde",
-    "windowClear": "Livre ✓",
-    "windowUnsure": "Incerto",
-    "windowRain": "Chuva"
+    "dryingChance": "chance de secar ao natural"
+  },
+  "ClothingTag": {
+    "extraLeve": "Extra Leve",
+    "leve": "Leve",
+    "medio": "Médio",
+    "pesado": "Pesado",
+    "extraPesado": "Extra Pesado",
+    "recomendar": "Recomendado",
+    "condicional": "Com ressalvas",
+    "evitar": "Não recomendado",
+    "EXTRA_LIGHT": "Extra Leve",
+    "LIGHT": "Leve",
+    "MEDIUM": "Médio",
+    "HEAVY": "Pesado",
+    "EXTRA_HEAVY": "Extra Pesado",
+    "Recomendar": "Recomendado",
+    "Condicional": "Com ressalvas",
+    "Evitar": "Não recomendado"
   },
   "DaysCarousel": {
     "regionLabel": "Previsão para os próximos dias",

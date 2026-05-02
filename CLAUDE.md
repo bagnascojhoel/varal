@@ -58,12 +58,17 @@ src/
         types/
           open-meteo.ts                           # Open-Meteo API response types
     ContainerConfig.ts             # Inversify DI container bindings
+  ui/                              # Design-system components (pure presentational)
+    DayCard/
+      DayCard.tsx                  # Presentational card — no Next.js / hook deps
+      DayCard.stories.tsx          # Storybook stories
+    index.ts                       # Barrel re-exports
   app/                             # Next.js App Router (driving adapter)
     page.tsx                       # Server component: resolves container directly
     layout.tsx                     # Root layout
     globals.css
-    _components/                   # React components
-      DayCard.tsx                  # Forecast card (was WashResult.tsx)
+    _components/                   # React components (may depend on Next.js)
+      DayCard.tsx                  # Thin wrapper: calls hooks, delegates to src/ui/DayCard
       LocationPicker.tsx
       CarouselTrack.tsx
       LiveClock.tsx
@@ -88,6 +93,10 @@ Path alias `@/*` resolves to `./src/`.
   contracts are interfaces; discriminated states are enums.
 - **`app/` uses plain JS objects** — components work with plain destructurable
   objects; no class instantiation in UI code.
+- **`src/ui/` for design-system components** — pure presentational components
+  that MUST NOT import from `next/navigation`, `next/server`, or any application
+  service. Renderable in Storybook without Next.js context. Each component in
+  `src/ui/` must have a co-located `*.stories.tsx` file.
 - **Server components resolve container directly** — `page.tsx` calls
   `container.get(FORECAST_SERVICE).getForecast(lat, lon)` with no self-fetch.
 - **Server Components First**: `app/page.tsx` is a server component; client

@@ -1,20 +1,12 @@
-'use client';
-
-import type { ForecastDayDto } from '@/core/application-services/forecast-application-service';
 import type { TimeState } from '@/core/domain/time-state';
-import type { Timezone } from '@/core/domain/time-zone';
-import {
-  ClothingRecommendation,
-  determineBarState,
-} from '@/core/domain/wash-decision';
+import { determineBarState } from '@/core/domain/wash-decision';
+import { ClothingRecommendation } from '@/core/domain/wash-decision';
 import type { WeatherState } from '@/core/domain/weather-state';
 import {
   CLOTHING_WEIGHT_CATEGORIES,
   type ClothingWeightCategory,
 } from '@/core/domain/clothing-weight-category';
 import { DateTime } from 'luxon';
-import { useClock } from '@/app/_lib/use-clock-hook';
-import { useTranslations } from 'next-intl';
 
 const ACCENT_CLASSES = [
   'bg-[linear-gradient(90deg,rgba(248,113,113,0.9),rgba(239,68,68,0.15))]',
@@ -27,38 +19,6 @@ const WEATHER_EMOJI: Record<WeatherState, string> = {
   rainy: '🌧️',
   cloudy: '⛅',
   sunny: '☀️',
-};
-
-const CATEGORY_I18N_KEY: Record<ClothingWeightCategory, string> = {
-  EXTRA_LIGHT: 'extraLeve',
-  LIGHT: 'leve',
-  MEDIUM: 'medio',
-  HEAVY: 'pesado',
-  EXTRA_HEAVY: 'extraPesado',
-};
-
-const RECOMMENDATION_I18N_KEY: Record<ClothingRecommendation, string> = {
-  [ClothingRecommendation.Recomendar]: 'recomendar',
-  [ClothingRecommendation.Condicional]: 'condicional',
-  [ClothingRecommendation.Evitar]: 'evitar',
-};
-
-const TAG_DOT: Record<ClothingRecommendation, string> = {
-  [ClothingRecommendation.Recomendar]:
-    'bg-[rgba(34,197,94,0.9)] day:bg-[rgba(22,163,74,0.8)]',
-  [ClothingRecommendation.Condicional]:
-    'bg-[rgba(251,191,36,0.9)] day:bg-[rgba(217,119,6,0.8)]',
-  [ClothingRecommendation.Evitar]:
-    'bg-[rgba(239,68,68,0.9)] day:bg-[rgba(185,28,28,0.8)]',
-};
-
-const TAG_BADGE: Record<ClothingRecommendation, string> = {
-  [ClothingRecommendation.Recomendar]:
-    'bg-[rgba(34,197,94,0.12)] border-[rgba(34,197,94,0.22)] text-green-300 day:text-green-700 day:bg-[rgba(22,163,74,0.1)] day:border-[rgba(22,163,74,0.2)]',
-  [ClothingRecommendation.Condicional]:
-    'bg-[rgba(251,191,36,0.12)] border-[rgba(251,191,36,0.22)] text-amber-300 day:text-amber-700 day:bg-[rgba(217,119,6,0.1)] day:border-[rgba(217,119,6,0.2)]',
-  [ClothingRecommendation.Evitar]:
-    'bg-[rgba(239,68,68,0.12)] border-[rgba(239,68,68,0.22)] text-red-300 day:text-red-700 day:bg-[rgba(185,28,28,0.1)] day:border-[rgba(185,28,28,0.2)]',
 };
 
 function getWeekday(dateStr: string): string {
@@ -81,16 +41,54 @@ function barHeight(prob: number): number {
   return Math.max(2, Math.round(((100 - prob) / 100) * 44));
 }
 
+const TAG_DOT: Record<ClothingRecommendation, string> = {
+  [ClothingRecommendation.Recomendar]:
+    'bg-[rgba(34,197,94,0.9)] day:bg-[rgba(22,163,74,0.8)]',
+  [ClothingRecommendation.Condicional]:
+    'bg-[rgba(251,191,36,0.9)] day:bg-[rgba(217,119,6,0.8)]',
+  [ClothingRecommendation.Evitar]:
+    'bg-[rgba(239,68,68,0.9)] day:bg-[rgba(185,28,28,0.8)]',
+};
+
+const TAG_BADGE: Record<ClothingRecommendation, string> = {
+  [ClothingRecommendation.Recomendar]:
+    'bg-[rgba(34,197,94,0.12)] border-[rgba(34,197,94,0.22)] text-green-300 day:text-green-700 day:bg-[rgba(22,163,74,0.1)] day:border-[rgba(22,163,74,0.2)]',
+  [ClothingRecommendation.Condicional]:
+    'bg-[rgba(251,191,36,0.12)] border-[rgba(251,191,36,0.22)] text-amber-300 day:text-amber-700 day:bg-[rgba(217,119,6,0.1)] day:border-[rgba(217,119,6,0.2)]',
+  [ClothingRecommendation.Evitar]:
+    'bg-[rgba(239,68,68,0.12)] border-[rgba(239,68,68,0.22)] text-red-300 day:text-red-700 day:bg-[rgba(185,28,28,0.1)] day:border-[rgba(185,28,28,0.2)]',
+};
+
+export interface DayCardProps {
+  date: string;
+  phrase: string;
+  dayWeatherState?: WeatherState;
+  hourlyPrecipitationProbability: number[];
+  isStillUsableNow: boolean;
+  clothingRecommendations: Record<
+    ClothingWeightCategory,
+    ClothingRecommendation
+  >;
+  label: string;
+  cardIndex: number;
+  isToday: boolean;
+  timeState: TimeState;
+  currentHour: number;
+  currentMinutes: number;
+  labels: any;
+}
+
 function ClothingTag({
   category,
   recommendation,
+  labels,
 }: {
   category: ClothingWeightCategory;
   recommendation: ClothingRecommendation;
+  labels: any;
 }) {
-  const t = useTranslations('ClothingTag');
-  const categoryName = t(CATEGORY_I18N_KEY[category]);
-  const stateLabel = t(RECOMMENDATION_I18N_KEY[recommendation]);
+  const categoryName = labels.ClothingTag[category];
+  const stateLabel = labels.ClothingTag[recommendation];
   return (
     <span
       className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[0.65rem] font-medium border ${TAG_BADGE[recommendation]}`}
@@ -105,27 +103,23 @@ function ClothingTag({
   );
 }
 
-interface DayCardProps {
-  forecast: ForecastDayDto;
-  label: string;
-  cardIndex: number;
-  isToday: boolean;
-  timeState: TimeState;
-  timezone: Timezone;
-}
-
 export function DayCard({
-  forecast,
+  date,
+  phrase,
+  dayWeatherState,
+  hourlyPrecipitationProbability,
+  isStillUsableNow,
+  clothingRecommendations,
   label,
   cardIndex,
   isToday,
   timeState,
-  timezone,
+  currentHour,
+  currentMinutes,
+  labels,
 }: DayCardProps) {
-  const t = useTranslations('DayCard');
-  const { hour: currentHour, minutes: currentMinutes } = useClock(timezone);
   const accent = ACCENT_CLASSES[cardIndex] ?? ACCENT_CLASSES[3];
-  const weekday = getWeekday(forecast.date);
+  const weekday = getWeekday(date);
 
   const pastThreshold = isToday && timeState === 'afternoon' ? currentHour : -1;
 
@@ -143,7 +137,7 @@ export function DayCard({
     nowMarkerStyle = { left: `${fraction * 100}%` };
   }
 
-  const todayEnded = isToday && !forecast.isStillUsableNow;
+  const todayEnded = isToday && !isStillUsableNow;
 
   return (
     <article
@@ -169,9 +163,9 @@ export function DayCard({
             {todayEnded && (
               <span
                 className="mt-[0.35rem] text-[0.48rem] uppercase tracking-[0.16em] text-white/[28%] day:text-ink/[32%] border border-[rgba(255,255,255,0.14)] day:border-[rgba(18,48,100,0.14)] rounded-full px-[0.45rem] py-[0.1rem] w-fit"
-                aria-label={t('dayEndedAriaLabel')}
+                aria-label={labels.DayCard.dayEndedAriaLabel}
               >
-                {t('dayEnded')}
+                {labels.DayCard.dayEnded}
               </span>
             )}
           </div>
@@ -179,36 +173,33 @@ export function DayCard({
             style={{ fontSize: '1.4rem', lineHeight: 1, userSelect: 'none' }}
             aria-hidden="true"
           >
-            {forecast.dayWeatherState &&
-              WEATHER_EMOJI[forecast.dayWeatherState]}
+            {dayWeatherState && WEATHER_EMOJI[dayWeatherState]}
           </span>
         </div>
 
         <p className="mb-5 text-xl font-semibold text-left text-white/[52%] day:text-ink/[62%]">
-          {forecast.phrase}
+          {phrase}
         </p>
 
         {/* Timeline */}
         <div className="mb-5">
           <span className="block text-white/[22%] day:text-ink/[30%] text-[0.5rem] uppercase tracking-[0.15em] mb-[5px]">
-            {t('dryingChance')}
+            {labels.DayCard.dryingChance}
           </span>
           <div className="flex items-end gap-[2px] h-12 pb-1 border-b border-[rgba(255,255,255,0.08)] day:border-[rgba(18,48,100,0.1)] relative">
-            {forecast.hourlyPrecipitationProbability
-              .slice(6, 21)
-              .map((prob, i) => {
-                const barHour = 6 + i;
-                const isPast = isToday && barHour < pastThreshold;
-                return (
-                  <div
-                    key={barHour}
-                    className={`${barClass(prob)}${isPast ? ' !bg-[rgba(255,255,255,0.1)] day:!bg-[rgba(18,48,100,0.08)]' : ''}`}
-                    style={{ height: `${barHeight(prob)}px` }}
-                    title={`${barHour}h · ${100 - prob}%`}
-                    data-bar-hour={isToday ? barHour : undefined}
-                  />
-                );
-              })}
+            {hourlyPrecipitationProbability.slice(6, 21).map((prob, i) => {
+              const barHour = 6 + i;
+              const isPast = isToday && barHour < pastThreshold;
+              return (
+                <div
+                  key={barHour}
+                  className={`${barClass(prob)}${isPast ? ' !bg-[rgba(255,255,255,0.1)] day:!bg-[rgba(18,48,100,0.08)]' : ''}`}
+                  style={{ height: `${barHeight(prob)}px` }}
+                  title={`${barHour}h · ${100 - prob}%`}
+                  data-bar-hour={isToday ? barHour : undefined}
+                />
+              );
+            })}
             {nowMarkerStyle && (
               <div
                 className="absolute top-0 bottom-1 w-[1.5px] bg-[rgba(255,255,255,0.6)] day:bg-[rgba(18,48,100,0.6)] rounded-[1px] pointer-events-none before:content-[''] before:absolute before:top-[-3px] before:left-1/2 before:-translate-x-1/2 before:w-[5px] before:h-[5px] before:bg-[rgba(255,255,255,0.75)] day:before:bg-[rgba(18,48,100,0.75)] before:rounded-full"
@@ -237,7 +228,8 @@ export function DayCard({
               <ClothingTag
                 key={category}
                 category={category}
-                recommendation={forecast.clothingRecommendations[category]}
+                recommendation={clothingRecommendations[category]}
+                labels={labels}
               />
             ))}
           </div>

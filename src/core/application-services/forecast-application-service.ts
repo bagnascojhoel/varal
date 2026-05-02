@@ -3,12 +3,17 @@ import { DayForecast, pickPhrase } from '@/core/domain/day-forecast';
 import type { TimeState } from '@/core/domain/time-state';
 import type { Timezone } from '@/core/domain/time-zone';
 import {
+  ClothingRecommendation,
   determineTimeState,
   determineWashDecision,
   determineWindowState,
 } from '@/core/domain/wash-decision';
 import type { WeatherState } from '@/core/domain/weather-state';
 import type { WindowState } from '@/core/domain/window-state';
+import {
+  CLOTHING_WEIGHT_CATEGORIES,
+  type ClothingWeightCategory,
+} from '@/core/domain/clothing-weight-category';
 import {
   WEATHER_REPOSITORY,
   type WeatherRepository,
@@ -27,6 +32,10 @@ export interface ForecastDayDto {
   isStillUsableNow: boolean;
   precipitationProbabilityMax: number;
   precipitationSum: number;
+  clothingRecommendations: Record<
+    ClothingWeightCategory,
+    ClothingRecommendation
+  >;
 }
 
 export interface ForecastPageResponse {
@@ -74,6 +83,13 @@ export class ForecastApplicationService {
     ).canWash;
     const hourly = dayForecast.hourlyPrecipitationProbability;
     const date = dayForecast.date.toISODate()!;
+    // TODO: replace with per-category classifier (domain story)
+    const stubRec = canWash
+      ? ClothingRecommendation.Recomendar
+      : ClothingRecommendation.Evitar;
+    const clothingRecommendations = Object.fromEntries(
+      CLOTHING_WEIGHT_CATEGORIES.map((cat) => [cat, stubRec]),
+    ) as Record<ClothingWeightCategory, ClothingRecommendation>;
     return {
       date,
       phrase: pickPhrase(canWash, date),
@@ -88,6 +104,7 @@ export class ForecastApplicationService {
       isStillUsableNow: dayForecast.isStillUsableNow(),
       precipitationProbabilityMax: dayForecast.precipitationProbabilityMax,
       precipitationSum: dayForecast.precipitationSum,
+      clothingRecommendations,
     };
   }
 }

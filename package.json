@@ -14,7 +14,8 @@
     "test:behavior": "TS_NODE_PROJECT=tsconfig.cucumber.json cucumber-js",
     "install:e2e": "npm install --prefix e2e && npx playwright install --with-deps chromium --prefix e2e",
     "test:e2e": "npm test --prefix e2e",
-    "prepare": "husky"
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "inversify": "^7.11.0",
@@ -31,7 +32,13 @@
   "devDependencies": {
     "@cucumber/cucumber": "^12.7.0",
     "@prisma/client": "^5.11.0",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/react": "^8.6.18",
+    "@storybook/react-vite": "^8.6.18",
+    "@storybook/test": "^8.6.18",
     "@tailwindcss/postcss": "^4",
+    "@tailwindcss/vite": "^4.2.4",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/luxon": "^3.7.1",
@@ -46,6 +53,7 @@
     "prettier": "^3.8.1",
     "pretty-quick": "^4.2.2",
     "prisma": "^5.11.0",
+    "storybook": "^8.6.18",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
