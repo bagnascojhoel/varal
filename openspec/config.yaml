@@ -1,0 +1,76 @@
+schema: spec-driven
+
+context: |
+  ## Product
+  Varal — a Next.js 16 (App Router) app that answers "should I wash my clothes today?"
+  based on weather forecasts. Brazilian audience; UI copy is in Portuguese (pt-BR).
+  Open-Meteo for weather data, Nominatim for reverse geocoding, ViaCEP for CEP lookup.
+
+  ## Tech Stack
+  - Next.js 16 (App Router), React 19, TypeScript 5
+  - Tailwind CSS v4 for styling
+  - Inversify v7 for dependency injection
+  - Zod v3 for API boundary validation
+  - Prisma v5 for persistence
+  - Luxon for date/time handling
+  - Winston for logging
+  - next-intl for i18n (locale files in `messages/`)
+  - Jest for unit tests, Playwright for E2E tests (in `e2e/`)
+  - Conventional Commits enforced
+
+  ## Architecture — Ports & Adapters (Hexagonal)
+  ```
+  src/
+    core/
+      domain/                  # Pure business logic — no fetch, no React
+      application-services/    # Orchestration (@injectable)
+      infrastructure/rest/     # HTTP adapters (@injectable)
+      ContainerConfig.ts       # Inversify DI bindings
+    app/                       # Next.js App Router (driving adapter)
+      _components/             # React components
+      api/                     # Thin Zod → container → response controllers
+  ```
+  Path alias: `@/*` → `./src/`.
+
+  ## Key Patterns
+  - Domain: pure entities (classes), port interfaces, enums, classifier functions
+  - Application services: orchestrate domain + infrastructure, produce DTOs
+  - Infrastructure adapters: @injectable, implement port interfaces
+  - DI tokens defined as `Symbol.for()` alongside their port interface
+  - Server components by default; `"use client"` only when browser APIs required
+  - No default exports — named exports throughout
+  - Business logic stays in `core/domain/`; fetch calls stay in `core/infrastructure/`
+  - UI components receive plain DTOs — no class instances
+
+  ## Conventions
+  - Branch naming: `<developer-username>/<short-description>` or `<developer-username>/<story-number>`
+  - Never work directly on `main`
+  - Story IDs follow `US-NN` pattern; story files are in Portuguese (pt-BR)
+  - Run `npm run typecheck` after every change; run `cd e2e && npm test` after major changes
+  - Verification step always included in tasks
+
+rules:
+  proposal:
+    - Write in English
+    - Capabilities section must use the existing capability ID if modifying an existing one
+    - Out-of-scope must explicitly call out related stories or future work that is out of scope
+    - Impact section must name the specific files/layers affected
+    - Include a section guiding UI/UX design
+
+  design:
+    - Write in English
+    - Every decision must include an "Alternatives" section explaining what was rejected and why
+    - Label thresholds and constants belong in the domain layer, not hardcoded in components
+    - UI copy and labels must be in Portuguese (pt-BR) and referenced via next-intl message keys
+    - Non-goals must reference the relevant story ID when deferring work (e.g. "US-05")
+
+  tasks:
+    - Write in English
+    - Follow TDD order within each layer: write the test first, then the implementation
+    - Each sub-task pair must be: (a) write a failing test, (b) implement to make it pass
+    - Organize task groups by architectural layer: Domain → Infrastructure → Application Service → UI/UX → Verification
+    - Each task must be independently executable in sequence (no skipping)
+    - Always include a Verification section as the final group with: typecheck, visual check, E2E tests
+    - Reference exact file paths (e.g. `src/core/domain/clothing-weight-category.ts`)
+    - Enum values must be uppercase SNAKE_CASE; interface/type names PascalCase
+    - Tasks touching i18n must add entries to locale files (messages/)
